@@ -57,95 +57,176 @@
     .content-section {
         margin-bottom: 2rem;
     }
-    
+
     blockquote {
         border-left: 4px solid var(--nu-purple);
         padding-left: 1rem;
         margin: 1rem 0;
         color: var(--nu-gray-dark);
     }
-    
+
     .table-container {
         margin: 2rem 0;
     }
-    
+
     .table-responsive {
         overflow-x: auto;
         margin-top: 1rem;
     }
-    
+
     table {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 1rem;
     }
-    
+
     th, td {
         border: 1px solid #ddd;
         padding: 8px;
         text-align: left;
     }
-    
+
     th {
         background-color: #f2f2f2;
         font-weight: bold;
     }
-    
+
     .center-align {
         text-align: center;
     }
-    
+
     .bold-cell {
         font-weight: bold;
     }
 </style>
 
 <script>
+    // Helper function to fetch a CSV file with fallback
+    async function fetchWithFallback(path, fallbackPath) {
+        try {
+            console.log('Trying to fetch from:', path);
+            const response = await fetch(path);
+            if (response.ok) {
+                return await response.text();
+            }
+            console.log(`Failed to fetch from ${path}, trying fallback: ${fallbackPath}`);
+            const fallbackResponse = await fetch(fallbackPath);
+            if (!fallbackResponse.ok) {
+                throw new Error(`Failed to load from both paths: ${path} and ${fallbackPath}`);
+            }
+            return await fallbackResponse.text();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    }
+
     // Function to load CSV data and create tables
     async function loadTableData() {
         try {
-            // Load Disease cohort table
-            const diseaseResponse = await fetch('tables/Disease_cohort_inclusion_exclusion_criteria.csv');
-            const diseaseData = await diseaseResponse.text();
-            document.getElementById('disease-cohort-table').innerHTML = createTableFromCSV(diseaseData);
-            
-            // Load Acoustic tasks table
-            const acousticResponse = await fetch('tables/Acoustic_Tasks_Protocol.csv');
-            const acousticData = await acousticResponse.text();
-            document.getElementById('acoustic-tasks-table').innerHTML = createTableFromCSV(acousticData);
-            
-            // Load Validated questionnaires table
-            const questionnairesResponse = await fetch('tables/Validated_Questionnaires.csv');
-            const questionnairesData = await questionnairesResponse.text();
-            document.getElementById('validated-questionnaires-table').innerHTML = createTableFromCSV(questionnairesData, ['X']);
+            // Get the baseurl from the config or default to empty string
+            const baseUrl = '/sprout-website';
+            console.log('Loading tables with baseUrl:', baseUrl);
+
+            // Add a status message while loading
+            document.querySelectorAll('.table-responsive').forEach(container => {
+                container.innerHTML = '<p>Loading table data...</p>';
+            });
+
+            // Try to load all tables with fallback paths
+            try {
+                // Disease cohort table
+                const diseaseData = await fetchWithFallback(
+                    `${baseUrl}/tables/Disease_cohort_inclusion_exclusion_criteria.csv`,
+                    'tables/Disease_cohort_inclusion_exclusion_criteria.csv'
+                );
+                document.getElementById('disease-cohort-table').innerHTML = createTableFromCSV(diseaseData);
+
+                // Acoustic tasks table
+                const acousticData = await fetchWithFallback(
+                    `${baseUrl}/tables/Acoustic_Tasks_Protocol.csv`,
+                    'tables/Acoustic_Tasks_Protocol.csv'
+                );
+                document.getElementById('acoustic-tasks-table').innerHTML = createTableFromCSV(acousticData);
+
+                // Validated questionnaires table
+                const questionnairesData = await fetchWithFallback(
+                    `${baseUrl}/tables/Validated_Questionnaires.csv`,
+                    'tables/Validated_Questionnaires.csv'
+                );
+                document.getElementById('validated-questionnaires-table').innerHTML = createTableFromCSV(questionnairesData, ['X']);
+
+                console.log('All tables loaded successfully');
+            } catch (fetchError) {
+                console.error('Error fetching table data:', fetchError);
+                throw fetchError;
+            }
         } catch (error) {
             console.error('Error loading table data:', error);
             document.querySelectorAll('.table-responsive').forEach(container => {
-                container.innerHTML = '<p>Error loading table data. Please try again later.</p>';
+                container.innerHTML = `
+                    <div style="color: red; padding: 10px; border: 1px solid red; margin: 10px 0;">
+                        <p><strong>Error loading table data:</strong></p>
+                        <p>${error.message}</p>
+                        <p>Please check the browser console for more details.</p>
+                        <p>If you're viewing this on GitHub Pages, please make sure the CSV files are properly uploaded to the repository.</p>
+                    </div>
+                `;
             });
         }
     }
-    
+
     // Function to parse CSV and create HTML table
     function createTableFromCSV(csvText, centerValues = []) {
+        // More robust CSV parsing that handles quoted fields with commas
+        function parseCSVLine(line) {
+            const result = [];
+            let cell = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+
+                if (char === '"' && (i === 0 || line[i-1] !== '\\')) {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(cell.trim());
+                    cell = '';
+                } else {
+                    cell += char;
+                }
+            }
+
+            // Add the last cell
+            result.push(cell.trim());
+
+            // Clean up quotes from cells
+            return result.map(cell => {
+                if (cell.startsWith('"') && cell.endsWith('"')) {
+                    return cell.substring(1, cell.length - 1).trim();
+                }
+                return cell.trim();
+            });
+        }
+
         const rows = csvText.trim().split('\n');
-        const headers = rows[0].split(',').map(header => header.trim());
-        
+        const headers = parseCSVLine(rows[0]);
+
         let tableHTML = '<table>';
-        
+
         // Add headers
         tableHTML += '<thead><tr>';
         headers.forEach(header => {
             tableHTML += `<th>${header}</th>`;
         });
         tableHTML += '</tr></thead>';
-        
+
         // Add body
         tableHTML += '<tbody>';
         for (let i = 1; i < rows.length; i++) {
-            const cells = rows[i].split(',').map(cell => cell.trim());
+            const cells = parseCSVLine(rows[i]);
             tableHTML += '<tr>';
-            
+
             cells.forEach((cell, index) => {
                 // Apply special formatting
                 if (index === 0) {
@@ -156,14 +237,14 @@
                     tableHTML += `<td>${cell}</td>`;
                 }
             });
-            
+
             tableHTML += '</tr>';
         }
         tableHTML += '</tbody></table>';
-        
+
         return tableHTML;
     }
-    
+
     // Load tables when the content is loaded
     document.addEventListener('DOMContentLoaded', loadTableData);
 </script>
