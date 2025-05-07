@@ -35,21 +35,108 @@
 <div class="table-container">
     <h3>Table 1 - Disease cohort inclusion/exclusion criteria and validation methods</h3>
     <div class="table-responsive" id="disease-cohort-table">
-        <!-- Table will be loaded via JavaScript -->
+        <!-- Fallback static table in case JavaScript fails -->
+        <noscript>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Disease Cohort</th>
+                        <th>Diagnosis</th>
+                        <th>Inclusion Criteria</th>
+                        <th>Exclusion Criteria</th>
+                        <th>Gold Standard Validation Methods</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="bold-cell">Voice Disorders Cohort</td>
+                        <td>Laryngeal Cancer</td>
+                        <td>Active laryngeal cancer T1-T4 Biopsy proven</td>
+                        <td>Previously treated laryngeal cancer with no evidence of disease on scope</td>
+                        <td>Laryngoscopy Images Stroboscopy Videos</td>
+                    </tr>
+                    <tr>
+                        <td class="bold-cell">Voice Disorders Cohort</td>
+                        <td>Laryngitis</td>
+                        <td>Acute laryngitis Chronic laryngitis Bacterial laryngitis</td>
+                        <td>Subjective laryngitis without evidence on scope</td>
+                        <td>Laryngoscopy Images Stroboscopy Videos</td>
+                    </tr>
+                </tbody>
+            </table>
+        </noscript>
     </div>
 </div>
 
 <div class="table-container">
     <h3>Table 2 - Acoustic Tasks in Protocol</h3>
     <div class="table-responsive" id="acoustic-tasks-table">
-        <!-- Table will be loaded via JavaScript -->
+        <!-- Fallback static table in case JavaScript fails -->
+        <noscript>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Task</th>
+                        <th>Description</th>
+                        <th>Part</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="bold-cell">Non Voice/Non Speech</td>
+                        <td>Respiration Part A</td>
+                        <td>Breathing sounds</td>
+                        <td>A</td>
+                    </tr>
+                    <tr>
+                        <td class="bold-cell">Non Voice/Non Speech</td>
+                        <td>Cough part A</td>
+                        <td>Voluntary Cough</td>
+                        <td>A</td>
+                    </tr>
+                </tbody>
+            </table>
+        </noscript>
     </div>
 </div>
 
 <div class="table-container">
     <h3>Table 3 - Validated Questionnaires integrated into App</h3>
     <div class="table-responsive" id="validated-questionnaires-table">
-        <!-- Table will be loaded via JavaScript -->
+        <!-- Fallback static table in case JavaScript fails -->
+        <noscript>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Validated Questionnaire</th>
+                        <th>Voice Disorders</th>
+                        <th>Respiratory</th>
+                        <th>Mood/Psychiatric</th>
+                        <th>Neurological</th>
+                        <th>Controls</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="bold-cell">Voice Handicap Index-10 (VHI-10)</td>
+                        <td class="center-align">X</td>
+                        <td class="center-align">X</td>
+                        <td class="center-align">X</td>
+                        <td class="center-align">X</td>
+                        <td class="center-align">X</td>
+                    </tr>
+                    <tr>
+                        <td class="bold-cell">Patient Health Questionnaire (PHQ-9)</td>
+                        <td class="center-align">X</td>
+                        <td class="center-align">X</td>
+                        <td class="center-align">X</td>
+                        <td class="center-align">X</td>
+                        <td class="center-align">X</td>
+                    </tr>
+                </tbody>
+            </table>
+        </noscript>
     </div>
 </div>
 
@@ -101,23 +188,74 @@
 </style>
 
 <script>
-    // Helper function to fetch a CSV file with fallback
-    async function fetchWithFallback(path, fallbackPath) {
+    // Embedded CSV data as fallback
+    const DISEASE_COHORT_CSV = `Disease Cohort,Diagnosis,Inclusion Criteria,Exclusion Criteria,Gold Standard Validation Methods
+Voice Disorders Cohort,Laryngeal Cancer,"Active laryngeal cancer T1-T4 Biopsy proven (if no biopsy at time of collection and suspicion is very high, provider will have to go back to confirm in the clinical validation section after the biopsy is obtained) ",Previously treated laryngeal cancer with no evidence of disease on scope,Laryngoscopy Images Stroboscopy Videos
+Voice Disorders Cohort,Laryngitis,Acute laryngitis Chronic laryngitis Bacterial laryngitis Fungal laryngitis Autoimmune laryngitis *need to have evidence of information of the vocal cords on laryngoscopy as well as dysphonia,Subjective laryngitis without evidence on scope,Laryngoscopy Images Stroboscopy Videos
+Voice Disorders Cohort,Pre-cancerous lesions,Keratosis Leukoplakia (note if with or without dysplasia),Low grade -,Laryngoscopy Images Stroboscopy Videos
+Voice Disorders Cohort,"Benign Lesions of the vocal cord (nodule, polyp, cyst) ",Vocal fold nodules Vocal fold polyp Vocal fold cyst Reinke's Edema Vocal fold ulcers Recurrent respiratory Papilloma Fibrous mass Rheumatoid nodules Recurrent Laryngeal Papilloma (RLP),Patient has received surgery for any condition and does not have evidence of pathology when scoped Immediate post op prior less than 30 days from laryngeal surgery,Laryngoscopy Images Stroboscopy Videos`;
+
+    const ACOUSTIC_TASKS_CSV = `Name,Task,Description,Part
+Non Voice/Non Speech,Respiration Part A,Breathing sounds,A
+Non Voice/Non Speech,Cough part A,Voluntary Cough,A
+Non Voice/Non Speech,Breath Sounds,Breathing sounds,Resp
+Non Voice/Non Speech,Voluntary Cough,Voluntary Cough,Resp
+Voice/Non Speech,Prolonged Vowel,vowel /e/,A
+Voice/Non Speech,Maximum Phonation Time,vowel /e/,A
+Voice/Non Speech,Glides,Lowest to Highest /e/,A
+Voice/Non Speech,Loudness,/Hey/,A
+Voice/Non Speech,Diadochokinesis,/pa/ta/ka/ /buttercup/,A
+Speech,Rainbow Passage,validated passage,A`;
+
+    const VALIDATED_QUESTIONNAIRES_CSV = `Validated Questionnaire,Voice Disorders,Respiratory,Mood/Psychiatric,Neurological,Controls
+Voice Handicap Index-10 (VHI-10),X,X,X,X,X
+Patient Health Questionnaire (PHQ-9),X,X,X,X,X
+General Anxiety Disorder (GAD-7),X,X,X,X,X
+Positive and Negative Affect Schedule (PANAS),,,X,,X
+Custom Affect scale,,,X,,X
+Post-Traumatic Stress Disorder Test (PTSD) Adult,,,X,,X
+Attention Deficit and Hyperactivity Disorder Questionnaire (ADHD-Adult),,,X,,X
+The Diagnostic and Statistical Manual of Mental Disorders (DSM-5 Adult),,,X,,X
+Dyspnea Index (DI),,X,,,X`;
+
+    // Helper function to fetch a CSV file with fallback to embedded data
+    async function fetchWithFallback(path, fallbackPath, embeddedData) {
         try {
             console.log('Trying to fetch from:', path);
             const response = await fetch(path);
             if (response.ok) {
                 return await response.text();
             }
+
             console.log(`Failed to fetch from ${path}, trying fallback: ${fallbackPath}`);
-            const fallbackResponse = await fetch(fallbackPath);
-            if (!fallbackResponse.ok) {
-                throw new Error(`Failed to load from both paths: ${path} and ${fallbackPath}`);
+            try {
+                const fallbackResponse = await fetch(fallbackPath);
+                if (fallbackResponse.ok) {
+                    return await fallbackResponse.text();
+                }
+            } catch (fallbackError) {
+                console.log('Fallback fetch failed, using embedded data');
             }
-            return await fallbackResponse.text();
+
+            // If both fetches fail, use the embedded data
+            console.log('Using embedded data as last resort');
+            return embeddedData;
         } catch (error) {
             console.error('Error fetching data:', error);
-            throw error;
+            // Return embedded data as last resort
+            return embeddedData;
+        }
+    }
+
+    // Function to create a direct HTML table from embedded data
+    function createDirectHtmlTable(containerId, csvData, centerValues = []) {
+        try {
+            const tableHtml = createTableFromCSV(csvData, centerValues);
+            document.getElementById(containerId).innerHTML = tableHtml;
+            return true;
+        } catch (error) {
+            console.error(`Error creating direct HTML table for ${containerId}:`, error);
+            return false;
         }
     }
 
@@ -133,33 +271,47 @@
                 container.innerHTML = '<p>Loading table data...</p>';
             });
 
-            // Try to load all tables with fallback paths
+            // Try to load all tables with fallback paths and embedded data
             try {
                 // Disease cohort table
                 const diseaseData = await fetchWithFallback(
                     `${baseUrl}/tables/Disease_cohort_inclusion_exclusion_criteria.csv`,
-                    'tables/Disease_cohort_inclusion_exclusion_criteria.csv'
+                    'tables/Disease_cohort_inclusion_exclusion_criteria.csv',
+                    DISEASE_COHORT_CSV
                 );
                 document.getElementById('disease-cohort-table').innerHTML = createTableFromCSV(diseaseData);
 
                 // Acoustic tasks table
                 const acousticData = await fetchWithFallback(
                     `${baseUrl}/tables/Acoustic_Tasks_Protocol.csv`,
-                    'tables/Acoustic_Tasks_Protocol.csv'
+                    'tables/Acoustic_Tasks_Protocol.csv',
+                    ACOUSTIC_TASKS_CSV
                 );
                 document.getElementById('acoustic-tasks-table').innerHTML = createTableFromCSV(acousticData);
 
                 // Validated questionnaires table
                 const questionnairesData = await fetchWithFallback(
                     `${baseUrl}/tables/Validated_Questionnaires.csv`,
-                    'tables/Validated_Questionnaires.csv'
+                    'tables/Validated_Questionnaires.csv',
+                    VALIDATED_QUESTIONNAIRES_CSV
                 );
                 document.getElementById('validated-questionnaires-table').innerHTML = createTableFromCSV(questionnairesData, ['X']);
 
                 console.log('All tables loaded successfully');
             } catch (fetchError) {
                 console.error('Error fetching table data:', fetchError);
-                throw fetchError;
+
+                // Final fallback: create tables directly from embedded data
+                console.log('Using direct HTML table creation as final fallback');
+                let success = true;
+
+                success = createDirectHtmlTable('disease-cohort-table', DISEASE_COHORT_CSV) && success;
+                success = createDirectHtmlTable('acoustic-tasks-table', ACOUSTIC_TASKS_CSV) && success;
+                success = createDirectHtmlTable('validated-questionnaires-table', VALIDATED_QUESTIONNAIRES_CSV, ['X']) && success;
+
+                if (!success) {
+                    throw new Error('Failed to create direct HTML tables');
+                }
             }
         } catch (error) {
             console.error('Error loading table data:', error);
@@ -169,7 +321,7 @@
                         <p><strong>Error loading table data:</strong></p>
                         <p>${error.message}</p>
                         <p>Please check the browser console for more details.</p>
-                        <p>If you're viewing this on GitHub Pages, please make sure the CSV files are properly uploaded to the repository.</p>
+                        <p>Try refreshing the page or viewing the tables in the original Streamlit application.</p>
                     </div>
                 `;
             });
@@ -247,4 +399,9 @@
 
     // Load tables when the content is loaded
     document.addEventListener('DOMContentLoaded', loadTableData);
+
+    // Also try to load tables immediately in case the page is already loaded
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(loadTableData, 100);
+    }
 </script>
