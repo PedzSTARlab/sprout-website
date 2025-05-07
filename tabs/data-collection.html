@@ -1,0 +1,169 @@
+<div class="content-section">
+    <p>Data is collected across five disease categories. Initial data release contains data collected from four of five categories (pediatric data to be incorporated in subsequent dataset releases.</p>
+
+    <p>Participants are recruited across different academic institutions from "high volume expert clinics" based on diagnosis and inclusion/exclusion criteria outlined below <strong>(Table 1)</strong>.</p>
+
+    <p><strong>High Volume Expert Clinics:</strong> Outpatient clinics within hospital systems or academic institutions that have developed an expertise in a specific disease area and see more than 50 patients per month from the same disease category. Ex: Asthma/COPD pulmonary specialty clinic.</p>
+
+    <p>Data is collected in the clinic with the assistance of a trained researched assistant. Future data collection will also occur remotely, however remote data collection did not occur with initial dataset being released. Voice samples are collected prospectively using a custom software application (Bridge2AI-Voice app) with the Bridge2AI-Voice protocols.</p>
+
+    <p><strong>Clinical validation:</strong> Clinical validation is performed by qualified physician or practitioner based on established gold standards for diagnosis <strong>(Table 1)</strong>.</p>
+
+    <p><strong>Acoustic Tasks:</strong> Voice, breathing, cough, and speech data are recorded with the app. A total of 22 acoustic Tasks are recorded through the app <strong>(Table 2)</strong>.</p>
+
+    <p><strong>Demographic surveys and confounders:</strong> Detailed demographic data and surveys about confounding factors such as smoking and drinking history is collected through the smartphone application.</p>
+
+    <p><strong>Validated Questionnaires:</strong> The Bridge2AI-Voice protocols contain validated tools and questionnaires for each disease category within the app for data collection <strong>(Table 3)</strong>.</p>
+
+    <p><strong>Other Multimodal Data:</strong> The rest of the multimodal data including imaging, genomic data (for the neuro cohort), laryngoscopy imaging and other EHR data is extracted from different sites independently and will be uploaded through the REDCAP database. Please note that no external data is released in this v2.0.0.</p>
+
+    <p>Please see publication for protocol development description:</p>
+    <blockquote>
+        Bensoussan, Yael, et al. "Developing Multi-Disorder Voice Protocols: A team science approach involving clinical expertise, bioethics, standards, and DEI." Proc. Interspeech 2024. 2024. <a href="https://www.isca-archive.org/interspeech_2024/bensoussan24_interspeech.html" target="_blank">https://www.isca-archive.org/interspeech_2024/bensoussan24_interspeech.html</a>.
+    </blockquote>
+
+    <p>The supporting REDCap Data Dictionary, Metadata and Instrument PDFs are available at <a href="https://github.com/eipm/bridge2ai-redcap" target="_blank">https://github.com/eipm/bridge2ai-redcap</a>.</p>
+
+    <p>When using the REDCap Data Dictionary and Metadata please cite:</p>
+    <blockquote>
+        Bensoussan, Y., Ghosh, S. S., Rameau, A., Boyer, M., Bahr, R., Watts, S., Rudzicz, F., Bolser, D., Lerner-Ellis, J., Awan, S., Powell, M. E., Belisle-Pipon, J.-C., Ravitsky, V., Johnson, A., Zisimopoulos, P., Tang, J., Sigaras, A., Elemento, O., Dorr, D., … Bridge2AI-Voice. (2024). eipm/bridge2ai-redcap. Zenodo. <a href="https://zenodo.org/doi/10.5281/zenodo.12760724" target="_blank">https://zenodo.org/doi/10.5281/zenodo.12760724</a>.
+    </blockquote>
+
+    <p>Protocols can be found in the Bridge2AI-Voice documentation for v2.0.0 of the dataset at <a href="https://kind-lab.github.io/vbai-fhir/protocol.html" target="_blank">https://kind-lab.github.io/vbai-fhir/protocol.html</a>.</p>
+</div>
+
+<div class="table-container">
+    <h3>Table 1 - Disease cohort inclusion/exclusion criteria and validation methods</h3>
+    <div class="table-responsive" id="disease-cohort-table">
+        <!-- Table will be loaded via JavaScript -->
+    </div>
+</div>
+
+<div class="table-container">
+    <h3>Table 2 - Acoustic Tasks in Protocol</h3>
+    <div class="table-responsive" id="acoustic-tasks-table">
+        <!-- Table will be loaded via JavaScript -->
+    </div>
+</div>
+
+<div class="table-container">
+    <h3>Table 3 - Validated Questionnaires integrated into App</h3>
+    <div class="table-responsive" id="validated-questionnaires-table">
+        <!-- Table will be loaded via JavaScript -->
+    </div>
+</div>
+
+<style>
+    .content-section {
+        margin-bottom: 2rem;
+    }
+    
+    blockquote {
+        border-left: 4px solid var(--nu-purple);
+        padding-left: 1rem;
+        margin: 1rem 0;
+        color: var(--nu-gray-dark);
+    }
+    
+    .table-container {
+        margin: 2rem 0;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+        margin-top: 1rem;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+    }
+    
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+    
+    .center-align {
+        text-align: center;
+    }
+    
+    .bold-cell {
+        font-weight: bold;
+    }
+</style>
+
+<script>
+    // Function to load CSV data and create tables
+    async function loadTableData() {
+        try {
+            // Load Disease cohort table
+            const diseaseResponse = await fetch('tables/Disease_cohort_inclusion_exclusion_criteria.csv');
+            const diseaseData = await diseaseResponse.text();
+            document.getElementById('disease-cohort-table').innerHTML = createTableFromCSV(diseaseData);
+            
+            // Load Acoustic tasks table
+            const acousticResponse = await fetch('tables/Acoustic_Tasks_Protocol.csv');
+            const acousticData = await acousticResponse.text();
+            document.getElementById('acoustic-tasks-table').innerHTML = createTableFromCSV(acousticData);
+            
+            // Load Validated questionnaires table
+            const questionnairesResponse = await fetch('tables/Validated_Questionnaires.csv');
+            const questionnairesData = await questionnairesResponse.text();
+            document.getElementById('validated-questionnaires-table').innerHTML = createTableFromCSV(questionnairesData, ['X']);
+        } catch (error) {
+            console.error('Error loading table data:', error);
+            document.querySelectorAll('.table-responsive').forEach(container => {
+                container.innerHTML = '<p>Error loading table data. Please try again later.</p>';
+            });
+        }
+    }
+    
+    // Function to parse CSV and create HTML table
+    function createTableFromCSV(csvText, centerValues = []) {
+        const rows = csvText.trim().split('\n');
+        const headers = rows[0].split(',').map(header => header.trim());
+        
+        let tableHTML = '<table>';
+        
+        // Add headers
+        tableHTML += '<thead><tr>';
+        headers.forEach(header => {
+            tableHTML += `<th>${header}</th>`;
+        });
+        tableHTML += '</tr></thead>';
+        
+        // Add body
+        tableHTML += '<tbody>';
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].split(',').map(cell => cell.trim());
+            tableHTML += '<tr>';
+            
+            cells.forEach((cell, index) => {
+                // Apply special formatting
+                if (index === 0) {
+                    tableHTML += `<td class="bold-cell">${cell}</td>`;
+                } else if (centerValues.includes(cell)) {
+                    tableHTML += `<td class="center-align">${cell}</td>`;
+                } else {
+                    tableHTML += `<td>${cell}</td>`;
+                }
+            });
+            
+            tableHTML += '</tr>';
+        }
+        tableHTML += '</tbody></table>';
+        
+        return tableHTML;
+    }
+    
+    // Load tables when the content is loaded
+    document.addEventListener('DOMContentLoaded', loadTableData);
+</script>

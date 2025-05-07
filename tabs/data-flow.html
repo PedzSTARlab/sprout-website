@@ -1,0 +1,82 @@
+<h2>SPROUT Data Processing Flow</h2>
+<hr>
+
+<div class="content-section">
+    <h3>1. Data Collection</h3>
+    <ul>
+        <li>Tools: Adobe Audition (<code>.wav</code>), Zoom (<code>.m4a</code>/<code>.mp4</code>), SharePoint transcripts</li>
+        <li>Raw files live on SharePoint; then copied to processing server</li>
+    </ul>
+
+    <h3>2. File Handling & Metadata</h3>
+    <ul>
+        <li>BIDS-style directory structure</li>
+        <li>Rename, remove empty files, associate transcripts</li>
+    </ul>
+
+    <h3>3. Pre-processing & QC</h3>
+    <ul>
+        <li>Noise reduction, silence trimming, normalization</li>
+        <li>Generate QC reports (SNR, clipping, duration)</li>
+    </ul>
+
+    <h3>4. Diarization & Segmentation</h3>
+    <ul>
+        <li>Manual speaker labeling + forced alignment (Montreal Forced Aligner)</li>
+        <li>Produce child-only audio segments</li>
+    </ul>
+
+    <h3>5. Annotation & Feature Extraction</h3>
+    <ul>
+        <li>Expert phonetic labels + auto-extracted features (MFCC, prosody)</li>
+        <li>Store artifacts in feature store (e.g., Git LFS or cloud bucket)</li>
+    </ul>
+
+    <h3>6. ASR & Transcription</h3>
+    <ul>
+        <li>Run Whisper / wav2vec-2.0 → timestamped transcripts</li>
+    </ul>
+
+    <h3>7. Modeling & Analysis</h3>
+    <ul>
+        <li>Train classifiers, bias analysis, explainability pipelines</li>
+    </ul>
+</div>
+
+<h2>Data Flow Diagram</h2>
+
+<div class="diagram-container">
+    <pre class="ascii-diagram">
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  Data Collection │────▶│  Pre-processing  │────▶│   Diarization   │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+                                                        │
+                                                        ▼
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│ Model Training  │◀────│  Feature Extract │◀────│  ASR Processing │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+    </pre>
+    <p>The diagram above illustrates the data processing flow from collection to model training.</p>
+</div>
+
+<style>
+    .content-section {
+        margin: 2rem 0;
+    }
+    
+    .diagram-container {
+        margin: 2rem 0;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .ascii-diagram {
+        font-family: monospace;
+        white-space: pre;
+        overflow-x: auto;
+        background-color: transparent;
+        border: none;
+        padding: 1rem;
+    }
+</style>

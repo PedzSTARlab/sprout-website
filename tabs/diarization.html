@@ -1,0 +1,36 @@
+<h2>Diarization</h2>
+
+<div class="content-section">
+    <p>Speaker diarization is a critical step in processing the SPROUT dataset, especially for isolating child speech from other speakers.</p>
+    
+    <h3>Diarization Process</h3>
+    <ul>
+        <li>Manual speaker labeling by trained annotators</li>
+        <li>Forced alignment using Montreal Forced Aligner</li>
+        <li>Production of child-only audio segments</li>
+        <li>Quality verification by speech-language pathologists</li>
+    </ul>
+    
+    <h3>Speaker Labels</h3>
+    <p>The following speaker labels are used in the diarization process:</p>
+    <ul>
+        <li><strong>CHI</strong>: Child (target participant)</li>
+        <li><strong>INV</strong>: Investigator/clinician</li>
+        <li><strong>PAR</strong>: Parent/caregiver</li>
+        <li><strong>OTH</strong>: Other speakers</li>
+        <li><strong>NOI</strong>: Noise/non-speech segments</li>
+    </ul>
+    
+    <div class="placeholder-message">
+        <p>Interactive diarization visualizations and examples will be added in a future update.</p>
+    </div>
+</div>
+
+<style>
+    .placeholder-message {
+        background-color: #f8f9fa;
+        border-left: 4px solid var(--nu-purple);
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+</style>

@@ -1,0 +1,41 @@
+<h2>Automatic Speech Recognition (ASR)</h2>
+
+<div class="content-section">
+    <p>This section describes the ASR processing applied to the SPROUT dataset.</p>
+    
+    <h3>ASR Models</h3>
+    <p>The following ASR models are used to transcribe the audio recordings:</p>
+    <ul>
+        <li><strong>Whisper</strong>: OpenAI's Whisper model (medium variant)</li>
+        <li><strong>wav2vec 2.0</strong>: Facebook AI's wav2vec 2.0 model fine-tuned on child speech</li>
+    </ul>
+    
+    <h3>Transcription Process</h3>
+    <ul>
+        <li>Audio segmentation based on diarization</li>
+        <li>ASR processing of child-only segments</li>
+        <li>Generation of timestamped transcripts</li>
+        <li>Manual verification of a subset of transcriptions</li>
+    </ul>
+    
+    <h3>Performance Metrics</h3>
+    <p>ASR performance is evaluated using the following metrics:</p>
+    <ul>
+        <li>Word Error Rate (WER)</li>
+        <li>Character Error Rate (CER)</li>
+        <li>Phoneme Error Rate (PER)</li>
+    </ul>
+    
+    <div class="placeholder-message">
+        <p>Detailed ASR performance metrics and interactive visualizations will be added in a future update.</p>
+    </div>
+</div>
+
+<style>
+    .placeholder-message {
+        background-color: #f8f9fa;
+        border-left: 4px solid var(--nu-purple);
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+</style>

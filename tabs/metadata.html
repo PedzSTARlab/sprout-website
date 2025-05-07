@@ -1,0 +1,152 @@
+<h1>SPROUT Metadata</h1>
+
+<div class="content-section">
+    <p>Multiple sessions (visits) are encoded by adding an extra layer of directories
+    and filenames in the form of a session (for example <code>ses-&lt;label&gt;</code>) and
+    with a <code>*_sessions.tsv</code> file.</p>
+
+    <div class="file-tree">
+        <pre>
+├─ sub-control01/
+│  ├─ ses-predrug/
+│  │  ├─ anat/
+│  │  │  ├─ sub-control01_ses-predrug_T1w.nii.gz 
+│  │  │  ├─ sub-control01_ses-predrug_T1w.json 
+│  │  │  ├─ sub-control01_ses-predrug_T2w.nii.gz 
+│  │  │  └─ sub-control01_ses-predrug_T2w.json 
+│  │  ├─ func/
+│  │  │  ├─ sub-control01_ses-predrug_task-nback_bold.nii.gz 
+│  │  │  ├─ sub-control01_ses-predrug_task-nback_bold.json 
+│  │  │  ├─ sub-control01_ses-predrug_task-nback_events.tsv 
+│  │  │  ├─ sub-control01_ses-predrug_task-nback_physio.tsv.gz 
+│  │  │  ├─ sub-control01_ses-predrug_task-nback_physio.json 
+│  │  │  └─ sub-control01_ses-predrug_task-nback_sbref.nii.gz 
+│  │  ├─ dwi/
+│  │  │  ├─ sub-control01_ses-predrug_dwi.nii.gz 
+│  │  │  ├─ sub-control01_ses-predrug_dwi.bval 
+│  │  │  └─ sub-control01_ses-predrug_dwi.bvec 
+│  │  ├─ fmap/
+│  │  │  ├─ sub-control01_ses-predrug_phasediff.nii.gz 
+│  │  │  ├─ sub-control01_ses-predrug_phasediff.json 
+│  │  │  └─ sub-control01_ses-predrug_magnitude1.nii.gz 
+│  │  └─ sub-control01_ses-predrug_scans.tsv 
+│  ├─ ses-postdrug/
+│  │  ├─ func/
+│  │  │  ├─ sub-control01_ses-postdrug_task-nback_bold.nii.gz 
+│  │  │  ├─ sub-control01_ses-postdrug_task-nback_bold.json 
+│  │  │  ├─ sub-control01_ses-postdrug_task-nback_events.tsv 
+│  │  │  ├─ sub-control01_ses-postdrug_task-nback_physio.tsv.gz 
+│  │  │  ├─ sub-control01_ses-postdrug_task-nback_physio.json 
+│  │  │  └─ sub-control01_ses-postdrug_task-nback_sbref.nii.gz 
+│  │  └─ fmap/
+│  │     ├─ sub-control01_ses-postdrug_phasediff.nii.gz 
+│  │     ├─ sub-control01_ses-postdrug_phasediff.json 
+│  │     └─ sub-control01_ses-postdrug_magnitude1.nii.gz 
+│  └─ sub-control01_sessions.tsv 
+├─ participants.tsv 
+├─ dataset_description.json 
+├─ README 
+└─ CHANGES
+        </pre>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>session_id</th>
+                    <th>acq_time</th>
+                    <th>systolic_blood_pressure</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ses-predrug</td>
+                    <td>2009-06-15T13:45:30</td>
+                    <td>120</td>
+                </tr>
+                <tr>
+                    <td>ses-postdrug</td>
+                    <td>2009-06-16T13:45:30</td>
+                    <td>100</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>See this <a href="https://github.com/bids-standard/bids-examples/tree/master/7t_trt" target="_blank">example dataset</a>
+    that has been formatted using this specification and can be used
+    for practical guidance when curating a new longitudinal dataset.</p>
+</div>
+
+<div class="content-section">
+    <h2>Multi-site or multi-center studies</h2>
+
+    <p>This version of the BIDS specification does not explicitly cover studies with
+    data coming from multiple sites or multiple centers (such extension is planned
+    in <a href="https://github.com/bids-standard/bids-2-devel/issues/11" target="_blank">BIDS 2.0</a>).
+    There are however ways to model your data without any loss in terms of metadata.</p>
+
+    <h3>Option 1: Treat each site/center as a separate dataset</h3>
+
+    <p>The simplest way of dealing with multiple sites is to treat data from each site
+    as a separate and independent BIDS dataset with a separate participants.tsv and
+    other metadata files. This way you can feed each dataset individually to BIDS
+    Apps and everything should just work.</p>
+
+    <h3>Option 2: Combining sites/centers into one dataset</h3>
+
+    <p>Alternatively you can combine data from all sites into one dataset.
+    This can be done in two ways:</p>
+
+    <h4>Option 2.a: Collate sites at subject level</h4>
+
+    <p>To identify which site each subjects comes from you can add a <code>site</code> column in the
+    <code>participants.tsv</code> file indicating the source site. This solution allows you to
+    analyze all subjects together in one dataset. One caveat is that subjects
+    from all sites will have to have unique labels. To enforce that and improve
+    readability you can use a subject label prefix identifying the site. For example
+    <code>sub-NUY001</code>, <code>sub-MIT002</code>, <code>sub-MPG002</code> and so on. Remember that hyphens and
+    underscores are not allowed in subject labels.</p>
+
+    <h4>Option 2.b: Use different sessions for different sites</h4>
+
+    <p>In case of studies such as "Traveling Human Phantom" it is possible to incorporate site within session label.
+    For example <code>sub-human1/ses-NUY</code>, <code>sub-human1/ses-MIT</code>, <code>sub-phantom1/ses-NUY</code>, <code>sub-phantom1/ses-MIT</code> and so on.</p>
+</div>
+
+<style>
+    .file-tree {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        overflow-x: auto;
+    }
+    
+    .file-tree pre {
+        font-family: monospace;
+        margin: 0;
+        white-space: pre;
+    }
+    
+    .table-container {
+        margin: 1rem 0;
+        overflow-x: auto;
+    }
+    
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    
+    th {
+        background-color: #f2f2f2;
+    }
+</style>

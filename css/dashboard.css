@@ -1,0 +1,316 @@
+/* =============================
+   Northwestern Brand Tokens
+   ============================= */
+   :root {
+    --nu-purple: #4E2A84;
+    --nu-gold: #FFD100;
+    --nu-gray-light: #F0F0F0;
+    --nu-gray-dark: #666666;
+    --nu-white: #FFFFFF;
+    --font-sans: 'Lato', Arial, sans-serif;
+    --font-heading: 'Montserrat', sans-serif;
+    --radius: 8px;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --transition: 0.3s ease-in-out;
+  }
+
+  /* =============================
+     Reset & Flex Layout
+     ============================= */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  html, body {
+    height: 100%;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-sans);
+    background: var(--nu-gray-light);
+    color: var(--nu-gray-dark);
+  }
+  main, .block-container {
+    flex: 1 0 auto;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background: var(--nu-white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  /* =============================
+     Header
+     ============================= */
+  header {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background: var(--nu-purple);
+    color: var(--nu-white);
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  /* Logo container – flush left with larger size */
+  header .nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.75rem 1rem;
+  }
+  header .logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-right: auto;
+  }
+  header .logo img {
+    height: 3.5rem; /* increased from 2.5rem */
+    width: auto;
+  }
+  header nav ul {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+  header nav a {
+    color: var(--nu-white);
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    transition: color var(--transition);
+  }
+  header nav a:hover {
+    color: var(--nu-gold);
+  }
+
+  /* =============================
+     Headings
+     ============================= */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--nu-purple);
+    margin-bottom: 1rem;
+  }
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.5rem; }
+
+  /* =============================
+     Tab Toggle (Custom for GitHub Pages)
+     ============================= */
+  .tabs-container {
+    margin: 2rem 0;
+  }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: var(--nu-white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 1rem 0;
+    overflow-x: auto;
+    padding: 0.5rem;
+  }
+
+  .tab-button {
+    flex: 1;
+    margin: 0 0.25rem;
+    padding: 0.75rem 1rem;
+    background: var(--nu-white);
+    border: 2px solid var(--nu-purple);
+    border-radius: var(--radius);
+    color: var(--nu-purple);
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition), transform var(--transition);
+  }
+
+  .tab-button:hover {
+    background: var(--nu-purple);
+    color: var(--nu-white);
+    transform: translateY(-2px);
+  }
+
+  .tab-button.active {
+    background: var(--nu-purple);
+    color: var(--nu-white);
+    border-color: var(--nu-gold);
+  }
+
+  .tab-content {
+    background: var(--nu-white);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+
+  .tab-pane {
+    display: none;
+  }
+
+  .tab-pane.active {
+    display: block;
+  }
+
+  /* Keep the original Streamlit tab styles for backward compatibility */
+  .stTabs [data-baseweb="tab-list"] {
+    display: flex !important;
+    justify-content: center;
+    background: var(--nu-white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+  .stTabs button[data-baseweb="tab"] {
+    flex: 1;
+    margin: 0 0.25rem;
+    padding: 0.75rem 1rem;
+    background: var(--nu-white);
+    border: 2px solid var(--nu-purple);
+    border-radius: var(--radius);
+    color: var(--nu-purple);
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    transition: background var(--transition), color var(--transition), transform var(--transition);
+  }
+  .stTabs button[data-baseweb="tab"]:hover {
+    background: var(--nu-purple);
+    color: var(--nu-white);
+    transform: translateY(-2px);
+  }
+  .stTabs [data-baseweb="tab-highlight"] {
+    background: var(--nu-purple) !important;
+    color: var(--nu-white) !important;
+    border-color: var(--nu-gold) !important;
+  }
+
+  /* =============================
+     Content Styling
+     ============================= */
+  p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  a {
+    color: var(--nu-purple);
+    text-decoration: underline;
+    transition: color var(--transition);
+  }
+
+  a:hover {
+    color: var(--nu-gold);
+  }
+
+  /* =============================
+     Charts & Metrics
+     ============================= */
+  .js-plotly-plot,
+  [data-testid="stMetric"],
+  .plotly-chart {
+    background: var(--nu-white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 1rem 0;
+    padding: 1rem;
+    transition: transform var(--transition);
+  }
+
+  .js-plotly-plot:hover,
+  [data-testid="stMetric"]:hover,
+  .plotly-chart:hover {
+    transform: translateY(-4px);
+  }
+
+  .metric-card {
+    background: var(--nu-white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin: 1rem 0;
+    text-align: center;
+    transition: transform var(--transition);
+  }
+
+  .metric-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .metric-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--nu-purple);
+  }
+
+  .metric-label {
+    font-size: 1rem;
+    color: var(--nu-gray-dark);
+  }
+
+  /* =============================
+     Footer (Pushed to Bottom)
+     ============================= */
+  footer {
+    flex-shrink: 0;
+    margin-top: auto;
+    background: var(--nu-purple);
+    color: var(--nu-white);
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+  footer .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: space-between;
+  }
+  footer .footer-inner .col {
+    flex: 1 1 200px;
+  }
+  footer a {
+    color: var(--nu-gold);
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+  footer a:hover {
+    color: var(--nu-white);
+  }
+
+  /* =============================
+     Responsive
+     ============================= */
+  @media (max-width: 768px) {
+    header .nav-container {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .stTabs [data-baseweb="tab-list"] {
+      flex-wrap: wrap;
+      padding: 0.5rem;
+    }
+    .stTabs button[data-baseweb="tab"] {
+      margin: 0.25rem 0;
+      font-size: 0.9rem;
+    }
+    main, .block-container {
+      margin: 1rem auto;
+      padding: 1rem;
+    }
+    footer .footer-inner {
+      flex-direction: column;
+      text-align: center;
+    }
+  }

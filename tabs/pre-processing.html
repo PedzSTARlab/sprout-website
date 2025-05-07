@@ -1,0 +1,34 @@
+<h2>Pre-Processing</h2>
+
+<div class="content-section">
+    <p>This section describes the pre-processing steps applied to the SPROUT dataset.</p>
+    
+    <h3>Audio Pre-processing</h3>
+    <ul>
+        <li>Noise reduction using spectral gating</li>
+        <li>Silence trimming at beginning and end of recordings</li>
+        <li>Volume normalization to -23 LUFS</li>
+        <li>Quality control metrics generation (SNR, clipping percentage, duration)</li>
+    </ul>
+    
+    <h3>Quality Control</h3>
+    <p>Each recording undergoes automated quality checks to ensure it meets the following criteria:</p>
+    <ul>
+        <li>Signal-to-Noise Ratio (SNR) > 15 dB</li>
+        <li>Clipping percentage < 1%</li>
+        <li>Minimum duration of 5 seconds</li>
+    </ul>
+    
+    <div class="placeholder-message">
+        <p>Detailed pre-processing documentation and interactive visualizations will be added in a future update.</p>
+    </div>
+</div>
+
+<style>
+    .placeholder-message {
+        background-color: #f8f9fa;
+        border-left: 4px solid var(--nu-purple);
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+</style>
