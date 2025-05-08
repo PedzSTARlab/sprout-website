@@ -112,3 +112,15 @@ def calculate_metrics(reference, hypothesis):
         margin: 1rem 0;
     }
 </style>
+
+<script>
+    // Initialize collapsible panels directly when this tab is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof initCollapsiblePanels === 'function') {
+            setTimeout(initCollapsiblePanels, 100);
+            if (typeof Prism !== 'undefined') {
+                setTimeout(Prism.highlightAll, 150);
+            }
+        }
+    });
+</script>

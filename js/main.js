@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById(tab.id).innerHTML = html;
                     // Initialize any Plotly charts or other interactive elements
                     initializeInteractiveElements();
+                    // Dispatch event for collapsible panels
+                    document.dispatchEvent(new CustomEvent('tabContentLoaded', { detail: { tabId: tab.id } }));
                 })
                 .catch(error => {
                     console.error(`Could not load ${tab.file}: ${error}`);

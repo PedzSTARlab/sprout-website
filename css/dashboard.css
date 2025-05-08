@@ -703,8 +703,14 @@
   .collapsible-content {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease-out;
+    transition: max-height 0.5s ease-out;
     background-color: #ffffff;
+    will-change: max-height;
+  }
+
+  /* When header is active, show content */
+  .collapsible-header.active + .collapsible-content {
+    max-height: 2000px; /* Large enough to contain content */
   }
 
   .collapsible-inner {
