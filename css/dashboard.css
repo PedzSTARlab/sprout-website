@@ -523,10 +523,11 @@
     overflow-x: auto;
     margin-top: var(--space-md);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    background-color: var(--nu-white);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow for better depth */
+    background-color: #FFFFFF; /* Pure white background */
     position: relative;
     max-width: 100%;
+    padding: 0; /* Remove any padding */
   }
 
   /* Add a subtle gradient overlay to indicate scrollable content */
@@ -536,8 +537,8 @@
     top: 0;
     right: 0;
     bottom: 0;
-    width: 30px;
-    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.7));
+    width: 40px; /* Wider gradient */
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(42,15,76,0.1)); /* Slight purple tint */
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -545,6 +546,22 @@
 
   .table-responsive:hover::after {
     opacity: 1;
+  }
+
+  /* Add a scrollbar indicator */
+  .table-responsive::-webkit-scrollbar {
+    height: 8px;
+    background-color: #F0F0F0;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb {
+    background-color: #2A0F4C;
+    border-radius: 4px;
+  }
+
+  .table-responsive::-webkit-scrollbar-track {
+    background-color: #F0F0F0;
+    border-radius: 4px;
   }
 
   table {
@@ -558,38 +575,39 @@
   }
 
   td {
-    border: 1px solid var(--nu-gray-medium);
+    border: 1px solid #CCCCCC; /* Slightly darker border for better visibility */
     padding: var(--space-md);
     text-align: left;
     border-left: none;
     border-top: none;
     font-size: var(--font-size-base);
     line-height: var(--line-height-relaxed);
+    color: #333333; /* Darker text for better readability */
   }
 
   th {
-    border: 1px solid var(--nu-purple-dark);
+    border: 1px solid #1A0A30; /* Very dark border */
     border-left: none;
     border-top: none;
     text-align: left;
   }
 
   th:first-child, td:first-child {
-    border-left: 1px solid var(--nu-gray-medium);
+    border-left: 1px solid #CCCCCC;
   }
 
   th:first-child {
-    border-left: 1px solid var(--nu-purple-dark);
+    border-left: 1px solid #1A0A30; /* Very dark border */
   }
 
   tr:first-child th {
-    border-top: 1px solid var(--nu-purple-dark);
+    border-top: 1px solid #1A0A30; /* Very dark border */
   }
 
   th {
-    background-color: var(--nu-purple-dark);
-    color: var(--nu-white);
-    font-weight: 700;
+    background-color: #2A0F4C; /* Even darker purple for maximum contrast */
+    color: #FFFFFF; /* Pure white */
+    font-weight: 800; /* Extra bold */
     font-size: var(--font-size-md);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -597,45 +615,54 @@
     top: 0;
     z-index: 10;
     padding: var(--space-md) var(--space-md);
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Stronger text shadow */
+    border: 1px solid #1A0A30; /* Very dark border */
   }
 
   tr {
     transition: background-color 0.2s ease;
   }
 
+  tr:nth-child(odd) {
+    background-color: #FFFFFF; /* Pure white for odd rows */
+  }
+
   tr:nth-child(even) {
-    background-color: var(--nu-gray-lightest);
+    background-color: #F0F0F0; /* Slightly darker for even rows */
   }
 
   tr:hover {
-    background-color: rgba(78, 42, 132, 0.08);
+    background-color: #E6E0F0; /* Light purple on hover */
   }
 
   .center-align {
     text-align: center;
     font-weight: bold;
-    color: var(--nu-purple-dark);
+    color: #2A0F4C; /* Darker purple for better contrast */
   }
 
   .bold-cell {
     font-weight: 700;
-    color: var(--nu-purple-dark);
+    color: #2A0F4C; /* Darker purple for better contrast */
   }
 
-  /* Add a subtle border to the table */
+  /* Add a stronger border to the table */
   .table-responsive {
-    border: 1px solid var(--nu-gray-medium);
+    border: 2px solid #2A0F4C; /* Darker border that matches headers */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Stronger shadow */
   }
 
   /* Improve table caption if present */
   table caption {
-    font-weight: 600;
+    font-weight: 700;
     padding: var(--space-md);
-    background-color: var(--nu-purple-light);
-    color: var(--nu-white);
+    background-color: #2A0F4C; /* Match header color */
+    color: #FFFFFF;
     text-align: center;
     caption-side: top;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
 
   /* =============================
