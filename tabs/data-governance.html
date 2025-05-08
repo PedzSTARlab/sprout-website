@@ -1,44 +1,325 @@
 <h2>Data Governance</h2>
 
 <div class="content-section">
-    <p>The SPROUT project implements robust data governance practices to ensure ethical use of child speech data.</p>
-    
-    <h3>Ethical Protections</h3>
-    <ul>
-        <li>All data collection follows rigorous human subjects research protocols</li>
-        <li>Informed parental consent with clear explanation of data usage</li>
-        <li>Options for data sharing preferences</li>
-        <li>Strict data privacy and security measures</li>
-    </ul>
-    
-    <h3>Data Access</h3>
-    <p>Access to the SPROUT dataset is managed through a controlled access mechanism:</p>
-    <ul>
-        <li>Data Use Agreement (DUA) required</li>
-        <li>Data Access Request Form submission</li>
-        <li>Review by Data Access Committee</li>
-        <li>Institutional signature requirements</li>
-    </ul>
-    
-    <h3>Data Security</h3>
-    <ul>
-        <li>Secure storage with encryption</li>
-        <li>Access controls and authentication</li>
-        <li>Audit logging of data access</li>
-        <li>Regular security assessments</li>
-    </ul>
-    
-    <h3>FAIR Principles</h3>
-    <p>The SPROUT dataset adheres to FAIR data principles:</p>
-    <ul>
-        <li><strong>Findable</strong>: Persistent identifiers and rich metadata</li>
-        <li><strong>Accessible</strong>: Clear access protocols while protecting privacy</li>
-        <li><strong>Interoperable</strong>: Standard formats and vocabularies</li>
-        <li><strong>Reusable</strong>: Clear licenses and provenance information</li>
-    </ul>
-    
-    <div class="placeholder-message">
-        <p>Detailed data governance documentation and access request forms will be added in a future update.</p>
+    <p>The SPROUT project implements robust data governance practices to ensure ethical use of speech data and to protect participant privacy and rights.</p>
+
+    <h3 id="ethical-framework">1. Ethical Framework</h3>
+    <p>Our ethical framework is built on principles of respect for persons, beneficence, justice, and transparency.</p>
+
+    <div class="collapsible-panel">
+        <div class="collapsible-header">
+            <span>Ethical Principles and Protections</span>
+            <i class="icon fas fa-chevron-down"></i>
+        </div>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+                <h4>Core Ethical Principles</h4>
+                <ul>
+                    <li><strong>Respect for Persons</strong>: Recognizing the autonomy of individuals and protecting those with diminished autonomy</li>
+                    <li><strong>Beneficence</strong>: Maximizing benefits while minimizing potential harms</li>
+                    <li><strong>Justice</strong>: Fair distribution of benefits and burdens of research</li>
+                    <li><strong>Transparency</strong>: Clear communication about data collection, usage, and sharing</li>
+                </ul>
+
+                <h4>Implemented Protections</h4>
+                <ul>
+                    <li><strong>IRB Approval</strong>: All research protocols approved by Institutional Review Boards at participating institutions</li>
+                    <li><strong>Informed Consent</strong>: Comprehensive consent process with clear explanation of:
+                        <ul>
+                            <li>Purpose of data collection</li>
+                            <li>Types of data collected</li>
+                            <li>How data will be used</li>
+                            <li>Potential risks and benefits</li>
+                            <li>Data sharing options</li>
+                        </ul>
+                    </li>
+                    <li><strong>Tiered Consent</strong>: Participants can choose different levels of data sharing:
+                        <ul>
+                            <li>Research use only</li>
+                            <li>Non-commercial development</li>
+                            <li>Commercial development with restrictions</li>
+                        </ul>
+                    </li>
+                    <li><strong>Right to Withdraw</strong>: Participants can withdraw consent and request data deletion</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3 id="data-access">2. Data Access Controls</h3>
+    <p>Access to the SPROUT dataset is managed through a controlled access mechanism to ensure appropriate use while protecting participant privacy.</p>
+
+    <div class="collapsible-panel">
+        <div class="collapsible-header">
+            <span>Access Request Process</span>
+            <i class="icon fas fa-chevron-down"></i>
+        </div>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+                <h4>Access Request Workflow</h4>
+                <ol>
+                    <li><strong>Registration</strong>: Researchers register on the SPROUT data portal</li>
+                    <li><strong>Data Access Request Form</strong>: Submission includes:
+                        <ul>
+                            <li>Research purpose and objectives</li>
+                            <li>Specific data elements requested</li>
+                            <li>Data security measures</li>
+                            <li>Institutional affiliation</li>
+                            <li>Funding sources</li>
+                        </ul>
+                    </li>
+                    <li><strong>Review by Data Access Committee</strong>: Evaluation based on:
+                        <ul>
+                            <li>Scientific merit</li>
+                            <li>Ethical considerations</li>
+                            <li>Alignment with consent provisions</li>
+                            <li>Data security protocols</li>
+                        </ul>
+                    </li>
+                    <li><strong>Data Use Agreement (DUA)</strong>: Legal contract specifying:
+                        <ul>
+                            <li>Permitted uses</li>
+                            <li>Prohibition on re-identification attempts</li>
+                            <li>Data security requirements</li>
+                            <li>Publication requirements</li>
+                            <li>Term and termination conditions</li>
+                        </ul>
+                    </li>
+                    <li><strong>Institutional Signature</strong>: Requires sign-off from authorized institutional official</li>
+                    <li><strong>Access Provisioning</strong>: Secure credentials provided for data access</li>
+                </ol>
+
+                <h4>Access Levels</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Access Level</th>
+                            <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Description</th>
+                            <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Requirements</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="bold-cell">Open Access</td>
+                            <td>De-identified metadata and summary statistics</td>
+                            <td>Registration only</td>
+                        </tr>
+                        <tr>
+                            <td class="bold-cell">Restricted Access</td>
+                            <td>De-identified individual-level data</td>
+                            <td>Approved DAR and signed DUA</td>
+                        </tr>
+                        <tr>
+                            <td class="bold-cell">Controlled Access</td>
+                            <td>Audio recordings and sensitive data</td>
+                            <td>Approved DAR, signed DUA, and additional security measures</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <h3 id="data-security">3. Data Security Measures</h3>
+    <p>Comprehensive security controls protect data throughout its lifecycle, from collection to storage and access.</p>
+
+    <div class="collapsible-panel">
+        <div class="collapsible-header">
+            <span>Security Infrastructure</span>
+            <i class="icon fas fa-chevron-down"></i>
+        </div>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+                <h4>Technical Security Controls</h4>
+                <ul>
+                    <li><strong>Encryption</strong>:
+                        <ul>
+                            <li>Data encrypted at rest using AES-256</li>
+                            <li>Transport encryption using TLS 1.3</li>
+                            <li>Key management with regular rotation</li>
+                        </ul>
+                    </li>
+                    <li><strong>Access Controls</strong>:
+                        <ul>
+                            <li>Multi-factor authentication</li>
+                            <li>Role-based access control</li>
+                            <li>Principle of least privilege</li>
+                            <li>Regular access reviews</li>
+                        </ul>
+                    </li>
+                    <li><strong>Monitoring and Auditing</strong>:
+                        <ul>
+                            <li>Comprehensive audit logging</li>
+                            <li>Automated anomaly detection</li>
+                            <li>Regular security assessments</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>Security Compliance</h4>
+                <ul>
+                    <li>HIPAA compliance for applicable data</li>
+                    <li>NIST Cybersecurity Framework</li>
+                    <li>Regular third-party security assessments</li>
+                    <li>Incident response plan with notification procedures</li>
+                </ul>
+
+                <pre><code class="language-bash"># Example security configuration (pseudocode)
+# Data access logging configuration
+ENABLE_AUDIT_LOGGING=true
+AUDIT_LOG_RETENTION=365 # days
+SENSITIVE_FIELD_MASKING=true
+
+# Authentication configuration
+REQUIRE_MFA=true
+PASSWORD_COMPLEXITY=high
+SESSION_TIMEOUT=30 # minutes
+FAILED_LOGIN_LOCKOUT=true
+
+# Encryption configuration
+DATA_AT_REST_ENCRYPTION=AES-256
+TRANSPORT_ENCRYPTION=TLS-1.3
+KEY_ROTATION_PERIOD=90 # days</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <h3 id="fair-principles">4. FAIR Data Principles</h3>
+    <p>The SPROUT dataset adheres to FAIR data principles to maximize the value and reuse potential of the data.</p>
+
+    <div class="collapsible-panel">
+        <div class="collapsible-header">
+            <span>FAIR Implementation</span>
+            <i class="icon fas fa-chevron-down"></i>
+        </div>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+                <h4>Findable</h4>
+                <ul>
+                    <li><strong>Persistent Identifiers</strong>: DOIs assigned to datasets and versions</li>
+                    <li><strong>Rich Metadata</strong>: Comprehensive metadata following established schemas</li>
+                    <li><strong>Indexing</strong>: Metadata indexed in relevant research data repositories</li>
+                </ul>
+
+                <h4>Accessible</h4>
+                <ul>
+                    <li><strong>Standardized Protocol</strong>: Data retrievable via standard HTTPS</li>
+                    <li><strong>Authentication</strong>: Clear authentication process for restricted data</li>
+                    <li><strong>Metadata Availability</strong>: Metadata remains accessible even if data access is restricted</li>
+                </ul>
+
+                <h4>Interoperable</h4>
+                <ul>
+                    <li><strong>Standard Formats</strong>: Data provided in widely-used formats (WAV, CSV, JSON)</li>
+                    <li><strong>Controlled Vocabularies</strong>: Use of standard terminologies and ontologies</li>
+                    <li><strong>Linked Data</strong>: References to related datasets and resources</li>
+                </ul>
+
+                <h4>Reusable</h4>
+                <ul>
+                    <li><strong>Clear Licensing</strong>: Explicit data usage licenses</li>
+                    <li><strong>Provenance</strong>: Detailed documentation of data collection and processing</li>
+                    <li><strong>Community Standards</strong>: Adherence to domain-specific data standards</li>
+                </ul>
+
+                <h4>FAIR Metrics</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Principle</th>
+                            <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Metric</th>
+                            <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Findable</td>
+                            <td>Persistent identifier usage</td>
+                            <td class="center-align" style="font-weight: bold; color: #000000;">✓</td>
+                        </tr>
+                        <tr>
+                            <td>Findable</td>
+                            <td>Rich metadata</td>
+                            <td class="center-align" style="font-weight: bold; color: #000000;">✓</td>
+                        </tr>
+                        <tr>
+                            <td>Accessible</td>
+                            <td>Standardized access protocol</td>
+                            <td class="center-align" style="font-weight: bold; color: #000000;">✓</td>
+                        </tr>
+                        <tr>
+                            <td>Accessible</td>
+                            <td>Metadata persistence</td>
+                            <td class="center-align" style="font-weight: bold; color: #000000;">✓</td>
+                        </tr>
+                        <tr>
+                            <td>Interoperable</td>
+                            <td>Standard file formats</td>
+                            <td class="center-align" style="font-weight: bold; color: #000000;">✓</td>
+                        </tr>
+                        <tr>
+                            <td>Interoperable</td>
+                            <td>Vocabulary usage</td>
+                            <td class="center-align" style="font-weight: bold; color: #000000;">✓</td>
+                        </tr>
+                        <tr>
+                            <td>Reusable</td>
+                            <td>Clear licensing</td>
+                            <td class="center-align" style="font-weight: bold; color: #000000;">✓</td>
+                        </tr>
+                        <tr>
+                            <td>Reusable</td>
+                            <td>Detailed provenance</td>
+                            <td class="center-align" style="font-weight: bold; color: #000000;">✓</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <h3 id="data-citation">5. Data Citation and Attribution</h3>
+    <p>Proper citation of the SPROUT dataset is required in all publications and derivative works.</p>
+
+    <div class="collapsible-panel">
+        <div class="collapsible-header">
+            <span>Citation Guidelines</span>
+            <i class="icon fas fa-chevron-down"></i>
+        </div>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+                <h4>Required Citation Format</h4>
+                <div class="code-block">
+                    <pre>Bensoussan, Y., Ghosh, S. S., Rameau, A., Boyer, M., Bahr, R., Watts, S., Rudzicz, F., Bolser, D., Lerner-Ellis, J., Awan, S., Powell, M. E., Belisle-Pipon, J.-C., Ravitsky, V., Johnson, A., Zisimopoulos, P., Tang, J., Sigaras, A., Elemento, O., Dorr, D., … Bridge2AI-Voice. (2024). SPROUT Dataset [version]. Zenodo. https://doi.org/[DOI]</pre>
+                </div>
+
+                <h4>Acknowledgment Text</h4>
+                <p>In addition to the citation, please include the following acknowledgment in the publication:</p>
+                <blockquote>
+                    "This research utilized the SPROUT dataset, developed by the Bridge2AI-Voice consortium with funding from the NIH Common Fund's Bridge to Artificial Intelligence (Bridge2AI) Program."
+                </blockquote>
+
+                <h4>Version-Specific Citation</h4>
+                <p>Always cite the specific version of the dataset used in your research. Each version has a unique DOI.</p>
+
+                <h4>Derivative Works</h4>
+                <p>If creating derivative datasets or models based on SPROUT data:</p>
+                <ul>
+                    <li>Clearly indicate the relationship to the original SPROUT dataset</li>
+                    <li>Describe any modifications or additions made</li>
+                    <li>Include the required citation and acknowledgment</li>
+                    <li>Provide access to derivative code when possible</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3 id="data-request">6. Data Access Request</h3>
+    <p>To request access to the SPROUT dataset, please complete the Data Access Request Form.</p>
+
+    <div class="action-buttons">
+        <a href="https://kind-lab.github.io/vbai-fhir/protocol.html" target="_blank" class="button primary">View Data Protocol</a>
+        <a href="https://github.com/eipm/bridge2ai-redcap" target="_blank" class="button secondary">Access REDCap Dictionary</a>
     </div>
 </div>
 
@@ -49,4 +330,79 @@
         padding: 1rem;
         margin: 1rem 0;
     }
+
+    .code-block {
+        background-color: #f5f5f5;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        padding: 1rem;
+        margin: 1rem 0;
+        overflow-x: auto;
+    }
+
+    .code-block pre {
+        margin: 0;
+        white-space: pre-wrap;
+        font-family: monospace;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    blockquote {
+        border-left: 4px solid var(--nu-gold);
+        padding: 0.5rem 1rem;
+        margin: 1rem 0;
+        background-color: #f9f9f9;
+        font-style: italic;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin: 2rem 0 1rem;
+    }
+
+    .button {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .button.primary {
+        background-color: var(--nu-purple);
+        color: white;
+        border: 2px solid var(--nu-purple);
+    }
+
+    .button.primary:hover {
+        background-color: var(--nu-purple-dark);
+        border-color: var(--nu-purple-dark);
+    }
+
+    .button.secondary {
+        background-color: white;
+        color: var(--nu-purple);
+        border: 2px solid var(--nu-purple);
+    }
+
+    .button.secondary:hover {
+        background-color: #f0f0f0;
+    }
 </style>
+
+<script>
+    // Initialize collapsible panels directly when this tab is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof initCollapsiblePanels === 'function') {
+            setTimeout(initCollapsiblePanels, 100);
+            if (typeof Prism !== 'undefined') {
+                setTimeout(Prism.highlightAll, 150);
+            }
+        }
+    });
+</script>
