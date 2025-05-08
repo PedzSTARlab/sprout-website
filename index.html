@@ -7,6 +7,8 @@
     <link rel="icon" href="images/PedzSTARLab.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.27.1/plotly.min.js"></script>
 </head>
 <body>
@@ -25,7 +27,7 @@
 
     <main>
         <h1>SPROUT Dashboard</h1>
-        
+
         <div class="tabs-container">
             <div class="tabs">
                 <button class="tab-button active" data-tab="research-overview">Research Overview</button>
@@ -37,7 +39,7 @@
                 <button class="tab-button" data-tab="asr">ASR</button>
                 <button class="tab-button" data-tab="data-governance">Data Governance</button>
             </div>
-            
+
             <div class="tab-content">
                 <!-- Research Overview Tab -->
                 <div class="tab-pane active" id="research-overview">
@@ -46,41 +48,41 @@
                     <p>To ensure equity and robustness in AI development, SPROUT prioritizes speaker variability. The dataset is built using a balanced recruitment strategy across racial/ethnic groups (Black, Latine, and White) and socioeconomic status (at or below 100%, and between 100%–200% of the federal poverty line). Recordings were collected across seven geographically diverse U.S. cities—St. Louis (MO), Los Angeles (CA), Dallas (TX), Orlando (FL), Atlanta (GA), Baltimore (MD), and Iselin (NJ)—through a partnership with a healthcare research firm.</p>
                     <p>Importantly, SPROUT was designed with robust ethical protections to safeguard the use of child speech in AI research. All data collection followed rigorous human subjects research protocols, including informed parental consent, options for data sharing preferences, and strict data privacy and security measures. These protections ensure that SPROUT supports innovation in a way that is transparent, respectful, and centered on the rights and dignity of children and families.</p>
                     <p>Developed through a collaborative, community-engaged approach, SPROUT enables cross-disciplinary research in speech-language pathology, machine learning, education, and child development. It supports the development of tools for early speech disorder detection, language development tracking, and culturally responsive assessment practices.</p>
-                    
+
                     <h3>Our Commitment</h3>
                     <p>At the Pediatric Speech Technologies and Acoustics Research (PedzSTAR) Lab, we are committed to advancing ethical, inclusive research that supports early identification of speech and language disorders through the development of AI-powered tools grounded in community input and real-world need. Guided by the principles of FAIR data use—making data Findable, Accessible, Interoperable, and Reusable—our work prioritizes transparency, responsible design, and equitable impact to ensure that all children, regardless of race, language background, or socioeconomic status, are accurately and justly served.</p>
                     <p><strong>Please Note:</strong> The public data releases do not contain pediatric data. It also does not contain an equal distribution of these categories of diseases. Further releases will contain additional data.</p>
-                    
+
                     <h2>Data Access</h2>
                     <h3>Access audio recordings</h3>
                     <p>We need to create a data access page for the SPROUT dataset. Bridge2ai used CANVA to create the data access page. The page is available at the following URL: <a href="https://wustl-catalog.instructure.com/courses/643/pages/how-to-access-the-data" target="_blank">https://wustl-catalog.instructure.com/courses/643/pages/how-to-access-the-data</a>. We need to decide if we want to use the same page for the SPROUT dataset or create a new one.</p>
                 </div>
-                
+
                 <!-- Other tabs will be populated with JavaScript -->
                 <div class="tab-pane" id="data-flow">
                     <!-- Content will be loaded from data-flow.html -->
                 </div>
-                
+
                 <div class="tab-pane" id="data-collection">
                     <!-- Content will be loaded from data-collection.html -->
                 </div>
-                
+
                 <div class="tab-pane" id="metadata">
                     <!-- Content will be loaded from metadata.html -->
                 </div>
-                
+
                 <div class="tab-pane" id="pre-processing">
                     <!-- Content will be loaded from pre-processing.html -->
                 </div>
-                
+
                 <div class="tab-pane" id="diarization">
                     <!-- Content will be loaded from diarization.html -->
                 </div>
-                
+
                 <div class="tab-pane" id="asr">
                     <!-- Content will be loaded from asr.html -->
                 </div>
-                
+
                 <div class="tab-pane" id="data-governance">
                     <!-- Content will be loaded from data-governance.html -->
                 </div>
@@ -106,5 +108,9 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="js/collapsible.js"></script>
 </body>
 </html>

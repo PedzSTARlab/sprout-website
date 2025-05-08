@@ -667,6 +667,77 @@
   }
 
   /* =============================
+     Collapsible Panels
+     ============================= */
+  .collapsible-panel {
+    margin: 1.5rem 0;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .collapsible-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+  }
+
+  .collapsible-header:hover {
+    background-color: #efefef;
+  }
+
+  .collapsible-header .icon {
+    transition: transform 0.3s ease;
+  }
+
+  .collapsible-header.active .icon {
+    transform: rotate(180deg);
+  }
+
+  .collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background-color: #ffffff;
+  }
+
+  .collapsible-inner {
+    padding: 1.5rem;
+  }
+
+  /* Code blocks inside collapsible panels */
+  .collapsible-panel pre[class*="language-"] {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .collapsible-panel code[class*="language-"] {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .code-info {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .code-info ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .code-info li {
+    margin-bottom: 0.25rem;
+  }
+
+  /* =============================
      Footer (Pushed to Bottom)
      ============================= */
   footer {

@@ -2,14 +2,47 @@
 
 <div class="content-section">
     <p>This section describes the ASR processing applied to the SPROUT dataset.</p>
-    
-    <h3>ASR Models</h3>
-    <p>The following ASR models are used to transcribe the audio recordings:</p>
-    <ul>
-        <li><strong>Whisper</strong>: OpenAI's Whisper model (medium variant)</li>
-        <li><strong>wav2vec 2.0</strong>: Facebook AI's wav2vec 2.0 model fine-tuned on child speech</li>
-    </ul>
-    
+
+    <h3 id="asr-models">1. ASR Models</h3>
+    <p>Transcribe child speech to text using state-of-the-art pretrained models. We support both OpenAI Whisper and Facebook's wav2vec-2.0 fine-tuned on domain data.</p>
+
+    <div class="collapsible-panel">
+        <div class="collapsible-header">
+            <span>Implementation details</span>
+            <i class="icon fas fa-chevron-down"></i>
+        </div>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+                <h4>• Whisper (OpenAI)</h4>
+
+                <pre><code class="language-python">import whisper
+model = whisper.load_model("base")
+result = model.transcribe("path.wav")
+transcript = result["text"]</code></pre>
+
+                <h4>• wav2vec-2.0 (fairseq/huggingface)</h4>
+
+                <pre><code class="language-python">from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
+proc = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
+model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
+input_values = proc(audio, sampling_rate=sr, return_tensors="pt").input_values
+logits = model(input_values).logits
+pred_ids = logits.argmax(dim=-1)
+transcript = proc.batch_decode(pred_ids)[0]</code></pre>
+
+                <div class="code-info">
+                    <p>• Code location: <code>src/processing/asr.py</code></p>
+                    <p>• Libraries:</p>
+                    <ul>
+                        <li><a href="https://github.com/openai/whisper" target="_blank">openai-whisper</a></li>
+                        <li><a href="https://huggingface.co/transformers/" target="_blank">transformers</a></li>
+                        <li><a href="https://github.com/bastibe/python-soundfile" target="_blank">soundfile</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h3>Transcription Process</h3>
     <ul>
         <li>Audio segmentation based on diarization</li>
@@ -17,7 +50,7 @@
         <li>Generation of timestamped transcripts</li>
         <li>Manual verification of a subset of transcriptions</li>
     </ul>
-    
+
     <h3>Performance Metrics</h3>
     <p>ASR performance is evaluated using the following metrics:</p>
     <ul>
@@ -25,7 +58,47 @@
         <li>Character Error Rate (CER)</li>
         <li>Phoneme Error Rate (PER)</li>
     </ul>
-    
+
+    <div class="collapsible-panel">
+        <div class="collapsible-header">
+            <span>Evaluation Code</span>
+            <i class="icon fas fa-chevron-down"></i>
+        </div>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+                <pre><code class="language-python">from jiwer import wer, cer
+import epitran
+
+def calculate_metrics(reference, hypothesis):
+    # Word Error Rate
+    word_error = wer(reference, hypothesis)
+
+    # Character Error Rate
+    char_error = cer(reference, hypothesis)
+
+    # Phoneme Error Rate using Epitran
+    epi = epitran.Epitran('eng-Latn')
+    ref_phonemes = epi.transliterate(reference)
+    hyp_phonemes = epi.transliterate(hypothesis)
+    phoneme_error = cer(ref_phonemes, hyp_phonemes)  # Using CER for phonemes
+
+    return {
+        "wer": word_error,
+        "cer": char_error,
+        "per": phoneme_error
+    }</code></pre>
+
+                <div class="code-info">
+                    <p>• Libraries:</p>
+                    <ul>
+                        <li><a href="https://github.com/jitsi/jiwer" target="_blank">jiwer</a> - For WER and CER calculation</li>
+                        <li><a href="https://github.com/dmort27/epitran" target="_blank">epitran</a> - For phoneme conversion</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="placeholder-message">
         <p>Detailed ASR performance metrics and interactive visualizations will be added in a future update.</p>
     </div>

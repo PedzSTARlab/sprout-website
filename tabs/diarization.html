@@ -2,15 +2,65 @@
 
 <div class="content-section">
     <p>Speaker diarization is a critical step in processing the SPROUT dataset, especially for isolating child speech from other speakers.</p>
-    
-    <h3>Diarization Process</h3>
-    <ul>
-        <li>Manual speaker labeling by trained annotators</li>
-        <li>Forced alignment using Montreal Forced Aligner</li>
-        <li>Production of child-only audio segments</li>
-        <li>Quality verification by speech-language pathologists</li>
-    </ul>
-    
+
+    <h3 id="diarization-process">1. Diarization Process</h3>
+    <p>We use a combination of manual annotation and automated alignment to accurately identify speaker segments in the audio recordings.</p>
+
+    <div class="collapsible-panel">
+        <div class="collapsible-header">
+            <span>Implementation details</span>
+            <i class="icon fas fa-chevron-down"></i>
+        </div>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+                <h4>• Montreal Forced Aligner (MFA)</h4>
+
+                <pre><code class="language-python">from montreal_forced_aligner import align
+from montreal_forced_aligner.corpus import AlignableCorpus
+from montreal_forced_aligner.dictionary import Dictionary
+
+# Create corpus from audio and transcription files
+corpus = AlignableCorpus(corpus_directory, dictionary)
+
+# Perform alignment
+aligner = align.PretrainedAligner(corpus, dictionary, acoustic_model_path)
+aligner.align()
+
+# Extract segments for specific speakers (e.g., child)
+child_segments = []
+for utterance in corpus.utterances:
+    if utterance.speaker_id == "CHI":
+        child_segments.append({
+            'start': utterance.begin,
+            'end': utterance.end,
+            'file': utterance.wav_path
+        })</code></pre>
+
+                <h4>• Pyannote-based Diarization</h4>
+
+                <pre><code class="language-python">from pyannote.audio import Pipeline
+
+# Load pretrained diarization pipeline
+pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization")
+
+# Apply diarization
+diarization = pipeline("audio.wav")
+
+# Print results
+for turn, _, speaker in diarization.itertracks(yield_label=True):
+    print(f"Speaker {speaker} speaks from {turn.start:.1f}s to {turn.end:.1f}s")</code></pre>
+
+                <div class="code-info">
+                    <p>• Libraries:</p>
+                    <ul>
+                        <li><a href="https://montreal-forced-aligner.readthedocs.io/" target="_blank">Montreal Forced Aligner</a></li>
+                        <li><a href="https://github.com/pyannote/pyannote-audio" target="_blank">pyannote-audio</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h3>Speaker Labels</h3>
     <p>The following speaker labels are used in the diarization process:</p>
     <ul>
@@ -20,7 +70,67 @@
         <li><strong>OTH</strong>: Other speakers</li>
         <li><strong>NOI</strong>: Noise/non-speech segments</li>
     </ul>
-    
+
+    <div class="collapsible-panel">
+        <div class="collapsible-header">
+            <span>Segment Extraction Code</span>
+            <i class="icon fas fa-chevron-down"></i>
+        </div>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+                <pre><code class="language-python">import soundfile as sf
+import numpy as np
+
+def extract_segments(audio_file, segments, target_speaker="CHI"):
+    """
+    Extract segments for a specific speaker from an audio file.
+
+    Parameters:
+    -----------
+    audio_file : str
+        Path to the audio file
+    segments : list
+        List of segment dictionaries with 'start', 'end', and 'speaker' keys
+    target_speaker : str
+        Speaker ID to extract (default: "CHI" for child)
+
+    Returns:
+    --------
+    extracted_audio : ndarray
+        Concatenated audio segments for the target speaker
+    """
+    # Load the audio file
+    audio, sr = sf.read(audio_file)
+
+    # Filter segments for target speaker
+    target_segments = [s for s in segments if s['speaker'] == target_speaker]
+
+    # Extract and concatenate segments
+    extracted_chunks = []
+    for segment in target_segments:
+        start_sample = int(segment['start'] * sr)
+        end_sample = int(segment['end'] * sr)
+        chunk = audio[start_sample:end_sample]
+        extracted_chunks.append(chunk)
+
+    # Concatenate all chunks
+    if extracted_chunks:
+        extracted_audio = np.concatenate(extracted_chunks)
+        return extracted_audio, sr
+    else:
+        return np.array([]), sr</code></pre>
+
+                <div class="code-info">
+                    <p>• Libraries:</p>
+                    <ul>
+                        <li><a href="https://github.com/bastibe/python-soundfile" target="_blank">soundfile</a> - For audio file handling</li>
+                        <li><a href="https://numpy.org/" target="_blank">numpy</a> - For array operations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="placeholder-message">
         <p>Interactive diarization visualizations and examples will be added in a future update.</p>
     </div>
