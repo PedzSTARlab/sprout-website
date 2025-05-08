@@ -586,7 +586,7 @@
   }
 
   th {
-    border: 1px solid #1A0A30; /* Very dark border */
+    border: 1px solid #CCCCCC; /* Light gray border */
     border-left: none;
     border-top: none;
     text-align: left;
@@ -597,16 +597,16 @@
   }
 
   th:first-child {
-    border-left: 1px solid #1A0A30; /* Very dark border */
+    border-left: 1px solid #CCCCCC; /* Light gray border */
   }
 
   tr:first-child th {
-    border-top: 1px solid #1A0A30; /* Very dark border */
+    border-top: 1px solid #CCCCCC; /* Light gray border */
   }
 
   th {
-    background-color: #2A0F4C; /* Even darker purple for maximum contrast */
-    color: #FFFFFF; /* Pure white */
+    background-color: #F0F0F0; /* Light gray background */
+    color: #000000; /* Black text */
     font-weight: 800; /* Extra bold */
     font-size: var(--font-size-md);
     text-transform: uppercase;
@@ -615,8 +615,8 @@
     top: 0;
     z-index: 10;
     padding: var(--space-md) var(--space-md);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Stronger text shadow */
-    border: 1px solid #1A0A30; /* Very dark border */
+    border: 1px solid #CCCCCC; /* Light gray border */
+    border-bottom: 2px solid #2A0F4C; /* Dark bottom border for definition */
   }
 
   tr {
@@ -646,23 +646,24 @@
     color: #2A0F4C; /* Darker purple for better contrast */
   }
 
-  /* Add a stronger border to the table */
+  /* Add a clean border to the table */
   .table-responsive {
-    border: 2px solid #2A0F4C; /* Darker border that matches headers */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Stronger shadow */
+    border: 1px solid #CCCCCC; /* Light gray border */
+    border-bottom: 2px solid #2A0F4C; /* Dark bottom border for definition */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
   }
 
   /* Improve table caption if present */
   table caption {
     font-weight: 700;
     padding: var(--space-md);
-    background-color: #2A0F4C; /* Match header color */
-    color: #FFFFFF;
+    background-color: #F0F0F0; /* Light gray background */
+    color: #000000; /* Black text */
     text-align: center;
     caption-side: top;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    border-bottom: 2px solid #2A0F4C; /* Dark bottom border for definition */
   }
 
   /* =============================
