@@ -17,13 +17,5 @@ See [LICENSE](./LICENSE)
 
 ## GitHub Pages
 
-This website is hosted on GitHub Pages at [https://pedzstarlab.github.io/sprout-website/](https://pedzstarlab.github.io/sprout-website/)
+This website will be hosted on GitHub Pages at [https://pedzstarlab.github.io/sprout-website/](https://pedzstarlab.github.io/sprout-website/)
 
-## Original Streamlit Application
-
-The original Streamlit application can be run locally with:
-
-```bash
-pip install -r requirements.txt
-sh startup.sh
-```
