@@ -496,6 +496,27 @@
      ============================= */
   .table-container {
     margin: var(--space-xl) 0;
+    position: relative;
+  }
+
+  .table-container h2 {
+    margin-bottom: var(--space-md);
+    color: var(--nu-purple-dark);
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    padding-bottom: var(--space-xs);
+  }
+
+  .table-container h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100px;
+    height: 3px;
+    background: var(--nu-gold);
+    border-radius: 1.5px;
   }
 
   .table-responsive {
@@ -503,44 +524,84 @@
     margin-top: var(--space-md);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
+    background-color: var(--nu-white);
+    position: relative;
+    max-width: 100%;
+  }
+
+  /* Add a subtle gradient overlay to indicate scrollable content */
+  .table-responsive::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 30px;
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.7));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .table-responsive:hover::after {
+    opacity: 1;
   }
 
   table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    margin-bottom: var(--space-md);
+    margin-bottom: 0;
     background-color: var(--nu-white);
     border-radius: var(--radius);
     overflow: hidden;
   }
 
-  th, td {
+  td {
     border: 1px solid var(--nu-gray-medium);
     padding: var(--space-md);
     text-align: left;
     border-left: none;
     border-top: none;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+  }
+
+  th {
+    border: 1px solid var(--nu-purple-dark);
+    border-left: none;
+    border-top: none;
+    text-align: left;
   }
 
   th:first-child, td:first-child {
     border-left: 1px solid var(--nu-gray-medium);
   }
 
+  th:first-child {
+    border-left: 1px solid var(--nu-purple-dark);
+  }
+
   tr:first-child th {
-    border-top: 1px solid var(--nu-gray-medium);
+    border-top: 1px solid var(--nu-purple-dark);
   }
 
   th {
-    background-color: var(--nu-purple-light);
+    background-color: var(--nu-purple-dark);
     color: var(--nu-white);
-    font-weight: 600;
+    font-weight: 700;
     font-size: var(--font-size-md);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     position: sticky;
     top: 0;
     z-index: 10;
+    padding: var(--space-md) var(--space-md);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  }
+
+  tr {
+    transition: background-color 0.2s ease;
   }
 
   tr:nth-child(even) {
@@ -548,17 +609,33 @@
   }
 
   tr:hover {
-    background-color: rgba(78, 42, 132, 0.05);
+    background-color: rgba(78, 42, 132, 0.08);
   }
 
   .center-align {
     text-align: center;
     font-weight: bold;
+    color: var(--nu-purple-dark);
   }
 
   .bold-cell {
-    font-weight: bold;
+    font-weight: 700;
     color: var(--nu-purple-dark);
+  }
+
+  /* Add a subtle border to the table */
+  .table-responsive {
+    border: 1px solid var(--nu-gray-medium);
+  }
+
+  /* Improve table caption if present */
+  table caption {
+    font-weight: 600;
+    padding: var(--space-md);
+    background-color: var(--nu-purple-light);
+    color: var(--nu-white);
+    text-align: center;
+    caption-side: top;
   }
 
   /* =============================
