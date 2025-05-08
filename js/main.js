@@ -7,8 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function loadTabContent() {
         const tabs = [
             { id: 'data-flow', file: 'tabs/data-flow.html' },
-            // Use Jekyll-based page for data collection
-            { id: 'data-collection', file: 'data-collection.html', isJekyll: true },
+            { id: 'data-collection', file: 'tabs/data-collection.html' },
             { id: 'metadata', file: 'tabs/metadata.html' },
             { id: 'pre-processing', file: 'tabs/pre-processing.html' },
             { id: 'diarization', file: 'tabs/diarization.html' },
@@ -17,18 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
         ];
 
         tabs.forEach(tab => {
-            // For Jekyll pages, redirect to the page instead of loading content
-            if (tab.isJekyll) {
-                const dataCollectionButton = document.querySelector(`[data-tab="${tab.id}"]`);
-                if (dataCollectionButton) {
-                    dataCollectionButton.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        window.location.href = tab.file;
-                    });
-                }
-                return;
-            }
-
             fetch(tab.file)
                 .then(response => {
                     if (!response.ok) {

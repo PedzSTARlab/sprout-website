@@ -6,22 +6,3 @@ url: "https://pedzstarlab.github.io"
 github:
   is_project_page: true
   repository_url: https://github.com/PedzSTARlab/sprout-website
-
-# Build settings
-markdown: kramdown
-include: ['_pages']
-exclude: ['venv', 'src', 'README.md', 'CITATION.cff', 'CODE_OF_CONDUCT.md', 'SECURITY.md', 'LICENSE']
-
-# Collections
-collections:
-  pages:
-    output: true
-    permalink: /:name/
-
-# Default front matter
-defaults:
-  -
-    scope:
-      path: ""
-    values:
-      layout: "default"
