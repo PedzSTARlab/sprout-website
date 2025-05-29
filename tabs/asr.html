@@ -1,126 +1,189 @@
-<h2>Automatic Speech Recognition (ASR)</h2>
+<div class="content-section research-pipeline">
+  <h1>Automatic Speech Recognition (ASR)</h1>
+  <p>
+    Automatic Speech Recognition (ASR) converts spoken language into written text by analyzing audio signals and recognizing speech patterns. 
+    In SPROUT, ASR is the final step in our pipeline—turning child‐only segments into time‐aligned transcripts for linguistic and clinical analysis.
+  </p>
 
-<div class="content-section">
-    <p>This section describes the ASR processing applied to the SPROUT dataset.</p>
+  <!-- Navigation -->
+  <nav class="pipeline-nav">
+    <a href="#overview">1. Overview</a>
+    <a href="#integration">2. ASR Pipeline Integration</a>
+    <a href="#models">3. ASR Model Used</a>
+    <a href="#outputs">4. Output Formats</a>
+    <a href="#challenges">5. Challenges</a>
+    <a href="#evaluation">6. Evaluation Summary</a>
+    <a href="#notes">Notes</a>
+  </nav>
 
-    <h3 id="asr-models">1. ASR Models</h3>
-    <p>Transcribe child speech to text using state-of-the-art pretrained models. We support both OpenAI Whisper and Facebook's wav2vec-2.0 fine-tuned on domain data.</p>
-
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Implementation details</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <h4>• Whisper (OpenAI)</h4>
-
-                <pre><code class="language-python">import whisper
-model = whisper.load_model("base")
-result = model.transcribe("path.wav")
-transcript = result["text"]</code></pre>
-
-                <h4>• wav2vec-2.0 (fairseq/huggingface)</h4>
-
-                <pre><code class="language-python">from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
-proc = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
-model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
-input_values = proc(audio, sampling_rate=sr, return_tensors="pt").input_values
-logits = model(input_values).logits
-pred_ids = logits.argmax(dim=-1)
-transcript = proc.batch_decode(pred_ids)[0]</code></pre>
-
-                <div class="code-info">
-                    <p>• Code location: <code>src/processing/asr.py</code></p>
-                    <p>• Libraries:</p>
-                    <ul>
-                        <li><a href="https://github.com/openai/whisper" target="_blank">openai-whisper</a></li>
-                        <li><a href="https://huggingface.co/transformers/" target="_blank">transformers</a></li>
-                        <li><a href="https://github.com/bastibe/python-soundfile" target="_blank">soundfile</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <h3>Transcription Process</h3>
+  <!-- 1. Overview -->
+  <section id="overview" class="subsection">
+    <h2>1. Overview</h2>
+    <p>
+      ASR systems typically involve:
+    </p>
     <ul>
-        <li>Audio segmentation based on diarization</li>
-        <li>ASR processing of child-only segments</li>
-        <li>Generation of timestamped transcripts</li>
-        <li>Manual verification of a subset of transcriptions</li>
+      <li><strong>Audio preprocessing</strong>: extract ML-ready features (MFCCs, spectrograms)</li>
+      <li><strong>Acoustic modeling</strong>: learn mapping from features → phonemes</li>
+      <li><strong>Language modeling</strong>: predict likely word sequences</li>
+      <li><strong>Decoding</strong>: combine models to produce final text</li>
     </ul>
+  </section>
 
-    <h3>Performance Metrics</h3>
-    <p>ASR performance is evaluated using the following metrics:</p>
+  <!-- 2. ASR Pipeline Integration -->
+  <section id="integration" class="subsection">
+    <h2>2. ASR Pipeline Integration</h2>
+    <p>Our ASR module sits downstream of:</p>
+    <pre><code>Raw Audio → Preprocessing → VAD & Silence Removal → Diarization → Segmentation → ASR → Analysis</code></pre>
+    <p>
+      - <strong>Diarization</strong> isolates child voices  
+      - <strong>Segmentation</strong> breaks long audio into ≤30 s chunks  
+      Together, these maximize transcription accuracy on pediatric speech.
+    </p>
+  </section>
+
+  <!-- 3. ASR Model Used -->
+  <section id="models" class="subsection">
+    <h2>3. ASR Model Used</h2>
+    <p>
+      We leverage two state-of-the-art architectures:
+      <strong>OpenAI Whisper</strong> (encoder–decoder transformer) and 
+      <strong>wav2vec-2.0</strong> (self-supervised conv + transformer CTC).
+    </p>
+
+    <h3>Whisper Model Variants</h3>
+    <input type="text" id="whisperFilter" class="table-filter" placeholder="Filter models…" />
+    <table id="whisperTable">
+      <thead>
+        <tr><th>Model</th><th>Params</th><th>Speed</th><th>Use Case</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>tiny</td><td>39 M</td><td>Fastest</td><td>Real-time apps</td></tr>
+        <tr><td>base</td><td>74 M</td><td>Fast</td><td>Quick processing</td></tr>
+        <tr><td>small</td><td>244 M</td><td>Medium</td><td>Balanced</td></tr>
+        <tr><td>medium</td><td>769 M</td><td>Slow</td><td>High accuracy</td></tr>
+        <tr><td>large</td><td>1550 M</td><td>Slowest</td><td><strong>Project default</strong></td></tr>
+        <tr><td>turbo</td><td>809 M</td><td>Optimized</td><td>Speed/accuracy</td></tr>
+      </tbody>
+    </table>
+
+    <details class="code-details">
+      <summary>View model initialization & inference</summary>
+      <button class="copy-btn">Copy</button>
+      <pre><code>### Whisper (OpenAI)
+import whisper
+model = whisper.load_model("large")
+res = model.transcribe("segment.wav", language="en")
+text = res["text"]
+
+### wav2vec-2.0 (HuggingFace)
+from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
+import torch, soundfile as sf
+
+audio, sr = sf.read("segment.wav")
+proc  = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
+mdl   = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
+inp   = proc(audio, sampling_rate=sr, return_tensors="pt", padding=True)
+with torch.no_grad():
+    logits = mdl(inp.input_values).logits
+pred  = torch.argmax(logits, dim=-1)
+hyp   = proc.batch_decode(pred)[0]</code></pre>
+    </details>
+  </section>
+
+  <!-- 4. Output Formats -->
+  <section id="outputs" class="subsection">
+    <h2>4. Output Formats</h2>
     <ul>
-        <li>Word Error Rate (WER)</li>
-        <li>Character Error Rate (CER)</li>
-        <li>Phoneme Error Rate (PER)</li>
+      <li><strong>Transcripts</strong>: cleaned text per segment</li>
+      <li><strong>Timestamps</strong>: start/end times for words (Whisper) or frames (wav2vec)</li>
     </ul>
+    <button class="toggle-btn" data-target="#outputSample">Show/Hide Sample Output</button>
+    <pre id="outputSample" class="csv-sample"><code>starting 0.0 ending 3.92
+Ready? Say cash.
+starting 4.32 ending 5.0
+Cash.
+…</code></pre>
+  </section>
 
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Evaluation Code</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <pre><code class="language-python">from jiwer import wer, cer
-import epitran
+  <!-- 5. Challenges -->
+  <section id="challenges" class="subsection">
+    <h2>5. Challenges</h2>
+    <ul>
+      <li>Disfluent speech (pauses, repeats, stutters)</li>
+      <li>Small vocabulary & mispronunciations (“pig”→“big”)</li>
+      <li>Short utterances often get clipped or skipped</li>
+    </ul>
+  </section>
 
-def calculate_metrics(reference, hypothesis):
-    # Word Error Rate
-    word_error = wer(reference, hypothesis)
+  <!-- 6. Evaluation Summary -->
+  <section id="evaluation" class="subsection">
+    <h2>6. Evaluation Summary</h2>
+    <p>No ground-truth transcripts currently available, so we use internal QC metrics:</p>
+    <ul>
+      <li><strong>Avg. Confidence Score</strong>: model’s confidence per segment</li>
+      <li><strong>Keyword Matching Accuracy</strong>: exact & fuzzy match on clinical prompts</li>
+    </ul>
+  </section>
 
-    # Character Error Rate
-    char_error = cer(reference, hypothesis)
-
-    # Phoneme Error Rate using Epitran
-    epi = epitran.Epitran('eng-Latn')
-    ref_phonemes = epi.transliterate(reference)
-    hyp_phonemes = epi.transliterate(hypothesis)
-    phoneme_error = cer(ref_phonemes, hyp_phonemes)  # Using CER for phonemes
-
-    return {
-        "wer": word_error,
-        "cer": char_error,
-        "per": phoneme_error
-    }</code></pre>
-
-                <div class="code-info">
-                    <p>• Libraries:</p>
-                    <ul>
-                        <li><a href="https://github.com/jitsi/jiwer" target="_blank">jiwer</a> - For WER and CER calculation</li>
-                        <li><a href="https://github.com/dmort27/epitran" target="_blank">epitran</a> - For phoneme conversion</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="placeholder-message">
-        <p>Detailed ASR performance metrics and interactive visualizations will be added in a future update.</p>
-    </div>
+  <!-- Notes -->
+  <section id="notes" class="subsection">
+    <h2>Notes</h2>
+    <h3>1. Out-of-the-Box Approach (Current)</h3>
+    <p>Use pre-trained Whisper without fine-tuning, optimizing upstream audio processing for best baseline performance on child speech.</p>
+    <h3>2. Fine-tuning Whisper (Under Dev)</h3>
+    <p>Apply PEFT/LoRA to adapt Whisper decoder layers to pediatric speech patterns, preserving encoder robustness.</p>
+    <h3>3. Adversarial Debiasing (Under Dev)</h3>
+    <p>Incorporate adversarial training to reduce demographic biases and equalize accuracy across dialects and developmental stages.</p>
+  </section>
 </div>
 
 <style>
-    .placeholder-message {
-        background-color: #f8f9fa;
-        border-left: 4px solid var(--nu-purple);
-        padding: 1rem;
-        margin: 1rem 0;
-    }
+  .research-pipeline { font-family: 'Lato', sans-serif; line-height: 1.6; }
+  .research-pipeline h1 { font-family: 'Montserrat', sans-serif; color: #4E2A84; }
+  .pipeline-nav { text-align: center; margin: 1rem 0; }
+  .pipeline-nav a { margin: 0 1rem; color: #4E2A84; text-decoration: none; font-weight: 600; }
+  .content-section { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .subsection { margin-top: 2rem; }
+  .subsection h2 { font-family: 'Montserrat', sans-serif; color: #4E2A84; border-bottom: 2px solid #FFD100; padding-bottom: .25rem; }
+  .subsection h3 { color: #FFD100; margin-top: 1rem; }
+  .table-filter { width: 100%; max-width: 300px; padding: .5rem; margin: .5rem 0 1rem; border: 1px solid #ccc; border-radius: 4px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+  th, td { border: 1px solid #F0F9FA; padding: .75rem; text-align: left; }
+  th { background: #F0F9FA; }
+  details.code-details { margin: 1rem 0; }
+  summary { cursor: pointer; font-weight: 600; font-family: monospace; }
+  .copy-btn { float: right; margin-top: -1.5rem; padding: .25rem .5rem; background: #4E2A84; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+  pre { background: #F5F5F5; padding: 1rem; border-radius: 4px; overflow-x: auto; }
+  .toggle-btn { margin: .5rem 0; padding: .5rem 1rem; background: #FFD100; border: none; border-radius: 4px; cursor: pointer; }
+  .csv-sample { display: none; white-space: pre-wrap; }
 </style>
 
 <script>
-    // Initialize collapsible panels directly when this tab is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        if (typeof initCollapsiblePanels === 'function') {
-            setTimeout(initCollapsiblePanels, 100);
-            if (typeof Prism !== 'undefined') {
-                setTimeout(Prism.highlightAll, 150);
-            }
-        }
+  // Copy code snippets
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const code = btn.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code);
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
     });
+  });
+
+  // Table filter for Whisper variants
+  document.getElementById('whisperFilter').addEventListener('input', e => {
+    const filter = e.target.value.toLowerCase();
+    document.querySelectorAll('#whisperTable tbody tr').forEach(row => {
+      row.style.display = row.cells[0].innerText.toLowerCase().includes(filter)
+        ? '' : 'none';
+    });
+  });
+
+  // Toggle sample output
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tbl = document.querySelector(btn.dataset.target);
+      tbl.style.display = tbl.style.display === 'block' ? 'none' : 'block';
+    });
+  });
 </script>
