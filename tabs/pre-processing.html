@@ -1,161 +1,202 @@
-<div class="content-section" id="preprocessing">
-  <h2>Pre-Processing Pipeline</h2>
-  <p>Each recording passes through three automated stages—<strong>Denoising</strong>, <strong>Pre-QC</strong>, and <strong>Post-QC</strong>—to ensure clean, uniform, and research-ready audio.</p>
+<div class="content-section research-pipeline">
+  <h1>SPROUT Pre-Processing Research Pipeline</h1>
+  <p>
+    The SPROUT pediatric speech dataset is processed through three rigorous stages—<a href="#denoising">Denoising</a>, 
+    <a href="#pre-qc">Pre-QC</a>, and <a href="#post-qc">Post-QC</a>—to yield clean, leveled, and validated audio 
+    for downstream analysis (diarization, ASR, feature extraction).
+  </p>
 
-  <!-- 1) Denoising -->
-  <section class="subsection" id="denoising">
-    <h3>1. Denoising</h3>
+  <!-- Navigation -->
+  <nav class="pipeline-nav">
+    <a href="#denoising">1. Denoising</a>
+    <a href="#pre-qc">2. Pre-QC</a>
+    <a href="#post-qc">3. Post-QC</a>
+  </nav>
+
+  <!-- 1. Denoising -->
+  <section id="denoising" class="subsection">
+    <h2>1. Denoising</h2>
     <p>
-      Remove environmental noise while preserving child speech using spectral-gating techniques  [oai_citation:3‡denoising_literature_review_detailed.md](file-service://file-T73j7Efoq8ofLE84qv31nK).
+      We remove background noise while preserving spectral detail of child speech.  
+      Core algorithm: <strong>Spectral Gating (Wiener-filter)</strong>, implemented in <code>noisereduce</code>.
     </p>
 
-    <h4>Tools &amp; Libraries</h4>
-    <ul>
-      <li><strong>librosa</strong> — load, resample, STFT/iSTFT</li>
-      <li><strong>noisereduce</strong> — spectral gating (<code>reduce_noise()</code>)</li>
-      <li><strong>soundfile</strong> — read/write WAV (.wav)</li>
-      <li><strong>pyloudnorm</strong> — loudness normalization to –16 LUFS</li>
-      <li><strong>numpy</strong> — clipping &amp; array ops</li>
-      <li><strong>pandas</strong> &amp; <strong>psutil</strong> — logging &amp; memory monitoring</li>
-    </ul>
+    <h3>1.1 Theory &amp; Equations</h3>
+    <p>
+      Compute STFT:<br>
+      <em>X(ω,t)=∑ₙ x[n+tH]·w[n]·e<sup>−jωn</sup></em><br>
+      Estimate noise spectrum |N(ω)| from lowest-energy frames, then mask:
+    </p>
+    <pre><code>M(ω,t)=max(1−α·|N(ω)|/|X(ω,t)|,β)</code></pre>
+    <p><em>α</em> controls noise reduction strength, <em>β</em> prevents musical noise.</p>
 
-    <h4>Pipeline Steps</h4>
+    <h3>1.2 Pipeline &amp; Code</h3>
     <ol>
-      <li>Load raw WAV: <code>librosa.load(path, sr=None)</code></li>
-      <li>Estimate noise from low-energy frames</li>
-      <li>Apply spectral gate: <code>nr.reduce_noise(y, sr, prop_decrease=1.0)</code></li>
-      <li>Prevent clipping: <code>numpy.clip(clean, -1.0, 1.0)</code></li>
-      <li>Normalize loudness: <code>pyln.normalize.loudness(clean, measured_lufs, -16.0)</code></li>
-      <li>Save cleaned file: <code>soundfile.write(out_path, audio, sr)</code></li>
-      <li>Log duration, memory, status to CSV</li>
+      <li>Load: <code>y,sr=librosa.load(path,sr=None)</code></li>
+      <li>Reduce noise:<br>
+        <code>clean=nr.reduce_noise(y=y,sr=sr,prop_decrease=1.0,stationary=False)</code>
+      </li>
+      <li>Clip peaks: <code>clean=np.clip(clean,−1,1)</code></li>
+      <li>Normalize LUFS:<br>
+        <code>meter=pyln.Meter(sr); clean_norm=pyln.normalize.loudness(clean,meter.integrated_loudness(clean),−16.0)</code>
+      </li>
+      <li>Save &amp; log metrics (duration, memory, status) to CSV</li>
     </ol>
+
+    <details class="code-details">
+      <summary>View Denoising Code</summary>
+      <button class="copy-btn">Copy</button>
+      <pre><code>import librosa, noisereduce as nr, numpy as np
+import pyloudnorm as pyln, soundfile as sf
+
+y, sr = librosa.load("input.wav", sr=None)
+clean = nr.reduce_noise(y=y, sr=sr)
+clean = np.clip(clean, -1.0, 1.0)
+
+meter = pyln.Meter(sr)
+clean_norm = pyln.normalize.loudness(clean, meter.integrated_loudness(clean), -16.0)
+
+sf.write("output_nr.wav", clean_norm, sr)
+</code></pre>
+    </details>
   </section>
 
-  <!-- 2) Pre-QC -->
-  <section class="subsection" id="pre-qc">
-    <h3>2. Pre-Processing Quality Control (Pre-QC)</h3>
-    <p>Evaluate key acoustic features against clinical thresholds to decide if a file is eligible for diarization and further analysis  [oai_citation:4‡pre_qc_literature_review_detailed_with_fields.md](file-service://file-G3VarTjwEqpWXytPyozqb4).</p>
+  <!-- 2. Pre-QC -->
+  <section id="pre-qc" class="subsection">
+    <h2>2. Pre-Processing Quality Control (Pre-QC)</h2>
+    <p>
+      Validate denoised audio against minimal acoustic thresholds before diarization  [oai_citation:0‡pre_qc_literature_review_detailed_with_fields.md](file-service://file-G3VarTjwEqpWXytPyozqb4).
+    </p>
 
-    <h4>Computed Features &amp; Thresholds</h4>
-    <table>
+    <h3>2.1 Feature Definitions &amp; Thresholds</h3>
+    <table id="preqcTable">
       <thead>
-        <tr>
-          <th>Feature</th><th>Description</th><th>Child Threshold</th>
-        </tr>
+        <tr><th>Feature</th><th>Definition</th><th>Threshold</th></tr>
       </thead>
       <tbody>
-        <tr><td>Duration (s)</td><td>Length of audio</td><td>> 1.0</td></tr>
-        <tr><td>SNR (dB)</td><td>Signal-to-Noise Ratio</td><td>> 15</td></tr>
-        <tr><td>Spectral Centroid (Hz)</td><td>“Brightness” of spectrum</td><td>> 1000</td></tr>
-        <tr><td>Spectral Bandwidth (Hz)</td><td>Frequency spread</td><td>> 1000</td></tr>
-        <tr><td>Pitch Mean (Hz)</td><td>YIN-based fundamental frequency</td><td>> 250</td></tr>
+        <tr><td>Duration (s)</td><td><code>len(y)/sr</code></td><td>> 1.0</td></tr>
+        <tr><td>SNR (dB)</td><td>10·log₁₀(Pₛ/Pₙ)</td><td>> 15</td></tr>
+        <tr><td>Centroid (Hz)</td><td><code>librosa.feature.spectral_centroid</code></td><td>> 1000</td></tr>
+        <tr><td>Bandwidth (Hz)</td><td><code>librosa.feature.spectral_bandwidth</code></td><td>> 1000</td></tr>
+        <tr><td>Pitch (Hz)</td><td><code>librosa.yin(y,250,400)</code></td><td>> 250</td></tr>
       </tbody>
     </table>
 
-    <h4>Feature Calculation</h4>
-    <ul>
-      <li><strong>Duration:</strong> <code>len(y)/sr</code></li>
-      <li><strong>SNR:</strong> 
-        <code>
-          10·log₁₀(mean(y²) / percentile(frame_energy, 10))
-        </code>
-      </li>
-      <li><strong>Spectral Centroid:</strong> <code>librosa.feature.spectral_centroid(y, sr)</code></li>
-      <li><strong>Spectral Bandwidth:</strong> <code>librosa.feature.spectral_bandwidth(y, sr)</code></li>
-      <li><strong>Pitch:</strong> <code>librosa.yin(y, fmin=250, fmax=400)</code></li>
-    </ul>
+    <h3>2.2 Code &amp; Logging</h3>
+    <details class="code-details">
+      <summary>View Pre-QC Code</summary>
+      <button class="copy-btn">Copy</button>
+      <pre><code>import numpy as np
 
-    <h4>Logging &amp; Output</h4>
-    <p>
-      Each region run produces 
-      <code>processing_log_<region>_<date>.csv</code> containing file path, feature values, pass/fail, and failure reasons  [oai_citation:5‡pre_qc_literature_review_detailed_with_fields.md](file-service://file-G3VarTjwEqpWXytPyozqb4).
-    </p>
+def compute_snr(y):
+    P_signal = np.mean(y**2)
+    frames = [np.sum(y[i:i+2048]**2) for i in range(0, len(y)-2048, 512)]
+    P_noise = np.percentile(frames, 10)
+    return 10*np.log10(P_signal/P_noise)
+
+snr = compute_snr(clean_norm)
+duration = len(clean_norm)/sr
+clipping = 100*np.mean(np.abs(clean_norm)>=0.999)</code></pre>
+    </details>
+
+    <h3>2.3 Sample Log Preview</h3>
+    <button class="toggle-btn" data-target="#preqcLog">Show/Hide CSV Sample</button>
+    <table id="preqcLog" class="csv-sample">
+      <thead><tr><th>file</th><th>snr</th><th>duration</th><th>pass</th><th>reason</th></tr></thead>
+      <tbody>
+        <tr><td>sub-001_nr.wav</td><td>18.2</td><td>1.24</td><td>Yes</td><td>—</td></tr>
+        <tr><td>sub-002_nr.wav</td><td>12.5</td><td>0.95</td><td>No</td><td>Duration, SNR</td></tr>
+      </tbody>
+    </table>
   </section>
 
-  <!-- 3) Post-QC -->
-  <section class="subsection" id="post-qc">
-    <h3>3. Post-Processing Quality Control (Post-QC)</h3>
-    <p>Conduct a final, in-depth check of denoised audio to flag any remaining quality issues and verify research readiness  [oai_citation:6‡Post_QC_Detailed_Literature_Review.md](file-service://file-T27hbSFNZEsuHryFKRGc5g).</p>
+  <!-- 3. Post-QC -->
+  <section id="post-qc" class="subsection">
+    <h2>3. Post-Processing Quality Control (Post-QC)</h2>
+    <p>
+      Perform comprehensive checks: energy, SPL, LUFS, spectral, pitch, MFCCs—ensuring research-grade audio  [oai_citation:1‡Post_QC_Detailed_Literature_Review.md](file-service://file-T27hbSFNZEsuHryFKRGc5g).
+    </p>
 
-    <h4>Pipeline Summary</h4>
-    <ol>
-      <li>Load denoised WAV: <code>sf.read()</code></li>
-      <li>Resample to 16 kHz (if needed): <code>librosa.resample()</code></li>
-      <li>Extract whole-file segment for analysis</li>
-      <li>Compute advanced features:
-        <ul>
-          <li>Signal Energy &amp; RMS</li>
-          <li>Sound Pressure Level (SPL)</li>
-          <li>LUFS (loudness)</li>
-          <li>Spectral Centroid &amp; Bandwidth</li>
-          <li>Pitch (YIN)</li>
-          <li>MFCC mean &amp; std</li>
-        </ul>
-      </li>
-      <li>Compare each feature to its research-grade thresholds:</li>
-    </ol>
-
-    <h4>Feature Threshold Ranges</h4>
-    <table>
-      <thead>
-        <tr><th>Feature</th><th>Threshold Range</th></tr>
-      </thead>
+    <h3>3.1 Advanced Feature Ranges</h3>
+    <table id="postqcTable">
+      <thead><tr><th>Feature</th><th>Acceptable Range</th></tr></thead>
       <tbody>
         <tr><td>Signal Energy</td><td>1e-6 … 1e-1</td></tr>
         <tr><td>SPL (dB)</td><td>39 … 70</td></tr>
-        <tr><td>LUFS</td><td>–∞ … ∞ (no hard limit)</td></tr>
-        <tr><td>RMS Energy</td><td>1e-5 … 0.21</td></tr>
-        <tr><td>Relative Amplitude</td><td>0.01 … 1.7</td></tr>
-        <tr><td>Spectral Centroid (Hz)</td><td>900 … 5000</td></tr>
-        <tr><td>Spectral Bandwidth (Hz)</td><td>900 … 6000</td></tr>
-        <tr><td>Pitch Mean (Hz)</td><td>250 … 400</td></tr>
+        <tr><td>LUFS</td><td>–23 ± 5</td></tr>
+        <tr><td>RMS</td><td>1e-5 … 0.21</td></tr>
+        <tr><td>Centroid (Hz)</td><td>900 … 5000</td></tr>
+        <tr><td>Pitch (Hz)</td><td>250 … 400</td></tr>
         <tr><td>MFCC Mean</td><td>–40 … 40</td></tr>
-        <tr><td>MFCC Std Dev</td><td>7 … 141</td></tr>
       </tbody>
     </table>
 
-    <h4>CSV Output Schema</h4>
-    <p>Results are saved as 
-      <code>postqc_results_<region>_<date>.csv</code> with columns:</p>
-    <ul>
-      <li>Segment file</li>
-      <li>Start/End time</li>
-      <li>All feature values</li>
-      <li>Eligible for Research (Yes/No)</li>
-      <li>Failure reason (if any)</li>
-      <li>Error messages (if any)</li>
-    </ul>
+    <h3>3.2 Code &amp; Output</h3>
+    <details class="code-details">
+      <summary>View Post-QC Code</summary>
+      <button class="copy-btn">Copy</button>
+      <pre><code>import soundfile as sf, librosa, pyloudnorm as pyln
+import numpy as np, pandas as pd
 
-    <h4>Libraries &amp; References</h4>
-    <ul>
-      <li><strong>librosa</strong>, <strong>pyloudnorm</strong>, <strong>numpy</strong> — feature extraction</li>
-      <li><strong>soundfile</strong>, <strong>shutil</strong>, <strong>pathlib</strong> — I/O &amp; file management</li>
-      <li><strong>pandas</strong>, <strong>datetime</strong> — logging &amp; timestamping</li>
-    </ul>
+audio, sr = sf.read("output_nr.wav")
+audio = librosa.resample(audio, sr, 16000)
+meter = pyln.Meter(16000); lufs = meter.integrated_loudness(audio)
+
+centroid = np.mean(librosa.feature.spectral_centroid(audio,16000))
+pitch = np.mean(librosa.yin(audio,250,400))
+
+# assemble dict & df → postqc_results.csv
+</code></pre>
+    </details>
+
+    <h3>3.3 Sample Post-QC Report</h3>
+    <button class="toggle-btn" data-target="#postqcLog">Show/Hide CSV Sample</button>
+    <table id="postqcLog" class="csv-sample">
+      <thead><tr><th>file</th><th>lufs</th><th>centroid</th><th>pitch</th><th>elig</th></tr></thead>
+      <tbody>
+        <tr><td>sub-001_nr.wav</td><td>-16.1</td><td>1450</td><td>270</td><td>Yes</td></tr>
+        <tr><td>sub-002_nr.wav</td><td>-20.5</td><td>800</td><td>230</td><td>No</td></tr>
+      </tbody>
+    </table>
   </section>
 </div>
 
 <style>
-  .content-section {
-    padding: 1.5rem;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-    font-family: var(--font-sans);
-  }
-  .subsection { margin-top: 1.5rem; }
-  h2 { font-family: var(--font-heading); font-size: 2rem; color: var(--nu-purple); }
-  h3 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--nu-gold); }
-  table {
-    width: 100%; border-collapse: collapse; margin: 1rem 0;
-  }
-  th, td {
-    border: 1px solid var(--nu-gray-light);
-    padding: 0.75rem;
-    text-align: left;
-  }
-  th { background: var(--nu-gray-light); font-family: var(--font-heading); }
-  code { background: #f5f5f5; padding: 0.2rem 0.4rem; border-radius: 4px; }
-  ul, ol { margin-left: 1.25rem; }
+  .research-pipeline { font-family: 'Lato', sans-serif; }
+  .research-pipeline h1 { font-family: 'Montserrat', sans-serif; color: #4E2A84; }
+  .pipeline-nav { margin: 1rem 0; text-align: center; }
+  .pipeline-nav a { margin: 0 1rem; color: #4E2A84; text-decoration: none; font-weight: bold; }
+  .content-section { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .subsection { margin-top: 2rem; }
+  .subsection h2 { color: #4E2A84; border-bottom: 2px solid #FFD100; padding-bottom: 0.25rem; }
+  .subsection h3 { color: #FFD100; margin-top: 1rem; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  th, td { border: 1px solid #F0F9FA; padding: 0.75rem; text-align: left; }
+  th { background: #F0F9FA; }
+  details.code-details { margin: 1rem 0; }
+  summary { cursor: pointer; font-family: monospace; }
+  .copy-btn { float: right; margin-top: -1.5rem; padding: 0.25rem 0.5rem; background: #4E2A84; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+  pre { background: #F5F5F5; padding: 1rem; border-radius: 4px; overflow-x: auto; }
+  .toggle-btn { margin: 0.5rem 0; padding: 0.5rem 1rem; background: #FFD100; border: none; border-radius: 4px; cursor: pointer; }
+  .csv-sample { display: none; }
 </style>
+
+<script>
+  // Copy code
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const code = btn.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code);
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  });
+
+  // Toggle CSV samples
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tbl = document.querySelector(btn.dataset.target);
+      tbl.style.display = tbl.style.display === 'table' ? 'none' : 'table';
+    });
+  });
+</script>
