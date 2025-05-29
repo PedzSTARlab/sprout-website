@@ -24,7 +24,7 @@
     </p>
     <ul>
       <li><strong>Audio preprocessing</strong>: extract ML-ready features (MFCCs, spectrograms)</li>
-      <li><strong>Acoustic modeling</strong>: learn mapping from features → phonemes</li>
+      <li><strong>Acoustic modeling</strong>: learn mapping from features to phonemes</li>
       <li><strong>Language modeling</strong>: predict likely word sequences</li>
       <li><strong>Decoding</strong>: combine models to produce final text</li>
     </ul>
@@ -68,7 +68,7 @@
     </table>
 
     <details class="code-details">
-      <summary>View model initialization & inference</summary>
+      <summary>View model initialization &amp; inference</summary>
       <button class="copy-btn">Copy</button>
       <pre><code>### Whisper (OpenAI)
 import whisper
@@ -139,28 +139,121 @@ Cash.
 </div>
 
 <style>
-  .research-pipeline { font-family: 'Lato', sans-serif; line-height: 1.6; }
-  .research-pipeline h1 { font-family: 'Montserrat', sans-serif; color: #4E2A84; }
-  .pipeline-nav { text-align: center; margin: 1rem 0; }
-  .pipeline-nav a { margin: 0 1rem; color: #4E2A84; text-decoration: none; font-weight: 600; }
-  .content-section { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-  .subsection { margin-top: 2rem; }
-  .subsection h2 { font-family: 'Montserrat', sans-serif; color: #4E2A84; border-bottom: 2px solid #FFD100; padding-bottom: .25rem; }
-  .subsection h3 { color: #FFD100; margin-top: 1rem; }
-  .table-filter { width: 100%; max-width: 300px; padding: .5rem; margin: .5rem 0 1rem; border: 1px solid #ccc; border-radius: 4px; }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
-  th, td { border: 1px solid #F0F9FA; padding: .75rem; text-align: left; }
-  th { background: #F0F9FA; }
-  details.code-details { margin: 1rem 0; }
-  summary { cursor: pointer; font-weight: 600; font-family: monospace; }
-  .copy-btn { float: right; margin-top: -1.5rem; padding: .25rem .5rem; background: #4E2A84; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
-  pre { background: #F5F5F5; padding: 1rem; border-radius: 4px; overflow-x: auto; }
-  .toggle-btn { margin: .5rem 0; padding: .5rem 1rem; background: #FFD100; border: none; border-radius: 4px; cursor: pointer; }
-  .csv-sample { display: none; white-space: pre-wrap; }
+  :root {
+    --nu-purple: #4E2A84;
+    --nu-light-purple: #7C5295;
+    --nu-gray-light: #F0F9FA;
+    --nu-gray-dark: #666666;
+    --nu-white: #FFFFFF;
+  }
+  .research-pipeline {
+    font-family: 'Lato', Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--nu-gray-dark);
+  }
+  .research-pipeline h1 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--nu-purple);
+    margin-bottom: 0.5rem;
+  }
+  .pipeline-nav {
+    text-align: center;
+    margin: 1rem 0;
+  }
+  .pipeline-nav a {
+    margin: 0 1rem;
+    color: var(--nu-purple);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .content-section {
+    background: var(--nu-white);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+  }
+  .subsection {
+    margin-top: 2rem;
+  }
+  .subsection h2 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--nu-purple);
+    border-bottom: 2px solid var(--nu-light-purple);
+    padding-bottom: 0.25rem;
+  }
+  .subsection h3 {
+    color: var(--nu-light-purple);
+    margin-top: 1rem;
+  }
+  .table-filter {
+    width: 100%;
+    max-width: 300px;
+    padding: 0.5rem;
+    margin: 0.5rem 0 1rem;
+    border: 1px solid var(--nu-gray-light);
+    border-radius: 4px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+  }
+  th, td {
+    border: 1px solid var(--nu-gray-light);
+    padding: 0.75rem;
+    text-align: left;
+  }
+  th {
+    background: var(--nu-gray-light);
+  }
+  details.code-details {
+    margin: 1rem 0;
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-family: monospace;
+    color: var(--nu-purple);
+  }
+  .copy-btn {
+    float: right;
+    margin-top: -1.5rem;
+    padding: 0.25rem 0.5rem;
+    background: var(--nu-purple);
+    color: var(--nu-white);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  pre {
+    background: var(--nu-gray-light);
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    color: #333;
+  }
+  .toggle-btn {
+    margin: 0.5rem 0;
+    padding: 0.5rem 1rem;
+    background: var(--nu-light-purple);
+    color: var(--nu-white);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .csv-sample {
+    display: none;
+    white-space: pre-wrap;
+    background: var(--nu-gray-light);
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+  }
 </style>
 
 <script>
-  // Copy code snippets
+  // Copy-to-clipboard functionality
   document.querySelectorAll('.copy-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const code = btn.nextElementSibling.innerText;
@@ -170,8 +263,8 @@ Cash.
     });
   });
 
-  // Table filter for Whisper variants
-  document.getElementById('whisperFilter').addEventListener('input', e => {
+  // Filter Whisper models table
+  document.getElementById('whisperFilter')?.addEventListener('input', e => {
     const filter = e.target.value.toLowerCase();
     document.querySelectorAll('#whisperTable tbody tr').forEach(row => {
       row.style.display = row.cells[0].innerText.toLowerCase().includes(filter)
@@ -179,11 +272,11 @@ Cash.
     });
   });
 
-  // Toggle sample output
+  // Toggle sample outputs
   document.querySelectorAll('.toggle-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const tbl = document.querySelector(btn.dataset.target);
-      tbl.style.display = tbl.style.display === 'block' ? 'none' : 'block';
+      const target = document.querySelector(btn.dataset.target);
+      target.style.display = target.style.display === 'block' ? 'none' : 'block';
     });
   });
 </script>
