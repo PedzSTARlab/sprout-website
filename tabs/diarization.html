@@ -1,158 +1,213 @@
-<h2>Diarization</h2>
+<div class="content-section research-pipeline">
+  <h1>Speaker Diarization</h1>
+  <p>
+    Speaker diarization partitions multi-speaker recordings into homogeneous segments by speaker, answering “Who spoke when?”  
+    In SPROUT, diarization is critical to isolate child speech from adult voices (parent, clinician) and prepare clean inputs for ASR.
+  </p>
 
-<div class="content-section">
-    <p>Speaker diarization is a critical step in processing the SPROUT dataset, especially for isolating child speech from other speakers.</p>
+  <!-- Navigation -->
+  <nav class="pipeline-nav">
+    <a href="#overview">1. Overview</a>
+    <a href="#concepts">2. Key Concepts</a>
+    <a href="#tools">3. Tools</a>
+    <a href="#flow">4. Sample Flow</a>
+    <a href="#challenges">5. Challenges</a>
+    <a href="#output">6. Sample Output</a>
+    <a href="#metrics">7. Metrics</a>
+  </nav>
 
-    <h3 id="diarization-process">1. Diarization Process</h3>
-    <p>We use a combination of manual annotation and automated alignment to accurately identify speaker segments in the audio recordings.</p>
+  <!-- 1. Overview -->
+  <section id="overview" class="subsection">
+    <h2>1. Overview</h2>
+    <p>
+      Speaker diarization uses machine-learning embeddings and clustering to label contiguous speech segments by speaker.  
+      For pediatric recordings, it ensures that downstream modules (ASR, feature extraction) operate only on child-only speech.
+    </p>
+  </section>
 
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Implementation details</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <h4>• Montreal Forced Aligner (MFA)</h4>
-
-                <pre><code class="language-python">from montreal_forced_aligner import align
-from montreal_forced_aligner.corpus import AlignableCorpus
-from montreal_forced_aligner.dictionary import Dictionary
-
-# Create corpus from audio and transcription files
-corpus = AlignableCorpus(corpus_directory, dictionary)
-
-# Perform alignment
-aligner = align.PretrainedAligner(corpus, dictionary, acoustic_model_path)
-aligner.align()
-
-# Extract segments for specific speakers (e.g., child)
-child_segments = []
-for utterance in corpus.utterances:
-    if utterance.speaker_id == "CHI":
-        child_segments.append({
-            'start': utterance.begin,
-            'end': utterance.end,
-            'file': utterance.wav_path
-        })</code></pre>
-
-                <h4>• Pyannote-based Diarization</h4>
-
-                <pre><code class="language-python">from pyannote.audio import Pipeline
-
-# Load pretrained diarization pipeline
-pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization")
-
-# Apply diarization
-diarization = pipeline("audio.wav")
-
-# Print results
-for turn, _, speaker in diarization.itertracks(yield_label=True):
-    print(f"Speaker {speaker} speaks from {turn.start:.1f}s to {turn.end:.1f}s")</code></pre>
-
-                <div class="code-info">
-                    <p>• Libraries:</p>
-                    <ul>
-                        <li><a href="https://montreal-forced-aligner.readthedocs.io/" target="_blank">Montreal Forced Aligner</a></li>
-                        <li><a href="https://github.com/pyannote/pyannote-audio" target="_blank">pyannote-audio</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <h3>Speaker Labels</h3>
-    <p>The following speaker labels are used in the diarization process:</p>
+  <!-- 2. Key Concepts -->
+  <section id="concepts" class="subsection">
+    <h2>2. Key Concepts</h2>
+    <h3>Voice Activity Detection (VAD)</h3>
+    <p>
+      Detects speech vs. silence to remove long non-speech regions.  
+      Helps focus embedding extraction on active speech frames.
+    </p>
+    <h3>Spectral Clustering</h3>
+    <p>
+      Transforms speaker embeddings into a similarity graph and applies eigenvector decomposition to find clusters  [oai_citation:0‡diarization_basic.md](file-service://file-4yQayqfQmWHmSxwgsgSaCj).  
+      Advantages over agglomerative clustering:
+    </p>
     <ul>
-        <li><strong>CHI</strong>: Child (target participant)</li>
-        <li><strong>INV</strong>: Investigator/clinician</li>
-        <li><strong>PAR</strong>: Parent/caregiver</li>
-        <li><strong>OTH</strong>: Other speakers</li>
-        <li><strong>NOI</strong>: Noise/non-speech segments</li>
+      <li>Handles non-convex clusters</li>
+      <li>Separates speakers with subtle acoustic differences (child vs. soft adult)</li>
+      <li>Robust when turns are short or overlapping</li>
     </ul>
+  </section>
 
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Segment Extraction Code</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <pre><code class="language-python">import soundfile as sf
-import numpy as np
+  <!-- 3. Tools -->
+  <section id="tools" class="subsection">
+    <h2>3. Tools</h2>
+    <ul>
+      <li><strong>NVIDIA NeMo Diarizer</strong>  
+        Pre-trained TitaNet embeddings + configurable clustering:  
+        <a href="https://docs.nvidia.com/deeplearning/nemo/user-guide/docs/en/stable/nlp/speaker_diarization/overview.html" target="_blank">NeMo Diarization Docs</a>
+      </li>
+    </ul>
+    <h3>Output Formats</h3>
+    <ul>
+      <li><code>.rttm</code> — Rich Transcription Time Marked</li>
+      <li><code>.csv</code>  — Tabular <code>speaker,start_time,end_time</code></li>
+    </ul>
+  </section>
 
-def extract_segments(audio_file, segments, target_speaker="CHI"):
-    """
-    Extract segments for a specific speaker from an audio file.
+  <!-- 4. Sample Flow -->
+  <section id="flow" class="subsection">
+    <h2>4. Sample Flow</h2>
+    <pre><code>Raw Audio → Preprocessing → VAD → Diarization → Segmentation</code></pre>
+    <ul>
+      <li><strong>Preprocessing</strong>: resample, loudness normalize, denoise</li>
+      <li><strong>VAD</strong>: drop silence</li>
+      <li><strong>Diarization</strong>: spectral clustering on TitaNet embeddings</li>
+      <li><strong>Segmentation</strong>: extract child-only speech clips</li>
+    </ul>
+  </section>
 
-    Parameters:
-    -----------
-    audio_file : str
-        Path to the audio file
-    segments : list
-        List of segment dictionaries with 'start', 'end', and 'speaker' keys
-    target_speaker : str
-        Speaker ID to extract (default: "CHI" for child)
+  <!-- 5. Challenges -->
+  <section id="challenges" class="subsection">
+    <h2>5. Challenges</h2>
+    <ul>
+      <li>Acoustic variability: children’s pitch and rhythm vary widely</li>
+      <li>Overlapping speech: parent/clinician versus child</li>
+      <li>Short turns: pediatric utterances may be under 1 s</li>
+    </ul>
+  </section>
 
-    Returns:
-    --------
-    extracted_audio : ndarray
-        Concatenated audio segments for the target speaker
-    """
-    # Load the audio file
-    audio, sr = sf.read(audio_file)
+  <!-- 6. Sample Output -->
+  <section id="output" class="subsection">
+    <h2>6. Sample Output</h2>
+    <button class="toggle-btn" data-target="#diarLog">Show/Hide CSV Sample</button>
+    <table id="diarLog" class="csv-sample">
+      <thead>
+        <tr><th>speaker</th><th>start_time</th><th>end_time</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>speaker_0</td><td>0.700</td><td>4.710</td></tr>
+        <tr><td>speaker_0</td><td>5.020</td><td>6.030</td></tr>
+        <tr><td>speaker_1</td><td>8.215</td><td>8.965</td></tr>
+        <tr><td>speaker_0</td><td>8.965</td><td>9.715</td></tr>
+      </tbody>
+    </table>
+    <p>Child vs. adult mapping applied post-processing based on cluster embedding averages.</p>
+  </section>
 
-    # Filter segments for target speaker
-    target_segments = [s for s in segments if s['speaker'] == target_speaker]
-
-    # Extract and concatenate segments
-    extracted_chunks = []
-    for segment in target_segments:
-        start_sample = int(segment['start'] * sr)
-        end_sample = int(segment['end'] * sr)
-        chunk = audio[start_sample:end_sample]
-        extracted_chunks.append(chunk)
-
-    # Concatenate all chunks
-    if extracted_chunks:
-        extracted_audio = np.concatenate(extracted_chunks)
-        return extracted_audio, sr
-    else:
-        return np.array([]), sr</code></pre>
-
-                <div class="code-info">
-                    <p>• Libraries:</p>
-                    <ul>
-                        <li><a href="https://github.com/bastibe/python-soundfile" target="_blank">soundfile</a> - For audio file handling</li>
-                        <li><a href="https://numpy.org/" target="_blank">numpy</a> - For array operations</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="placeholder-message">
-        <p>Interactive diarization visualizations and examples will be added in a future update.</p>
-    </div>
+  <!-- 7. Metrics -->
+  <section id="metrics" class="subsection">
+    <h2>7. Metrics</h2>
+    <ul>
+      <li><strong>Speaker Count Sanity:</strong> flag >3 speakers</li>
+      <li><strong>Segment Length:</strong> flag <0.5 s or >30 s</li>
+      <li><strong>Cluster Separation:</strong> cosine distance heuristics between embeddings</li>
+    </ul>
+    <p>
+      We do not report DER (requires ground-truth labels).  
+      Instead, we monitor unsupervised validation to ensure reliable speaker separation for ASR.
+    </p>
+  </section>
 </div>
 
 <style>
-    .placeholder-message {
-        background-color: #f8f9fa;
-        border-left: 4px solid var(--nu-purple);
-        padding: 1rem;
-        margin: 1rem 0;
-    }
+  :root {
+    --nu-purple: #4E2A84;
+    --nu-light-purple: #7C5295;
+    --nu-gray-light: #F0F9FA;
+    --nu-gray-dark: #666666;
+    --nu-white: #FFFFFF;
+  }
+  .research-pipeline {
+    font-family: 'Lato', Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--nu-gray-dark);
+  }
+  .research-pipeline h1 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--nu-purple);
+    margin-bottom: 0.5rem;
+  }
+  .pipeline-nav {
+    text-align: center;
+    margin: 1rem 0;
+  }
+  .pipeline-nav a {
+    margin: 0 1rem;
+    color: var(--nu-purple);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .content-section {
+    background: var(--nu-white);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+  }
+  .subsection {
+    margin-top: 2rem;
+  }
+  .subsection h2 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--nu-purple);
+    border-bottom: 2px solid var(--nu-light-purple);
+    padding-bottom: 0.25rem;
+  }
+  h3 {
+    color: var(--nu-light-purple);
+    margin-top: 1rem;
+  }
+  pre {
+    background: var(--nu-gray-light);
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-family: monospace;
+  }
+  ul {
+    margin-left: 1.5rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+  }
+  th, td {
+    border: 1px solid var(--nu-gray-light);
+    padding: 0.75rem;
+    text-align: left;
+  }
+  th {
+    background: var(--nu-gray-light);
+  }
+  .toggle-btn {
+    margin: 0.5rem 0;
+    padding: 0.5rem 1rem;
+    background: var(--nu-light-purple);
+    color: var(--nu-white);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .csv-sample {
+    display: none;
+    width: 100%;
+  }
 </style>
 
 <script>
-    // Initialize collapsible panels directly when this tab is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        if (typeof initCollapsiblePanels === 'function') {
-            setTimeout(initCollapsiblePanels, 100);
-            if (typeof Prism !== 'undefined') {
-                setTimeout(Prism.highlightAll, 150);
-            }
-        }
+  // Toggle CSV samples
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tbl = document.querySelector(btn.dataset.target);
+      tbl.style.display = tbl.style.display === 'table' ? 'none' : 'table';
     });
+  });
 </script>
