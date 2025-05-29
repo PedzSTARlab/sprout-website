@@ -101,7 +101,7 @@ clipping = 100 * np.mean(np.abs(audio) >= 0.999)</code></pre>
       <tbody>
         <tr><td>Signal Energy</td><td>1e-6 … 1e-1</td></tr>
         <tr><td>SPL (dB)</td><td>39 … 70</td></tr>
-        <tr><td>LUFS</td><td>No hard limit</td></tr>
+        <tr><td>LUFS</td><td>-16</td></tr>
         <tr><td>RMS</td><td>1e-5 … 0.21</td></tr>
         <tr><td>Spectral Centroid</td><td>900 … 5000</td></tr>
         <tr><td>Pitch Mean</td><td>250 … 400</td></tr>
@@ -136,7 +136,7 @@ pitch = np.mean(librosa.yin(audio, 250, 400))
   .research-pipeline h1 { font-family: Montserrat, sans-serif; color: #4E2A84; margin-bottom: 1rem; }
   .subsection { margin-top: 2rem; }
   .subsection h2 { font-family: Montserrat, sans-serif; color: #4E2A84; margin-bottom: 0.5rem; }
-  .subsection h3 { font-family: Montserrat, sans-serif; color: #FFD100; margin-top: 1rem; }
+  .subsection h3 { font-family: Montserrat, sans-serif; color: #4c08a4; margin-top: 1rem; }
   .table-filter { width: 100%; max-width: 400px; padding: 0.5rem; margin: 0.5rem 0 1rem; border: 1px solid #ccc; border-radius: 4px; }
   table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
   th, td { border: 1px solid #F0F9FA; padding: 0.75rem; text-align: left; }
