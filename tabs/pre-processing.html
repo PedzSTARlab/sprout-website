@@ -1,166 +1,161 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SPROUT Pre-Processing</title>
-  <style>
-    :root {
-      --nu-purple: #4E2A84;
-      --nu-gold:   #FFD100;
-      --nu-gray-light: #F0F9FA;
-      --nu-gray-dark:  #666666;
-      --radius: 8px;
-      --shadow: 0 2px 8px rgba(0,0,0,0.1);
-      --font-sans: 'Lato', Arial, sans-serif;
-      --font-heading: 'Montserrat', sans-serif;
-    }
-    body {
-      font-family: var(--font-sans);
-      background: var(--nu-gray-light);
-      color: var(--nu-gray-dark);
-      margin: 2rem;
-    }
-    h2 { font-family: var(--font-heading); color: var(--nu-purple); }
-    .content-section { 
-      background: white; 
-      padding: 1.5rem; 
-      border-radius: var(--radius); 
-      box-shadow: var(--shadow); 
-      margin-bottom: 2rem; 
-    }
-    .subsection + .subsection { margin-top: 2rem; }
-    .subsection h3 { color: var(--nu-gold); }
-    .tools-list li { margin: 0.5rem 0; }
-    .code-snippet {
-      background: #F5F5F5;
-      border-left: 4px solid var(--nu-purple);
-      padding: 1rem;
-      margin: 1rem 0;
-      overflow-x: auto;
-      font-family: monospace;
-    }
-    canvas {
-      max-width: 600px;
-      margin: 1rem auto;
-      display: block;
-    }
-  </style>
+<div class="content-section" id="preprocessing">
+  <h2>Pre-Processing Pipeline</h2>
+  <p>Each recording passes through three automated stages—<strong>Denoising</strong>, <strong>Pre-QC</strong>, and <strong>Post-QC</strong>—to ensure clean, uniform, and research-ready audio.</p>
 
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-
-  <div class="content-section">
-    <h2>Pre-Processing Pipeline</h2>
+  <!-- 1) Denoising -->
+  <section class="subsection" id="denoising">
+    <h3>1. Denoising</h3>
     <p>
-      Every recording goes through three stages—<strong>Denoising</strong>, 
-      <strong>Pre-QC</strong> and <strong>Post-QC</strong>—so downstream analysis runs on 
-      clean, validated speech.
+      Remove environmental noise while preserving child speech using spectral-gating techniques  [oai_citation:3‡denoising_literature_review_detailed.md](file-service://file-T73j7Efoq8ofLE84qv31nK).
     </p>
 
-    <!-- 1) Denoising (we won’t chart this) -->
-    <div class="subsection" id="denoising">
-      <h3>1. Denoising</h3>
-      <p>
-        Spectral gating via <code>noisereduce</code> plus clipping prevention.
-      </p>
-      <div class="code-snippet">
-<pre><code># pseudocode
-clean = reduce_noise(raw_audio)
-clean = clip(clean, -1, 1)
-save("output_nr.wav", clean)</code></pre>
-      </div>
-    </div>
+    <h4>Tools &amp; Libraries</h4>
+    <ul>
+      <li><strong>librosa</strong> — load, resample, STFT/iSTFT</li>
+      <li><strong>noisereduce</strong> — spectral gating (<code>reduce_noise()</code>)</li>
+      <li><strong>soundfile</strong> — read/write WAV (.wav)</li>
+      <li><strong>pyloudnorm</strong> — loudness normalization to –16 LUFS</li>
+      <li><strong>numpy</strong> — clipping &amp; array ops</li>
+      <li><strong>pandas</strong> &amp; <strong>psutil</strong> — logging &amp; memory monitoring</li>
+    </ul>
 
-    <!-- 2) Pre-QC -->
-    <div class="subsection" id="pre-qc">
-      <h3>2. Pre-Processing Quality Control</h3>
-      <p>Check minimal metrics before moving on:</p>
-      <ul>
-        <li>Duration ≥ 1s</li>
-        <li>SNR ≥ 15dB</li>
-        <li>Clipping ≤ 1%</li>
-      </ul>
+    <h4>Pipeline Steps</h4>
+    <ol>
+      <li>Load raw WAV: <code>librosa.load(path, sr=None)</code></li>
+      <li>Estimate noise from low-energy frames</li>
+      <li>Apply spectral gate: <code>nr.reduce_noise(y, sr, prop_decrease=1.0)</code></li>
+      <li>Prevent clipping: <code>numpy.clip(clean, -1.0, 1.0)</code></li>
+      <li>Normalize loudness: <code>pyln.normalize.loudness(clean, measured_lufs, -16.0)</code></li>
+      <li>Save cleaned file: <code>soundfile.write(out_path, audio, sr)</code></li>
+      <li>Log duration, memory, status to CSV</li>
+    </ol>
+  </section>
 
-      <!-- Chart Container -->
-      <canvas id="preqcChart"></canvas>
-    </div>
+  <!-- 2) Pre-QC -->
+  <section class="subsection" id="pre-qc">
+    <h3>2. Pre-Processing Quality Control (Pre-QC)</h3>
+    <p>Evaluate key acoustic features against clinical thresholds to decide if a file is eligible for diarization and further analysis  [oai_citation:4‡pre_qc_literature_review_detailed_with_fields.md](file-service://file-G3VarTjwEqpWXytPyozqb4).</p>
 
-    <!-- 3) Post-QC -->
-    <div class="subsection" id="post-qc">
-      <h3>3. Post-Processing Quality Control</h3>
-      <p>Deep-dive metrics on the cleaned file:</p>
-      <ul>
-        <li>LUFS</li>
-        <li>Spectral Centroid & Bandwidth</li>
-        <li>Pitch Mean</li>
-        <li>MFCC Variance</li>
-      </ul>
+    <h4>Computed Features &amp; Thresholds</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>Feature</th><th>Description</th><th>Child Threshold</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Duration (s)</td><td>Length of audio</td><td>> 1.0</td></tr>
+        <tr><td>SNR (dB)</td><td>Signal-to-Noise Ratio</td><td>> 15</td></tr>
+        <tr><td>Spectral Centroid (Hz)</td><td>“Brightness” of spectrum</td><td>> 1000</td></tr>
+        <tr><td>Spectral Bandwidth (Hz)</td><td>Frequency spread</td><td>> 1000</td></tr>
+        <tr><td>Pitch Mean (Hz)</td><td>YIN-based fundamental frequency</td><td>> 250</td></tr>
+      </tbody>
+    </table>
 
-      <!-- Chart Container -->
-      <canvas id="postqcChart"></canvas>
-    </div>
-  </div>
+    <h4>Feature Calculation</h4>
+    <ul>
+      <li><strong>Duration:</strong> <code>len(y)/sr</code></li>
+      <li><strong>SNR:</strong> 
+        <code>
+          10·log₁₀(mean(y²) / percentile(frame_energy, 10))
+        </code>
+      </li>
+      <li><strong>Spectral Centroid:</strong> <code>librosa.feature.spectral_centroid(y, sr)</code></li>
+      <li><strong>Spectral Bandwidth:</strong> <code>librosa.feature.spectral_bandwidth(y, sr)</code></li>
+      <li><strong>Pitch:</strong> <code>librosa.yin(y, fmin=250, fmax=400)</code></li>
+    </ul>
 
-  <script>
-    // Sample data; replace with real values from your pipeline
-    const preQCData = {
-      labels: ['Duration (s)', 'SNR (dB)', 'Clipping (%)'],
-      datasets: [{
-        label: 'Pre-QC Metrics',
-        data: [1.2, 18, 0.5],
-        backgroundColor: [
-          'rgba(78,42,132,0.6)',
-          'rgba(255,209,0,0.6)',
-          'rgba(102,102,102,0.6)'
-        ],
-        borderColor: [
-          '#4E2A84',
-          '#FFD100',
-          '#666666'
-        ],
-        borderWidth: 1
-      }]
-    };
+    <h4>Logging &amp; Output</h4>
+    <p>
+      Each region run produces 
+      <code>processing_log_<region>_<date>.csv</code> containing file path, feature values, pass/fail, and failure reasons  [oai_citation:5‡pre_qc_literature_review_detailed_with_fields.md](file-service://file-G3VarTjwEqpWXytPyozqb4).
+    </p>
+  </section>
 
-    new Chart(document.getElementById('preqcChart'), {
-      type: 'bar',
-      data: preQCData,
-      options: {
-        scales: {
-          y: { beginAtZero: true }
-        },
-        plugins: {
-          legend: { display: false }
-        }
-      }
-    });
+  <!-- 3) Post-QC -->
+  <section class="subsection" id="post-qc">
+    <h3>3. Post-Processing Quality Control (Post-QC)</h3>
+    <p>Conduct a final, in-depth check of denoised audio to flag any remaining quality issues and verify research readiness  [oai_citation:6‡Post_QC_Detailed_Literature_Review.md](file-service://file-T27hbSFNZEsuHryFKRGc5g).</p>
 
-    const postQCData = {
-      labels: ['LUFS', 'Centroid', 'Bandwidth', 'Pitch'],
-      datasets: [{
-        label: 'Post-QC Metrics',
-        data: [-23, 1500, 1200, 280],
-        backgroundColor: 'rgba(78,42,132,0.6)',
-        borderColor: '#4E2A84',
-        borderWidth: 1
-      }]
-    };
+    <h4>Pipeline Summary</h4>
+    <ol>
+      <li>Load denoised WAV: <code>sf.read()</code></li>
+      <li>Resample to 16 kHz (if needed): <code>librosa.resample()</code></li>
+      <li>Extract whole-file segment for analysis</li>
+      <li>Compute advanced features:
+        <ul>
+          <li>Signal Energy &amp; RMS</li>
+          <li>Sound Pressure Level (SPL)</li>
+          <li>LUFS (loudness)</li>
+          <li>Spectral Centroid &amp; Bandwidth</li>
+          <li>Pitch (YIN)</li>
+          <li>MFCC mean &amp; std</li>
+        </ul>
+      </li>
+      <li>Compare each feature to its research-grade thresholds:</li>
+    </ol>
 
-    new Chart(document.getElementById('postqcChart'), {
-      type: 'radar',
-      data: postQCData,
-      options: {
-        scales: {
-          r: {
-            beginAtZero: true,
-            suggestedMin: 0
-          }
-        }
-      }
-    });
-  </script>
-</body>
-</html>
+    <h4>Feature Threshold Ranges</h4>
+    <table>
+      <thead>
+        <tr><th>Feature</th><th>Threshold Range</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Signal Energy</td><td>1e-6 … 1e-1</td></tr>
+        <tr><td>SPL (dB)</td><td>39 … 70</td></tr>
+        <tr><td>LUFS</td><td>–∞ … ∞ (no hard limit)</td></tr>
+        <tr><td>RMS Energy</td><td>1e-5 … 0.21</td></tr>
+        <tr><td>Relative Amplitude</td><td>0.01 … 1.7</td></tr>
+        <tr><td>Spectral Centroid (Hz)</td><td>900 … 5000</td></tr>
+        <tr><td>Spectral Bandwidth (Hz)</td><td>900 … 6000</td></tr>
+        <tr><td>Pitch Mean (Hz)</td><td>250 … 400</td></tr>
+        <tr><td>MFCC Mean</td><td>–40 … 40</td></tr>
+        <tr><td>MFCC Std Dev</td><td>7 … 141</td></tr>
+      </tbody>
+    </table>
+
+    <h4>CSV Output Schema</h4>
+    <p>Results are saved as 
+      <code>postqc_results_<region>_<date>.csv</code> with columns:</p>
+    <ul>
+      <li>Segment file</li>
+      <li>Start/End time</li>
+      <li>All feature values</li>
+      <li>Eligible for Research (Yes/No)</li>
+      <li>Failure reason (if any)</li>
+      <li>Error messages (if any)</li>
+    </ul>
+
+    <h4>Libraries &amp; References</h4>
+    <ul>
+      <li><strong>librosa</strong>, <strong>pyloudnorm</strong>, <strong>numpy</strong> — feature extraction</li>
+      <li><strong>soundfile</strong>, <strong>shutil</strong>, <strong>pathlib</strong> — I/O &amp; file management</li>
+      <li><strong>pandas</strong>, <strong>datetime</strong> — logging &amp; timestamping</li>
+    </ul>
+  </section>
+</div>
+
+<style>
+  .content-section {
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    font-family: var(--font-sans);
+  }
+  .subsection { margin-top: 1.5rem; }
+  h2 { font-family: var(--font-heading); font-size: 2rem; color: var(--nu-purple); }
+  h3 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--nu-gold); }
+  table {
+    width: 100%; border-collapse: collapse; margin: 1rem 0;
+  }
+  th, td {
+    border: 1px solid var(--nu-gray-light);
+    padding: 0.75rem;
+    text-align: left;
+  }
+  th { background: var(--nu-gray-light); font-family: var(--font-heading); }
+  code { background: #f5f5f5; padding: 0.2rem 0.4rem; border-radius: 4px; }
+  ul, ol { margin-left: 1.25rem; }
+</style>
