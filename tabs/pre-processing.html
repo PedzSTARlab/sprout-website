@@ -1,193 +1,166 @@
-<div class="content-section preprocessing">
-  <h2>Pre-Processing Pipeline</h2>
-  <p>The SPROUT pipeline cleans and validates each raw recording in three stages—<strong>Denoising</strong>, <strong>Pre-QC</strong>, and <strong>Post-QC</strong>—so downstream tasks (diarization, ASR, feature extraction) run on high-quality speech.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SPROUT Pre-Processing</title>
+  <style>
+    :root {
+      --nu-purple: #4E2A84;
+      --nu-gold:   #FFD100;
+      --nu-gray-light: #F0F9FA;
+      --nu-gray-dark:  #666666;
+      --radius: 8px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --font-sans: 'Lato', Arial, sans-serif;
+      --font-heading: 'Montserrat', sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--nu-gray-light);
+      color: var(--nu-gray-dark);
+      margin: 2rem;
+    }
+    h2 { font-family: var(--font-heading); color: var(--nu-purple); }
+    .content-section { 
+      background: white; 
+      padding: 1.5rem; 
+      border-radius: var(--radius); 
+      box-shadow: var(--shadow); 
+      margin-bottom: 2rem; 
+    }
+    .subsection + .subsection { margin-top: 2rem; }
+    .subsection h3 { color: var(--nu-gold); }
+    .tools-list li { margin: 0.5rem 0; }
+    .code-snippet {
+      background: #F5F5F5;
+      border-left: 4px solid var(--nu-purple);
+      padding: 1rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+      font-family: monospace;
+    }
+    canvas {
+      max-width: 600px;
+      margin: 1rem auto;
+      display: block;
+    }
+  </style>
 
-  <!-- 1. Denoising -->
-  <div class="subsection" id="denoising">
-    <h3>1. Denoising</h3>
-    <p>Remove background and environmental noise while preserving child speech content. We leverage spectral gating and Wiener-filter techniques to suppress hum, clicks, and room noise.</p>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
 
-    <h4>Tools &amp; Libraries</h4>
-    <ul class="tools-list">
-      <li><a href="https://librosa.org/doc/latest/index.html" target="_blank">librosa</a> — audio I/O, STFT, resampling</li>
-      <li><a href="https://github.com/timsainb/noisereduce" target="_blank">noisereduce</a> — spectral gating noise reduction</li>
-      <li><a href="https://python-soundfile.readthedocs.io/" target="_blank">soundfile</a> — read/write WAV files</li>
-      <li><a href="https://github.com/csteinmetz1/pyloudnorm" target="_blank">pyloudnorm</a> — LUFS-based loudness normalization</li>
-      <li><a href="https://pandas.pydata.org/" target="_blank">pandas</a> — logging results to CSV</li>
-      <li><a href="https://psutil.readthedocs.io/" target="_blank">psutil</a> — memory monitoring</li>
-    </ul>
+  <div class="content-section">
+    <h2>Pre-Processing Pipeline</h2>
+    <p>
+      Every recording goes through three stages—<strong>Denoising</strong>, 
+      <strong>Pre-QC</strong> and <strong>Post-QC</strong>—so downstream analysis runs on 
+      clean, validated speech.
+    </p>
 
-    <h4>Processing Steps</h4>
-    <ol>
-      <li>Load raw `.wav` with <code>librosa.load()</code>.</li>
-      <li>Estimate noise profile from low-energy frames.</li>
-      <li>Apply <code>noisereduce.reduce_noise()</code> spectral gate.</li>
-      <li>Rescale to prevent clipping via <code>numpy.clip()</code>.</li>
-      <li>Save cleaned file with <code>soundfile.write()</code>.</li>
-    </ol>
-
-    <div class="code-snippet">
-      <pre><code># Python pseudocode
-import noisereduce as nr
-import soundfile as sf
-
-y, sr = sf.read("input.wav")
-clean = nr.reduce_noise(y=y, sr=sr, prop_decrease=1.0, stationary=False)
-clean = numpy.clip(clean, -1.0, 1.0)
-sf.write("output_nr.wav", clean, sr)</code></pre>
+    <!-- 1) Denoising (we won’t chart this) -->
+    <div class="subsection" id="denoising">
+      <h3>1. Denoising</h3>
+      <p>
+        Spectral gating via <code>noisereduce</code> plus clipping prevention.
+      </p>
+      <div class="code-snippet">
+<pre><code># pseudocode
+clean = reduce_noise(raw_audio)
+clean = clip(clean, -1, 1)
+save("output_nr.wav", clean)</code></pre>
+      </div>
     </div>
 
-    <div class="visualization-placeholder">
-      <!-- e.g. waveform before/after or spectrogram -->
-      <p>[Denoising visualization will appear here]</p>
-    </div>
-  </div>
+    <!-- 2) Pre-QC -->
+    <div class="subsection" id="pre-qc">
+      <h3>2. Pre-Processing Quality Control</h3>
+      <p>Check minimal metrics before moving on:</p>
+      <ul>
+        <li>Duration ≥ 1s</li>
+        <li>SNR ≥ 15dB</li>
+        <li>Clipping ≤ 1%</li>
+      </ul>
 
-  <!-- 2. Pre-QC -->
-  <div class="subsection" id="pre-qc">
-    <h3>2. Pre-Processing Quality Control (Pre-QC)</h3>
-    <p>Assess whether each denoised file meets minimal criteria to proceed:</p>
-
-    <table class="feature-table">
-      <thead>
-        <tr>
-          <th>Feature</th>
-          <th>Description</th>
-          <th>Threshold (Child Speech)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Duration (s)</td><td>Total audio length</td><td>> 1.0</td></tr>
-        <tr><td>SNR (dB)</td><td>Signal-to-Noise Ratio</td><td>> 15</td></tr>
-        <tr><td>Spectral Centroid (Hz)</td><td>“Brightness” of spectrum</td><td>> 1000</td></tr>
-        <tr><td>Spectral Bandwidth (Hz)</td><td>Spread of frequencies</td><td>> 1000</td></tr>
-        <tr><td>Pitch Mean (Hz)</td><td>Average f₀ via YIN</td><td>> 250</td></tr>
-      </tbody>
-    </table>
-
-    <div class="code-snippet">
-      <pre><code>def compute_snr(y):
-    signal_power = np.mean(y**2)
-    energies = [np.sum(y[i:i+2048]**2) for i in range(0, len(y)-2048, 512)]
-    noise_power = np.percentile(energies, 10)
-    return 10 * np.log10(signal_power / noise_power)</code></pre>
+      <!-- Chart Container -->
+      <canvas id="preqcChart"></canvas>
     </div>
 
-    <div class="visualization-placeholder">
-      <!-- e.g. QC metrics bar chart -->
-      <p>[Pre-QC metrics chart will appear here]</p>
-    </div>
-  </div>
+    <!-- 3) Post-QC -->
+    <div class="subsection" id="post-qc">
+      <h3>3. Post-Processing Quality Control</h3>
+      <p>Deep-dive metrics on the cleaned file:</p>
+      <ul>
+        <li>LUFS</li>
+        <li>Spectral Centroid & Bandwidth</li>
+        <li>Pitch Mean</li>
+        <li>MFCC Variance</li>
+      </ul>
 
-  <!-- 3. Post-QC -->
-  <div class="subsection" id="post-qc">
-    <h3>3. Post-Processing Quality Control (Post-QC)</h3>
-    <p>Perform in-depth validation on denoised recordings to flag any remaining issues and confirm research readiness.</p>
-
-    <h4>Pipeline Overview</h4>
-    <ul>
-      <li>Load denoised `.wav` (<code>soundfile.read</code>).</li>
-      <li>Resample to 16 kHz if needed (<code>librosa.resample</code>).</li>
-      <li>Compute acoustic features:</li>
-        <ul>
-          <li>LUFS (<code>pyloudnorm.Meter.integrated_loudness</code>)</li>
-          <li>SPL, RMS, signal energy</li>
-          <li>Spectral centroid &amp; bandwidth</li>
-          <li>Pitch via <code>librosa.yin</code></li>
-          <li>MFCC mean &amp; variance</li>
-        </ul>
-      <li>Compare against research-grade thresholds.</li>
-      <li>Log results to CSV with eligibility flags.</li>
-    </ul>
-
-    <table class="library-table">
-      <thead>
-        <tr><th>Library</th><th>Purpose</th><th>Usage Example</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>librosa</td>
-          <td>Resample &amp; spectral features</td>
-          <td><code>librosa.feature.spectral_centroid()</code></td>
-        </tr>
-        <tr>
-          <td>pyloudnorm</td>
-          <td>LUFS normalization</td>
-          <td><code>Meter(sr).integrated_loudness()</code></td>
-        </tr>
-        <tr>
-          <td>soundfile</td>
-          <td>Audio I/O</td>
-          <td><code>sf.write()</code></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="visualization-placeholder">
-      <!-- e.g. Post-QC report table or heatmap -->
-      <p>[Post-QC report visualization will appear here]</p>
+      <!-- Chart Container -->
+      <canvas id="postqcChart"></canvas>
     </div>
   </div>
-</div>
 
-<style>
-.content-section.preprocessing {
-  padding: 2rem;
-  background: #FFFFFF;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-bottom: 2rem;
-}
-.content-section h2 {
-  font-family: var(--font-heading);
-  color: var(--nu-purple);
-  margin-bottom: 1rem;
-}
-.subsection h3 {
-  margin-top: 1.5rem;
-  color: var(--nu-gold);
-}
-.tools-list li {
-  margin: 0.5rem 0;
-}
-.feature-table,
-.library-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1rem 0;
-}
-.feature-table th,
-.feature-table td,
-.library-table th,
-.library-table td {
-  border: 1px solid var(--nu-gray-light);
-  padding: 0.75rem;
-  text-align: left;
-}
-.feature-table th,
-.library-table th {
-  background: var(--nu-gray-light);
-  font-family: var(--font-heading);
-}
-.code-snippet {
-  background: #F5F5F5;
-  border-left: 4px solid var(--nu-purple);
-  padding: 1rem;
-  margin: 1rem 0;
-  overflow-x: auto;
-  font-family: var(--font-sans);
-}
-.code-snippet pre {
-  margin: 0;
-}
-.visualization-placeholder {
-  background: var(--nu-gray-light);
-  border: 2px dashed var(--nu-purple);
-  color: var(--nu-gray-dark);
-  text-align: center;
-  padding: 2rem;
-  border-radius: 4px;
-  margin: 1rem 0;
-  font-style: italic;
-}
-</style>
+  <script>
+    // Sample data; replace with real values from your pipeline
+    const preQCData = {
+      labels: ['Duration (s)', 'SNR (dB)', 'Clipping (%)'],
+      datasets: [{
+        label: 'Pre-QC Metrics',
+        data: [1.2, 18, 0.5],
+        backgroundColor: [
+          'rgba(78,42,132,0.6)',
+          'rgba(255,209,0,0.6)',
+          'rgba(102,102,102,0.6)'
+        ],
+        borderColor: [
+          '#4E2A84',
+          '#FFD100',
+          '#666666'
+        ],
+        borderWidth: 1
+      }]
+    };
+
+    new Chart(document.getElementById('preqcChart'), {
+      type: 'bar',
+      data: preQCData,
+      options: {
+        scales: {
+          y: { beginAtZero: true }
+        },
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+
+    const postQCData = {
+      labels: ['LUFS', 'Centroid', 'Bandwidth', 'Pitch'],
+      datasets: [{
+        label: 'Post-QC Metrics',
+        data: [-23, 1500, 1200, 280],
+        backgroundColor: 'rgba(78,42,132,0.6)',
+        borderColor: '#4E2A84',
+        borderWidth: 1
+      }]
+    };
+
+    new Chart(document.getElementById('postqcChart'), {
+      type: 'radar',
+      data: postQCData,
+      options: {
+        scales: {
+          r: {
+            beginAtZero: true,
+            suggestedMin: 0
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
