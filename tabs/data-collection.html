@@ -1,517 +1,181 @@
 <div class="content-section">
-    <p>Data is collected across five disease categories. Initial data release contains data collected from four of five categories (pediatric data to be incorporated in subsequent dataset releases.</p>
+  <h2>📦 Data Collection & Recording Infrastructure</h2>
+  <p>This dataset was recorded using standardized, high-quality audio and video equipment to ensure reproducibility and consistency across multiple clinical sites. The table below provides a detailed description of the devices, formats, and environments used during data acquisition.</p>
 
-    <p>Participants are recruited across different academic institutions from "high volume expert clinics" based on diagnosis and inclusion/exclusion criteria outlined below <strong>(Table 1)</strong>.</p>
+  <div class="table-container">
+    <h3>🎙️ Audio Recording Equipment</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Specification</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Device</td>
+          <td>Zoom H6 Six-Track Portable Recorder</td>
+        </tr>
+        <tr>
+          <td>Microphone</td>
+          <td>Movo LV4-C Cardioid XLR Lavalier Microphone</td>
+        </tr>
+        <tr>
+          <td>Wind Protection</td>
+          <td>URSA Soft Circles</td>
+        </tr>
+        <tr>
+          <td>Sampling Rate</td>
+          <td>44.1 kHz</td>
+        </tr>
+        <tr>
+          <td>Bit Depth</td>
+          <td>24-bit</td>
+        </tr>
+        <tr>
+          <td>Channels</td>
+          <td>Stereo (2 channels)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <p><strong>High Volume Expert Clinics:</strong> Outpatient clinics within hospital systems or academic institutions that have developed an expertise in a specific disease area and see more than 50 patients per month from the same disease category. Ex: Asthma/COPD pulmonary specialty clinic.</p>
+  <div class="table-container">
+    <h3>💻 Laptop Specifications (Parallel Setup)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Specification</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Device</td>
+          <td>Lenovo ThinkBook 16 G7 ARP</td>
+        </tr>
+        <tr>
+          <td>Microphone</td>
+          <td>Realtek ALC3287 HD Audio</td>
+        </tr>
+        <tr>
+          <td>Sampling Rate</td>
+          <td>48 kHz</td>
+        </tr>
+        <tr>
+          <td>Bit Depth</td>
+          <td>16-bit</td>
+        </tr>
+        <tr>
+          <td>Channels</td>
+          <td>Stereo (2 channels)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <p>Data is collected in the clinic with the assistance of a trained researched assistant. Future data collection will also occur remotely, however remote data collection did not occur with initial dataset being released. Voice samples are collected prospectively using a custom software application (Bridge2AI-Voice app) with the Bridge2AI-Voice protocols.</p>
+  <div class="table-container">
+    <h3>🎥 Video Capture</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Specification</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1080p Full HD</td>
+          <td>Aligned audiovisual recording</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <p><strong>Clinical validation:</strong> Clinical validation is performed by qualified physician or practitioner based on established gold standards for diagnosis <strong>(Table 1)</strong>.</p>
+  <div class="table-container">
+    <h3>📁 File Format</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Attribute</th>
+          <th>Specification</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Extension</td>
+          <td>.wav</td>
+        </tr>
+        <tr>
+          <td>Format</td>
+          <td>WAV (uncompressed)</td>
+        </tr>
+        <tr>
+          <td>Sampling Rate</td>
+          <td>44.1 kHz</td>
+        </tr>
+        <tr>
+          <td>Bit Depth</td>
+          <td>24-bit</td>
+        </tr>
+        <tr>
+          <td>Channels</td>
+          <td>Stereo (2 channels)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <p><strong>Acoustic Tasks:</strong> Voice, breathing, cough, and speech data are recorded with the app. A total of 22 acoustic Tasks are recorded through the app <strong>(Table 2)</strong>.</p>
+  <div class="table-container">
+    <h3>🌍 Recording Environment</h3>
+    <p>Data was recorded in quiet rooms standardized across all sites:</p>
+    <ul>
+      <li>Chicago, IL</li>
+      <li>St. Louis, MO</li>
+      <li>Los Angeles, CA</li>
+      <li>Dallas, TX</li>
+      <li>Orlando, FL</li>
+      <li>Atlanta, GA</li>
+      <li>Baltimore, MD</li>
+      <li>Iselin, NJ</li>
+    </ul>
+  </div>
 
-    <p><strong>Demographic surveys and confounders:</strong> Detailed demographic data and surveys about confounding factors such as smoking and drinking history is collected through the smartphone application.</p>
-
-    <p><strong>Validated Questionnaires:</strong> The Bridge2AI-Voice protocols contain validated tools and questionnaires for each disease category within the app for data collection <strong>(Table 3)</strong>.</p>
-
-    <p><strong>Other Multimodal Data:</strong> The rest of the multimodal data including imaging, genomic data (for the neuro cohort), laryngoscopy imaging and other EHR data is extracted from different sites independently and will be uploaded through the REDCAP database. Please note that no external data is released in this v2.0.0.</p>
-
-    <p>Please see publication for protocol development description:</p>
-    <blockquote>
-        Bensoussan, Yael, et al. "Developing Multi-Disorder Voice Protocols: A team science approach involving clinical expertise, bioethics, standards, and DEI." Proc. Interspeech 2024. 2024. <a href="https://www.isca-archive.org/interspeech_2024/bensoussan24_interspeech.html" target="_blank">https://www.isca-archive.org/interspeech_2024/bensoussan24_interspeech.html</a>.
-    </blockquote>
-
-    <p>The supporting REDCap Data Dictionary, Metadata and Instrument PDFs are available at <a href="https://github.com/eipm/bridge2ai-redcap" target="_blank">https://github.com/eipm/bridge2ai-redcap</a>.</p>
-
-    <p>When using the REDCap Data Dictionary and Metadata please cite:</p>
-    <blockquote>
-        Bensoussan, Y., Ghosh, S. S., Rameau, A., Boyer, M., Bahr, R., Watts, S., Rudzicz, F., Bolser, D., Lerner-Ellis, J., Awan, S., Powell, M. E., Belisle-Pipon, J.-C., Ravitsky, V., Johnson, A., Zisimopoulos, P., Tang, J., Sigaras, A., Elemento, O., Dorr, D., … Bridge2AI-Voice. (2024). eipm/bridge2ai-redcap. Zenodo. <a href="https://zenodo.org/doi/10.5281/zenodo.12760724" target="_blank">https://zenodo.org/doi/10.5281/zenodo.12760724</a>.
-    </blockquote>
-
-    <p>Protocols can be found in the Bridge2AI-Voice documentation for v2.0.0 of the dataset at <a href="https://kind-lab.github.io/vbai-fhir/protocol.html" target="_blank">https://kind-lab.github.io/vbai-fhir/protocol.html</a>.</p>
+  <div class="table-container">
+    <h3>🧰 Software & Systems</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Tool</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Adobe Audition</td>
+          <td>Primary audio recording tool</td>
+        </tr>
+        <tr>
+          <td>ASIO4ALL</td>
+          <td>Low-latency driver</td>
+        </tr>
+        <tr>
+          <td>REDCap</td>
+          <td>Survey data management</td>
+        </tr>
+        <tr>
+          <td>OneDrive & SharePoint</td>
+          <td>Cloud-based storage</td>
+        </tr>
+        <tr>
+          <td>Zoom & Microsoft Teams</td>
+          <td>Virtual communication and coordination</td>
+        </tr>
+        <tr>
+          <td>Operating System</td>
+          <td>Windows 10</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
-
-<div class="table-container">
-    <h2>Table 1 - Disease cohort inclusion/exclusion criteria and validation methods</h2>
-    <div class="table-responsive" id="disease-cohort-table">
-        <table>
-            <thead>
-                <tr>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Disease Cohort</th>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Diagnosis</th>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Inclusion Criteria</th>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Exclusion Criteria</th>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Gold Standard Validation Methods</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="bold-cell">Voice Disorders Cohort</td>
-                    <td>Laryngeal Cancer</td>
-                    <td>Active laryngeal cancer T1-T4 Biopsy proven (if no biopsy at time of collection and suspicion is very high, provider will have to go back to confirm in the clinical validation section after the biopsy is obtained)</td>
-                    <td>Previously treated laryngeal cancer with no evidence of disease on scope</td>
-                    <td>Laryngoscopy Images Stroboscopy Videos</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice Disorders Cohort</td>
-                    <td>Laryngitis</td>
-                    <td>Acute laryngitis Chronic laryngitis Bacterial laryngitis Fungal laryngitis Autoimmune laryngitis *need to have evidence of information of the vocal cords on laryngoscopy as well as dysphonia</td>
-                    <td>Subjective laryngitis without evidence on scope</td>
-                    <td>Laryngoscopy Images Stroboscopy Videos</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice Disorders Cohort</td>
-                    <td>Pre-cancerous lesions</td>
-                    <td>Keratosis Leukoplakia (note if with or without dysplasia)</td>
-                    <td>Low grade -</td>
-                    <td>Laryngoscopy Images Stroboscopy Videos</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice Disorders Cohort</td>
-                    <td>Benign Lesions of the vocal cord (nodule, polyp, cyst)</td>
-                    <td>Vocal fold nodules Vocal fold polyp Vocal fold cyst Reinke's Edema Vocal fold ulcers Recurrent respiratory Papilloma Fibrous mass Rheumatoid nodules Recurrent Laryngeal Papilloma (RLP)</td>
-                    <td>Patient has received surgery for any condition and does not have evidence of pathology when scoped Immediate post op prior less than 30 days from laryngeal surgery</td>
-                    <td>Laryngoscopy Images Stroboscopy Videos</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice Disorders Cohort</td>
-                    <td>Muscle Tension Dysphonia (MTD)</td>
-                    <td>Laryngology & SLP diagnosis</td>
-                    <td></td>
-                    <td>Laryngoscopy Images Stroboscopy Videos</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice Disorders Cohort</td>
-                    <td>Vocal Fold Paralysis</td>
-                    <td>Unilateral or bilateral vocal fold paralysis</td>
-                    <td>Vocal fold paresis</td>
-                    <td>Laryngoscopy Images Stroboscopy Videos</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice Disorders Cohort</td>
-                    <td>Spasmodic Dysphonia</td>
-                    <td>Adductor Spasmodic Dysphonia Abductor Spasmodic Dysphonia Mixed Spasmodic Dysphonia</td>
-                    <td>Tremor only</td>
-                    <td>Laryngoscopy Images Stroboscopy Videos</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Respiratory Cohort</td>
-                    <td>Asthma</td>
-                    <td>Mild, moderate, or severe persistent asthma Diagnosis by pulmonologist or allergist</td>
-                    <td>Intermittent asthma</td>
-                    <td>Pulmonary Function Tests (PFTs) Methacholine Challenge Test (if available) Fractional exhaled nitric oxide (FeNO) (if available)</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Respiratory Cohort</td>
-                    <td>COPD</td>
-                    <td>Mild, moderate, severe, or very severe COPD Diagnosis by pulmonologist</td>
-                    <td>Asthma-COPD overlap</td>
-                    <td>Pulmonary Function Tests (PFTs) Chest X-ray or CT scan (if available)</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Respiratory Cohort</td>
-                    <td>Pulmonary Fibrosis</td>
-                    <td>Idiopathic pulmonary fibrosis (IPF) or other forms of pulmonary fibrosis Diagnosis by pulmonologist</td>
-                    <td>Asbestosis</td>
-                    <td>High-resolution CT scan Pulmonary Function Tests (PFTs) Lung biopsy (if available)</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Respiratory Cohort</td>
-                    <td>Cystic Fibrosis</td>
-                    <td>Confirmed diagnosis of cystic fibrosis</td>
-                    <td>Cystic fibrosis carrier status without disease</td>
-                    <td>Sweat chloride test Genetic testing for CFTR mutations</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Respiratory Cohort</td>
-                    <td>Pneumonia</td>
-                    <td>Community-acquired pneumonia Hospital-acquired pneumonia</td>
-                    <td>Aspiration pneumonia</td>
-                    <td>Chest X-ray or CT scan Sputum culture (if available) Blood tests (CBC, CRP)</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Mood/Psychiatric Cohort</td>
-                    <td>Major Depressive Disorder</td>
-                    <td>Current major depressive episode Diagnosis by psychiatrist or psychologist</td>
-                    <td>Bipolar disorder Psychotic depression</td>
-                    <td>Structured clinical interview (e.g., SCID) PHQ-9 score ≥ 10</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Mood/Psychiatric Cohort</td>
-                    <td>Generalized Anxiety Disorder</td>
-                    <td>Current generalized anxiety disorder Diagnosis by psychiatrist or psychologist</td>
-                    <td>Panic disorder as primary diagnosis</td>
-                    <td>Structured clinical interview (e.g., SCID) GAD-7 score ≥ 10</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Mood/Psychiatric Cohort</td>
-                    <td>Post-Traumatic Stress Disorder</td>
-                    <td>Current PTSD Diagnosis by psychiatrist or psychologist</td>
-                    <td>Acute stress disorder</td>
-                    <td>Structured clinical interview (e.g., SCID) PCL-5 score ≥ 33</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Mood/Psychiatric Cohort</td>
-                    <td>Bipolar Disorder</td>
-                    <td>Bipolar I or Bipolar II disorder Diagnosis by psychiatrist</td>
-                    <td>Cyclothymia</td>
-                    <td>Structured clinical interview (e.g., SCID) Mood disorder questionnaire</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Neurological Cohort</td>
-                    <td>Parkinson's Disease</td>
-                    <td>Idiopathic Parkinson's disease Diagnosis by neurologist</td>
-                    <td>Parkinsonism due to medications or other causes</td>
-                    <td>Neurological examination MDS-UPDRS score DaTscan (if available)</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Neurological Cohort</td>
-                    <td>Alzheimer's Disease</td>
-                    <td>Mild, moderate, or severe Alzheimer's disease Diagnosis by neurologist or geriatrician</td>
-                    <td>Other forms of dementia</td>
-                    <td>Neuropsychological testing MRI brain scan MMSE or MoCA score</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Neurological Cohort</td>
-                    <td>Multiple Sclerosis</td>
-                    <td>Relapsing-remitting, primary progressive, or secondary progressive MS Diagnosis by neurologist</td>
-                    <td>Clinically isolated syndrome</td>
-                    <td>MRI brain and spinal cord Cerebrospinal fluid analysis (if available) Evoked potentials (if available)</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Neurological Cohort</td>
-                    <td>Amyotrophic Lateral Sclerosis</td>
-                    <td>Definite, probable, or possible ALS according to El Escorial criteria Diagnosis by neurologist</td>
-                    <td>Primary lateral sclerosis</td>
-                    <td>Electromyography (EMG) Nerve conduction studies MRI brain and spinal cord</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Control Group</td>
-                    <td>Healthy Controls</td>
-                    <td>No diagnosed voice, respiratory, mood/psychiatric, or neurological disorders</td>
-                    <td>Any acute or chronic medical condition that could affect voice</td>
-                    <td>Medical history review Basic physical examination</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div class="table-container">
-    <h2>Table 2 - Acoustic Tasks in Protocol</h2>
-    <div class="table-responsive" id="acoustic-tasks-table">
-        <table>
-            <thead>
-                <tr>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Name</th>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Task</th>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Description</th>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Part</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="bold-cell">Non Voice/Non Speech</td>
-                    <td>Respiration Part A</td>
-                    <td>Breathing sounds</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Non Voice/Non Speech</td>
-                    <td>Cough part A</td>
-                    <td>Voluntary Cough</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Non Voice/Non Speech</td>
-                    <td>Breath Sounds</td>
-                    <td>Breathing sounds</td>
-                    <td>Resp</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Non Voice/Non Speech</td>
-                    <td>Voluntary Cough</td>
-                    <td>Voluntary Cough</td>
-                    <td>Resp</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice/Non Speech</td>
-                    <td>Prolonged Vowel</td>
-                    <td>vowel /e/</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice/Non Speech</td>
-                    <td>Maximum Phonation Time</td>
-                    <td>vowel /e/</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice/Non Speech</td>
-                    <td>Glides</td>
-                    <td>Lowest to Highest /e/</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice/Non Speech</td>
-                    <td>Loudness</td>
-                    <td>/Hey/</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice/Non Speech</td>
-                    <td>Diadochokinesis</td>
-                    <td>/pa/ta/ka/ /buttercup/</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Speech</td>
-                    <td>Rainbow Passage</td>
-                    <td>validated passage</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Speech</td>
-                    <td>Grandfather Passage</td>
-                    <td>validated passage</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Speech</td>
-                    <td>CAPE-V Sentences</td>
-                    <td>validated sentences</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Speech</td>
-                    <td>Picture Description</td>
-                    <td>Cookie Theft picture</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Speech</td>
-                    <td>Counting</td>
-                    <td>Count from 1 to 20</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Speech</td>
-                    <td>Days of Week</td>
-                    <td>Recite days of the week</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Speech</td>
-                    <td>Months of Year</td>
-                    <td>Recite months of the year</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Speech</td>
-                    <td>Spontaneous Speech</td>
-                    <td>Talk about a happy memory</td>
-                    <td>A</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice/Non Speech</td>
-                    <td>Sustained Vowels</td>
-                    <td>vowels /a/, /i/, /u/</td>
-                    <td>B</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice/Non Speech</td>
-                    <td>Pitch Glides</td>
-                    <td>High to low and low to high</td>
-                    <td>B</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice/Non Speech</td>
-                    <td>Vocal Intensity</td>
-                    <td>Soft, medium, loud voice</td>
-                    <td>B</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Non Voice/Non Speech</td>
-                    <td>Induced Cough</td>
-                    <td>Cough after inhaling citric acid</td>
-                    <td>Resp</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div class="table-container">
-    <h2>Table 3 - Validated Questionnaires integrated into App</h2>
-    <div class="table-responsive" id="validated-questionnaires-table">
-        <table>
-            <thead>
-                <tr>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Validated Questionnaire</th>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Voice Disorders</th>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Respiratory</th>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Mood/Psychiatric</th>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Neurological</th>
-                    <th style="background-color: #F0F0F0; color: #000000; font-weight: bold; border: 1px solid #CCCCCC;">Controls</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="bold-cell">Voice Handicap Index-10 (VHI-10)</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Patient Health Questionnaire (PHQ-9)</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">General Anxiety Disorder (GAD-7)</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Positive and Negative Affect Schedule (PANAS)</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Custom Affect scale</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Post-Traumatic Stress Disorder Test (PTSD) Adult</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Attention Deficit and Hyperactivity Disorder Questionnaire (ADHD-Adult)</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">The Diagnostic and Statistical Manual of Mental Disorders (DSM-5 Adult)</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Dyspnea Index (DI)</td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">COPD Assessment Test (CAT)</td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Asthma Control Test (ACT)</td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">St. George's Respiratory Questionnaire (SGRQ)</td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Voice-Related Quality of Life (V-RQOL)</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Vocal Fatigue Index (VFI)</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Unified Parkinson's Disease Rating Scale (UPDRS)</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Mini-Mental State Examination (MMSE)</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Montreal Cognitive Assessment (MoCA)</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Amyotrophic Lateral Sclerosis Functional Rating Scale (ALSFRS-R)</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-                <tr>
-                    <td class="bold-cell">Multiple Sclerosis Quality of Life-54 (MSQOL-54)</td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align"></td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                    <td class="center-align" style="font-weight: bold; color: #000000;">X</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-
