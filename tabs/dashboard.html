@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridge2AI Voice Dashboard</title>
+    <link rel="icon" href="images/B2AI Logo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        footer {
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+            background-color: #f8f9fa;
+            font-size: 0.9rem;
+        }
+        .review-notice {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffeeba;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .tab-content {
+            padding: 1rem;
+        }
+        .metric-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .metric-card {
+            flex: 1;
+            background: #f1f1f1;
+            padding: 1rem;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .metric-card h3 {
+            margin: 0.5rem 0;
+        }
+        .plot-container {
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="review-notice">
+        This repository is under review for potential modification in compliance with Administration directives.
+    </div>
+
+    <header style="text-align:center; margin-bottom: 2rem;">
+        <img src="images/B2AI Logo.png" alt="Bridge2AI Logo" style="height: 60px;">
+    </header>
+
+    <main>
+        <nav>
+            <ul id="tabs" style="display: flex; list-style-type: none; padding: 0; border-bottom: 2px solid #ddd;">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#collection">Collection Methods</a></li>
+                <li><a href="#governance">Data Governance</a></li>
+                <li><a href="#dashboard">Study Dashboard</a></li>
+                <li><a href="#metadata">Study Metadata</a></li>
+                <li><a href="#healthsheet">Healthsheet</a></li>
+                <li><a href="#preprocessing">Data Pre-Processing</a></li>
+                <li><a href="#ai">AI-Readiness</a></li>
+            </ul>
+        </nav>
+
+        <section class="tab-content" id="overview">
+            <h2>Overview</h2>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <h3>Number of Participants</h3>
+                    <p id="participants-count">---</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Number of Recordings</h3>
+                    <p id="recordings-count">---</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Total Questionnaires</h3>
+                    <p id="questionnaires-count">---</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Total Acoustic Tasks</h3>
+                    <p id="acoustic-tasks-count">---</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Total Hours of Recordings</h3>
+                    <p id="hours-count">---</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="tab-content" id="collection">
+            <h2>Collection Methods</h2>
+            <p>[Insert content from collection_methods_page here]</p>
+        </section>
+
+        <section class="tab-content" id="governance">
+            <h2>Data Governance</h2>
+            <p>[Insert content from data_governance_page here]</p>
+        </section>
+
+        <section class="tab-content" id="dashboard">
+            <h2>Study Dashboard</h2>
+            <div class="plot-container">
+                <div id="demographic-chart" style="height: 400px;"></div>
+            </div>
+            <div class="plot-container">
+                <div id="disorder-chart" style="height: 400px;"></div>
+            </div>
+            <div class="plot-container">
+                <div id="collection-chart" style="height: 400px;"></div>
+            </div>
+        </section>
+
+        <section class="tab-content" id="metadata">
+            <h2>Study Metadata</h2>
+            <p>[Insert content from study_metadata_page here]</p>
+        </section>
+
+        <section class="tab-content" id="healthsheet">
+            <h2>Healthsheet</h2>
+            <p>[Insert content from healthsheet_page here]</p>
+        </section>
+
+        <section class="tab-content" id="preprocessing">
+            <h2>Data Pre-Processing</h2>
+            <p>[Insert content from data_pre_processing_page here]</p>
+        </section>
+
+        <section class="tab-content" id="ai">
+            <h2>AI-Readiness</h2>
+            <p>[Insert content from ai_readiness_page here]</p>
+        </section>
+    </main>
+
+    <footer>
+        © Weill Cornell Medicine | Version 2.0.2 &nbsp;|&nbsp;
+        <a href="https://weill.cornell.edu/notice-privacy-practices" target="_blank">Privacy Policy</a> &nbsp;|&nbsp;
+        <a href="https://weill.cornell.edu/weill-cornell-medicine-web-terms-use" target="_blank">Terms of Use</a>
+    </footer>
+</body>
+</html>
