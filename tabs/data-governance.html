@@ -1,277 +1,48 @@
 <h2>Data Governance</h2>
 
 <div class="content-section">
-    <h3>Accessing the Dataset</h3>
-    <p>The feature-only and raw audio datasets are available under distinct agreements appropriate for the sensitivity of their respective content.</p>
-    <ul>
-        <li><strong>Registered Access (features-only data):</strong>
-            <ul>
-                <li>Register on PhysioNet and confirm your identity (<a href="https://b2ai-voice.org/wp-content/uploads/2024/11/B2AI-Voice_Registered_Access_Data_Agreement_v20241119.pdf" target="_blank">Registered Access License</a> for reference)</li>
-                <li>Sign the Bridge2AI-Voice Registered Access Agreement, which outlines the terms and conditions for data use</li>
-            </ul>
-        </li>
-        <li><strong>Controlled Access (raw audio data):</strong>
-            <ul>
-                <li>Complete the Data Access Request Form (DARF)</li>
-                <li>Complete the Data Use Agreement (DUA)</li>
-                <li>Submit your application to the Data Access Compliance Office for review</li>
-            </ul>
-        </li>
-    </ul>
-    <p>Upon approval, ensure a Data Use and Transfer Agreement (DTUA) is signed by an authorized official at your institution</p>
+    <h3>Accessing the Data</h3>
+    <p>The SPROUT raw audio and video datasets, metadata, and survey data (json and tsv) are available for request. Datasets are governed by Data Use Agreements (DUAs), appropriate for the sensitivity of their respective content. Data access is subject to approval by the governance committee.</p>
 
-    <h3>Oversight</h3>
+    <p>Data is stored on Northwestern University's secure infrastructure with three registered access levels and their requirements:</p>
 
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Has the clinical study been reviewed and approved by at least one human subjects' protection review board?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>Submitted, approved by USF Single IRB and subsites IRB through the Single IRB Process</p>
-            </div>
-        </div>
-    </div>
+    <h4>Credentialed Access</h4>
+    <p><strong>Description:</strong> Full data repository which includes raw audio and video recordings, transcripts, surveys including additional detailed demographic information (e.g., caregiver education, household income, multilingual exposure) and complete test results. Access is available only under heightened security controls, with IRB approval and explicit institutional review. This dataset is available under a Data Use Agreement for non-commercial research and educational use.</p>
+    <p><strong>Requirements:</strong> Submitted request form, verified institution credentials, research proposal abstract, IRB-approved protocol, a lab-provided Northwestern affiliated NetID, and a Globus End Point.</p>
 
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Is this clinical study for a drug product?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>No</p>
-            </div>
-        </div>
-    </div>
+    <h4>Secured Access</h4>
+    <p><strong>Description:</strong> A curated subset of de-identified audio data and basic demographic variables. This dataset is available under a Data Use Agreement for non-commercial research, technology development and educational use.</p>
+    <p><strong>Requirements:</strong> Request form submission, project abstract, a Globus End Point, adherence to Creative Commons Attribution-NonCommercial 4.0 International license.</p>
 
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Is this clinical study for a medical device?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>No</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Was a data monitoring committee appointed for this study?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>No</p>
-            </div>
-        </div>
-    </div>
+    <h4>Registered Access</h4>
+    <p><strong>Description:</strong> A curated subset of de-identified audio data and basic demographic variables for participants who have explicitly consented to commercial use. These data are intended for community reuse, including AI model development in academic and commercial domains.</p>
+    <p><strong>Requirements:</strong> Registration and a Data Use Agreement that restricts commercial development to educational, therapeutic, or entertainment technologies for children.</p>
 
     <h3>De-Identification Levels</h3>
+    <p>Since audio recordings are considered voice prints, we begin deidentification at the recording session level. We take a layered approach to data protection to balance transparency with privacy.</p>
 
-    <p>Level of de-identification from this dataset Identifiable information (under HIPAA and under the Common Rule) as well as data considered as sensitive have been removed from this dataset.</p>
-
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Does this dataset remove direct identifiers?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>Yes</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Does this dataset apply the HIPAA de-identification rules?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>Yes</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Does this dataset rebase and/or replace dates by integers?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>Yes</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Does this dataset remove narrative text fields?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>Yes</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Does this dataset achieve K-anonymization (k>=2)?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>No</p>
-            </div>
-        </div>
-    </div>
-
-    <h4>De-identification Details</h4>
-
-    <p>All direct identifiers were removed, as these would reveal the identity of the research participant. These include name, civic address, and social security numbers. Indirect identifiers were removed where these created a significant risk of causing participant re-identification, for example through their combination with other public data available on social media, in government registries, or elsewhere. These include select geographic or demographic identifiers, as well as some information about household composition or cultural identity. Non-identifying elements of data that revealed highly sensitive information, such as information about household income, mental health status, traumatic life experiences, and the like were also removed. All raw voice data was removed, as this data has the potential to cause to individual re-identification or to be used for illicit or unauthorized purposes.</p>
+    <ul>
+        <li>All Personal Identifiable Information is stored securely in REDCap, with limited access to specified personnel and is not located on the data storage server.</li>
+        <li>All data on the storage server are de-identified with participant codes at the source of the recording.</li>
+        <li>Since young children require some redirection for engagement, the child’s first name only may be used in the recording. All data are de-identified and stored using abstract participant IDs.</li>
+        <li>Only key demographic variables (city, race, age, biosex, risk status) are available in the Secured Access and Registered Access dataset.</li>
+    </ul>
 
     <h3>Consent</h3>
+    <dl>
+        <dt><strong>Does this dataset allow only the non-commercial use of the data?</strong></dt>
+        <dd>Yes, currently the data can be used for non-commercial use only. We will notify registered users when we have dataset updates.</dd>
 
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Does this dataset allow only the non-commercial use of the data?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>No</p>
-            </div>
-        </div>
-    </div>
+        <dt><strong>Does this dataset allow only the use of the data in a specific geographic location?</strong></dt>
+        <dd>No</dd>
 
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Does this dataset allow only the use of the data in a specific geographic location?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>No</p>
-            </div>
-        </div>
-    </div>
+        <dt><strong>Does this dataset allow only the use of the data for a specific type of research?</strong></dt>
+        <dd>No</dd>
 
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Does this dataset allow only the use of the data for a specific type of research?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>No</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Does this dataset allow only the use of the data for genetic research?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>No</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="collapsible-panel">
-        <div class="collapsible-header">
-            <span>Does this dataset allow only the use of the data for research that does not involve the development of methods or algorithms?</span>
-            <i class="icon fas fa-chevron-down"></i>
-        </div>
-        <div class="collapsible-content">
-            <div class="collapsible-inner">
-                <p>No</p>
-            </div>
-        </div>
-    </div>
+        <dt><strong>Does this dataset allow only the use of the data for research that does not involve the development of methods or algorithms?</strong></dt>
+        <dd>No. The data can be used to develop algorithms used for educational, therapeutic, child entertainment tools but at this time they cannot be distributed for commercial purposes.</dd>
+    </dl>
 
     <h4 class="section-subheader">Consent Details</h4>
-
-    <p>Research data that does not contain your direct identifiers will be shared with external researchers for future research through a secure database. Data that poses a low risk of causing individual re-identification will be shared in registered access with the general public. Data that would pose a heightened risk of re-identification if shared in full open access will be shared through a controlled access mechanism with authorized researchers.</p>
+    <p>Data that does not contain direct identifiers will be shared with external users for future research through a secure database. Data that poses a low risk of causing individual re-identification will be shared through secured access and use agreements with the public. Data that poses a heightened risk of re-identification if shared in public access datasets will be shared through a controlled access mechanism with authorized researchers.</p>
 </div>
-
-<style>
-    .content-section h3 {
-        color: var(--nu-purple-dark);
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-        font-weight: 700;
-        border-bottom: 2px solid var(--nu-gold);
-        padding-bottom: 0.5rem;
-        display: inline-block;
-    }
-
-    .section-subheader {
-        color: var(--nu-purple);
-        margin-top: 1.5rem;
-        margin-bottom: 1rem;
-        font-weight: 600;
-        border-bottom: 1px solid var(--nu-purple-light);
-        padding-bottom: 0.3rem;
-        display: inline-block;
-    }
-
-    .collapsible-panel {
-        margin: 1rem 0;
-        border: 1px solid #e0e0e0;
-        border-radius: var(--radius);
-        overflow: hidden;
-    }
-
-    .collapsible-header {
-        padding: 1rem;
-        background-color: #f5f5f5;
-        cursor: pointer;
-        font-weight: 600;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .collapsible-header:hover {
-        background-color: #efefef;
-    }
-
-    .collapsible-content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
-    }
-
-    .collapsible-header.active + .collapsible-content {
-        max-height: 500px;
-    }
-
-    .collapsible-inner {
-        padding: 1rem;
-        background-color: #ffffff;
-    }
-
-    .collapsible-inner p {
-        margin: 0;
-    }
-</style>
-
-<script>
-    // Initialize collapsible panels directly when this tab is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        if (typeof initCollapsiblePanels === 'function') {
-            setTimeout(initCollapsiblePanels, 100);
-        }
-    });
-</script>
