@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load tab content from separate HTML files
     function loadTabContent() {
         const tabs = [
+            { id: 'dashboard', file: 'tabs/dashboard-tab.html' },
             { id: 'data-flow', file: 'tabs/data-flow.html' },
             { id: 'data-collection', file: 'tabs/data-collection.html' },
             { id: 'metadata', file: 'tabs/metadata.html' },
@@ -25,6 +26,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(html => {
                     document.getElementById(tab.id).innerHTML = html;
+                    
+                    // Special handling for dashboard tab
+                    if (tab.id === 'dashboard') {
+                        console.log('Dashboard tab loaded, ensuring dashboard script is loaded...');
+                        
+                        // Make sure dashboard script is loaded
+                        if (!window.dashboardScriptLoaded) {
+                            const script = document.createElement('script');
+                            script.src = 'js/dashboard.js';
+                            script.onload = () => {
+                                console.log('Dashboard script loaded, calling loadDashboardData...');
+                                window.dashboardScriptLoaded = true;
+                                if (typeof loadDashboardData === 'function') {
+                                    loadDashboardData();
+                                }
+                            };
+                            document.head.appendChild(script);
+                        } else {
+                            // Script already loaded, just call the function
+                            setTimeout(() => {
+                                console.log('Dashboard script already loaded, calling loadDashboardData...');
+                                if (typeof loadDashboardData === 'function') {
+                                    loadDashboardData();
+                                } else {
+                                    console.error('loadDashboardData function not found!');
+                                }
+                            }, 100);
+                        }
+                    }
+                    
                     // Initialize any Plotly charts or other interactive elements
                     initializeInteractiveElements();
                     // Dispatch event for collapsible panels
@@ -48,6 +79,14 @@ document.addEventListener('DOMContentLoaded', function() {
             button.classList.add('active');
             const tabId = button.getAttribute('data-tab');
             document.getElementById(tabId).classList.add('active');
+            
+            // Special handling for dashboard tab
+            if (tabId === 'dashboard' && typeof loadDashboardData === 'function') {
+                // Re-initialize dashboard if switching to it
+                setTimeout(() => {
+                    loadDashboardData();
+                }, 100);
+            }
         });
     });
 

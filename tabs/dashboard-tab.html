@@ -1,0 +1,392 @@
+<div class="content-section">
+
+  <!-- Northwestern-branded header -->
+  <div class="dashboard-header">
+    <h1>SPROUT Participant Dashboard</h1>
+    <p>Quality Control & Analysis</p>
+  </div>
+
+  <!-- Key Metrics Section -->
+  <div class="metrics-section">
+    <h3 class="section-header">Key Metrics</h3>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value" id="total-participants">-</div>
+        <div class="metric-label">Total Participants</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="active-cities">-</div>
+        <div class="metric-label">Active Cities</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="avg-age">-</div>
+        <div class="metric-label">Average Age</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="age-range">-</div>
+        <div class="metric-label">Age Range</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Geographic Distribution -->
+  <div class="chart-section">
+    <h3 class="section-header">Geographic Distribution</h3>
+    <div id="us-map" class="chart-container"></div>
+    
+    <div class="participants-table-container">
+      <h4>Participant Count by City</h4>
+      <div id="city-table" class="data-table"></div>
+    </div>
+  </div>
+
+  <!-- Age Demographics -->
+  <div class="chart-section">
+    <h3 class="section-header">Age Demographics</h3>
+    <div id="age-chart" class="chart-container"></div>
+  </div>
+
+  <!-- Demographics Section -->
+  <div class="chart-section">
+    <h3 class="section-header">Demographics</h3>
+    <div class="demographics-grid">
+      <div class="chart-half">
+        <h4>Child Race Distribution</h4>
+        <div id="race-chart" class="chart-container"></div>
+      </div>
+      <div class="chart-half">
+        <h4>Hispanic / Latine Identification</h4>
+        <div id="hispanic-chart" class="chart-container"></div>
+      </div>
+    </div>
+    
+    <div class="chart-full">
+      <h4>Demographic Groups</h4>
+      <div id="demo-chart" class="chart-container"></div>
+    </div>
+  </div>
+
+  <!-- Quality Control Section -->
+  <div class="chart-section">
+    <h3 class="section-header">Quality Control Summary</h3>
+    <div class="qc-metrics">
+      <div class="metric-card qc-card">
+        <div class="metric-value">7,929</div>
+        <div class="metric-label">Eligible Samples</div>
+      </div>
+      <div class="metric-card qc-card">
+        <div class="metric-value">867</div>
+        <div class="metric-label">Not Eligible</div>
+      </div>
+      <div class="metric-card qc-card">
+        <div class="metric-value">8,796</div>
+        <div class="metric-label">Total Samples</div>
+      </div>
+      <div class="metric-card qc-card">
+        <div class="metric-value">90.1%</div>
+        <div class="metric-label">Eligibility Rate</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature Analysis Section -->
+  <div class="chart-section">
+    <h3 class="section-header">Feature Analysis</h3>
+    <p>Post-QC acoustic feature analysis with threshold-based quality control assessments.</p>
+    <div class="feature-charts-grid">
+      <div id="lufs-chart" class="chart-container"></div>
+      <div id="rms-chart" class="chart-container"></div>
+      <div id="amplitude-chart" class="chart-container"></div>
+      <div id="centroid-chart" class="chart-container"></div>
+      <div id="bandwidth-chart" class="chart-container"></div>
+      <div id="pitch-chart" class="chart-container"></div>
+      <div id="mfcc-mean-chart" class="chart-container"></div>
+      <div id="mfcc-std-chart" class="chart-container"></div>
+    </div>
+  </div>
+
+  <!-- Overall Eligibility Analysis -->
+  <div class="chart-section">
+    <h3 class="section-header">Overall Eligibility Analysis</h3>
+    <div id="eligibility-chart" class="chart-container"></div>
+    
+    <div class="eligibility-by-city">
+      <h4>Eligibility Distribution by City</h4>
+      <div id="city-eligibility-chart" class="chart-container"></div>
+    </div>
+  </div>
+
+  <!-- Quality Control Summary Table -->
+  <div class="chart-section">
+    <h3 class="section-header">Quality Control Summary</h3>
+    <div id="qc-summary-table" class="summary-table"></div>
+  </div>
+
+  <!-- Dashboard Info -->
+
+  <div class="dashboard-footer">
+    <p><strong>Last updated:</strong> August 2025<br>
+    <strong>Dashboard build:</strong> HTML5, CSS3, JavaScript, Plotly.js<br>
+    <strong>Contact:</strong> pedzstarlab@northwestern.edu</p>
+  </div>
+</div>
+
+<!-- Dashboard-specific CSS -->
+<style>
+/* Northwestern University brand colors */
+:root {
+  --nu-purple: #4E2A84;
+  --nu-light-purple: #836EAA;
+  --nu-gray: #716C6B;
+  --nu-light-gray: #D8D6D0;
+  --nu-white: #FFFFFF;
+}
+
+.dashboard-header {
+  background: linear-gradient(90deg, var(--nu-purple) 0%, var(--nu-light-purple) 100%);
+  padding: 2rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.dashboard-header h1 {
+  color: white;
+  font-size: 2.5rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.dashboard-header p {
+  color: white;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+  opacity: 0.9;
+}
+
+.section-header {
+  color: var(--nu-purple);
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--nu-light-gray);
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--nu-purple);
+  text-align: center;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--nu-purple);
+  margin-bottom: 0.5rem;
+}
+
+.metric-label {
+  color: var(--nu-gray);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.chart-container {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--nu-light-gray);
+  margin-bottom: 1rem;
+  min-height: 400px;
+}
+
+.demographics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.chart-half, .chart-full {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--nu-light-gray);
+}
+
+.chart-full {
+  margin-top: 1rem;
+}
+
+.chart-half h4, .chart-full h4 {
+  color: var(--nu-purple);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.participants-table-container {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.participants-table-container h4 {
+  color: var(--nu-purple);
+  margin-bottom: 1rem;
+}
+
+.data-table {
+  overflow-x: auto;
+}
+
+.data-table table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--nu-light-gray);
+}
+
+.data-table th, .data-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--nu-light-gray);
+}
+
+.data-table th {
+  background-color: var(--nu-purple);
+  color: white;
+  font-weight: 600;
+}
+
+.data-table tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.qc-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 2rem 0;
+}
+
+.qc-card {
+  border-left-color: #2E8B57;
+}
+
+.feature-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.eligibility-by-city {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.eligibility-by-city h4 {
+  color: var(--nu-purple);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.summary-table {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--nu-light-gray);
+  overflow-x: auto;
+}
+
+.summary-table table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--nu-light-gray);
+}
+
+.summary-table th, .summary-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--nu-light-gray);
+}
+
+.summary-table th {
+  background-color: var(--nu-purple);
+  color: white;
+  font-weight: 600;
+}
+
+.summary-table tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.dashboard-info {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 2rem 0;
+}
+
+.dashboard-info h3 {
+  color: var(--nu-purple);
+  margin-bottom: 1rem;
+}
+
+.dashboard-info ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.dashboard-info li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.dashboard-info li:last-child {
+  border-bottom: none;
+}
+
+.dashboard-footer {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--nu-gray);
+  border-top: 1px solid var(--nu-light-gray);
+  margin-top: 3rem;
+}
+
+@media (max-width: 768px) {
+  .demographics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2rem;
+  }
+}
+</style>
