@@ -235,23 +235,19 @@
   }
 
   .tabs {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-xs);
     justify-content: center;
     background: var(--nu-white);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
     margin: var(--space-md) 0;
-    overflow-x: auto;
     padding: var(--space-sm);
     position: relative;
-    gap: var(--space-xs);
   }
 
   .tab-button {
-    flex: 1 1 auto;
-    min-width: 120px;
-    max-width: 180px;
     margin: 0;
     padding: var(--space-md) var(--space-sm);
     background: var(--nu-white);
@@ -270,6 +266,10 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     line-height: 1.2;
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .tab-button::before {
@@ -832,18 +832,32 @@
   /* =============================
      Responsive
      ============================= */
-  @media (max-width: 1024px) {
+  @media (max-width: 1200px) {
+    .tabs {
+      grid-template-columns: repeat(5, 1fr);
+    }
+    
     .tab-button {
-      flex: 1 1 calc(25% - var(--space-xs));
-      min-width: 90px;
+      font-size: var(--font-size-xs);
+      padding: var(--space-sm) var(--space-xs);
+      white-space: normal;
+      line-height: 1.1;
+      min-height: 3.5rem;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .tabs {
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+    }
+    
+    .tab-button {
       font-size: var(--font-size-xs);
       padding: var(--space-sm) var(--space-xs);
       white-space: normal;
       line-height: 1.1;
       min-height: 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
   }
 
@@ -867,25 +881,19 @@
     }
 
     .tabs {
-      flex-wrap: wrap;
-      padding: var(--space-xs);
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
       gap: var(--space-xs);
+      padding: var(--space-xs);
     }
 
     .tab-button {
-      flex: 1 1 calc(33.333% - var(--space-xs));
-      min-width: 100px;
-      max-width: none;
       margin: 0;
       padding: var(--space-sm) var(--space-xs);
       font-size: var(--font-size-xs);
       white-space: normal;
       line-height: 1.1;
-      height: auto;
       min-height: 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     h1 { font-size: var(--font-size-2xl); }
@@ -927,20 +935,27 @@
     }
 
     .tabs {
-      flex-direction: column;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: var(--space-xs);
       padding: var(--space-xs);
     }
 
+    /* Handle the odd number (9 tabs) by spanning the last tab across two columns */
+    .tab-button:last-child {
+      grid-column: span 2;
+      max-width: 50%;
+      justify-self: center;
+    }
+
     .tab-button {
-      flex: 1 1 100%;
-      min-width: auto;
-      max-width: none;
-      margin: 0 0 var(--space-xs) 0;
+      margin: 0;
       padding: var(--space-md) var(--space-sm);
       font-size: var(--font-size-sm);
       white-space: normal;
       text-align: center;
       min-height: 2.5rem;
+      line-height: 1.2;
     }
 
     main, .block-container {
