@@ -195,16 +195,6 @@
     position: relative;
   }
 
-  h1::after {
-    content: '';
-    display: block;
-    width: 80px;
-    height: 4px;
-    background: var(--nu-gold);
-    margin-top: var(--space-sm);
-    border-radius: 2px;
-  }
-
   h2 {
     font-size: var(--font-size-2xl);
     margin-top: var(--space-xl);
@@ -255,24 +245,31 @@
     overflow-x: auto;
     padding: var(--space-sm);
     position: relative;
+    gap: var(--space-xs);
   }
 
   .tab-button {
-    flex: 1;
-    margin: 0 var(--space-xs);
-    padding: var(--space-md) var(--space-md);
+    flex: 1 1 auto;
+    min-width: 120px;
+    max-width: 180px;
+    margin: 0;
+    padding: var(--space-md) var(--space-sm);
     background: var(--nu-white);
     border: 2px solid var(--nu-purple);
     border-radius: var(--radius);
     color: var(--nu-purple);
     font-family: var(--font-heading);
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-sm);
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transition);
     position: relative;
     overflow: hidden;
     z-index: 1;
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    line-height: 1.2;
   }
 
   .tab-button::before {
@@ -835,6 +832,21 @@
   /* =============================
      Responsive
      ============================= */
+  @media (max-width: 1024px) {
+    .tab-button {
+      flex: 1 1 calc(25% - var(--space-xs));
+      min-width: 90px;
+      font-size: var(--font-size-xs);
+      padding: var(--space-sm) var(--space-xs);
+      white-space: normal;
+      line-height: 1.1;
+      min-height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
   @media (max-width: 768px) {
     html {
       font-size: 14px;
@@ -857,13 +869,23 @@
     .tabs {
       flex-wrap: wrap;
       padding: var(--space-xs);
+      gap: var(--space-xs);
     }
 
     .tab-button {
-      margin: var(--space-xs) 0;
-      padding: var(--space-sm) var(--space-sm);
-      font-size: var(--font-size-sm);
-      flex-basis: calc(50% - var(--space-sm));
+      flex: 1 1 calc(33.333% - var(--space-xs));
+      min-width: 100px;
+      max-width: none;
+      margin: 0;
+      padding: var(--space-sm) var(--space-xs);
+      font-size: var(--font-size-xs);
+      white-space: normal;
+      line-height: 1.1;
+      height: auto;
+      min-height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     h1 { font-size: var(--font-size-2xl); }
@@ -904,8 +926,21 @@
       font-size: 12px;
     }
 
+    .tabs {
+      flex-direction: column;
+      padding: var(--space-xs);
+    }
+
     .tab-button {
-      flex-basis: 100%;
+      flex: 1 1 100%;
+      min-width: auto;
+      max-width: none;
+      margin: 0 0 var(--space-xs) 0;
+      padding: var(--space-md) var(--space-sm);
+      font-size: var(--font-size-sm);
+      white-space: normal;
+      text-align: center;
+      min-height: 2.5rem;
     }
 
     main, .block-container {
