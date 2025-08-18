@@ -46,6 +46,65 @@
       0%, 100% { transform: scale(1); }
       50%      { transform: scale(1.1); }
     }
+    
+    /* Zenodo card styling */
+    .zenodo-card {
+      display: flex;
+      background-color: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+    
+    .zenodo-badge {
+      background-color: #2878b6;
+      color: white;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .zenodo-badge i {
+      font-size: 2rem;
+    }
+    
+    .zenodo-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+    
+    .pill {
+      background-color: #f0f0f0;
+      padding: 0.25rem 0.75rem;
+      border-radius: 1rem;
+      font-size: 0.85rem;
+      color: #555;
+    }
+    
+    .btn-zenodo {
+      display: inline-block;
+      background-color: #2878b6;
+      color: white;
+      padding: 0.5rem 1.25rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+    
+    .btn-zenodo:hover {
+      background-color: #1c5f94;
+    }
   </style>
 </head>
 <body>
@@ -120,14 +179,6 @@
         aria-label="View SPROUT on Zenodo (opens in a new tab)"
       >
         View on Zenodo
-      </a>
-      <a
-        class="btn-secondary"
-        href="https://zenodo.org/records/15723649"
-        target="_blank" rel="noopener"
-        aria-label="Cite SPROUT record on Zenodo (opens in a new tab)"
-      >
-        Cite / Details
       </a>
     </div>
 
