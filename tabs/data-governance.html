@@ -6,42 +6,56 @@
 
     <p>Data is stored on Northwestern University's secure infrastructure with three registered access levels and their requirements:</p>
 
-    <h4>Credentialed Access</h4>
-    <p><strong>Description:</strong> Full data repository which includes raw audio and video recordings, transcripts, surveys including additional detailed demographic information (e.g., caregiver education, household income, multilingual exposure) and complete test results. Access is available only under heightened security controls, with IRB approval and explicit institutional review. This dataset is available under a Data Use Agreement for non-commercial research and educational use.</p>
-    <p><strong>Requirements:</strong> Submitted request form, verified institution credentials, research proposal abstract, IRB-approved protocol, a lab-provided Northwestern affiliated NetID, and a Globus End Point.</p>
+    <div class="access-level-card">
+        <h4>Credentialed Access</h4>
+        <p><strong>Description:</strong> Full data repository which includes raw audio and video recordings, transcripts, surveys including additional detailed demographic information (e.g., caregiver education, household income, multilingual exposure) and complete test results. Access is available only under heightened security controls, with IRB approval and explicit institutional review. This dataset is available under a Data Use Agreement for non-commercial research and educational use.</p>
+        <p><strong>Requirements:</strong> Submitted request form, verified institution credentials, research proposal abstract, IRB-approved protocol, a lab-provided Northwestern affiliated NetID, and a Globus End Point.</p>
+    </div>
 
-    <h4>Secured Access</h4>
-    <p><strong>Description:</strong> A curated subset of de-identified audio data and basic demographic variables. This dataset is available under a Data Use Agreement for non-commercial research, technology development and educational use.</p>
-    <p><strong>Requirements:</strong> Request form submission, project abstract, a Globus End Point, adherence to Creative Commons Attribution-NonCommercial 4.0 International license.</p>
+    <div class="access-level-card">
+        <h4>Secured Access</h4>
+        <p><strong>Description:</strong> A curated subset of de-identified audio data and basic demographic variables. This dataset is available under a Data Use Agreement for non-commercial research, technology development and educational use.</p>
+        <p><strong>Requirements:</strong> Request form submission, project abstract, a Globus End Point, adherence to Creative Commons Attribution-NonCommercial 4.0 International license.</p>
+    </div>
 
-    <h4>Registered Access</h4>
-    <p><strong>Description:</strong> A curated subset of de-identified audio data and basic demographic variables for participants who have explicitly consented to commercial use. These data are intended for community reuse, including AI model development in academic and commercial domains.</p>
-    <p><strong>Requirements:</strong> Registration and a Data Use Agreement that restricts commercial development to educational, therapeutic, or entertainment technologies for children.</p>
+    <div class="access-level-card">
+        <h4>Registered Access</h4>
+        <p><strong>Description:</strong> A curated subset of de-identified audio data and basic demographic variables for participants who have explicitly consented to commercial use. These data are intended for community reuse, including AI model development in academic and commercial domains.</p>
+        <p><strong>Requirements:</strong> Registration and a Data Use Agreement that restricts commercial development to educational, therapeutic, or entertainment technologies for children.</p>
+    </div>
 
     <h3>De-Identification Levels</h3>
     <p>Since audio recordings are considered voice prints, we begin deidentification at the recording session level. We take a layered approach to data protection to balance transparency with privacy.</p>
 
-    <ul>
+    <ul class="feature-list">
         <li>All Personal Identifiable Information is stored securely in REDCap, with limited access to specified personnel and is not located on the data storage server.</li>
         <li>All data on the storage server are de-identified with participant codes at the source of the recording.</li>
-        <li>Since young children require some redirection for engagement, the child’s first name only may be used in the recording. All data are de-identified and stored using abstract participant IDs.</li>
+        <li>Since young children require some redirection for engagement, the child's first name only may be used in the recording. All data are de-identified and stored using abstract participant IDs.</li>
         <li>Only key demographic variables (city, race, age, biosex, risk status) are available in the Secured Access and Registered Access dataset.</li>
     </ul>
 
     <h3>Consent</h3>
-    <dl>
-        <dt><strong>Does this dataset allow only the non-commercial use of the data?</strong></dt>
-        <dd>Yes, currently the data can be used for non-commercial use only. We will notify registered users when we have dataset updates.</dd>
+    <div class="faq-section">
+        <div class="faq-item">
+            <dt><strong>Does this dataset allow only the non-commercial use of the data?</strong></dt>
+            <dd>Yes, currently the data can be used for non-commercial use only. We will notify registered users when we have dataset updates.</dd>
+        </div>
 
-        <dt><strong>Does this dataset allow only the use of the data in a specific geographic location?</strong></dt>
-        <dd>No</dd>
+        <div class="faq-item">
+            <dt><strong>Does this dataset allow only the use of the data in a specific geographic location?</strong></dt>
+            <dd>No</dd>
+        </div>
 
-        <dt><strong>Does this dataset allow only the use of the data for a specific type of research?</strong></dt>
-        <dd>No</dd>
+        <div class="faq-item">
+            <dt><strong>Does this dataset allow only the use of the data for a specific type of research?</strong></dt>
+            <dd>No</dd>
+        </div>
 
-        <dt><strong>Does this dataset allow only the use of the data for research that does not involve the development of methods or algorithms?</strong></dt>
-        <dd>No. The data can be used to develop algorithms used for educational, therapeutic, child entertainment tools but at this time they cannot be distributed for commercial purposes.</dd>
-    </dl>
+        <div class="faq-item">
+            <dt><strong>Does this dataset allow only the use of the data for research that does not involve the development of methods or algorithms?</strong></dt>
+            <dd>No. The data can be used to develop algorithms used for educational, therapeutic, child entertainment tools but at this time they cannot be distributed for commercial purposes.</dd>
+        </div>
+    </div>
 
     <h4 class="section-subheader">Consent Details</h4>
     <p>Data that does not contain direct identifiers will be shared with external users for future research through a secure database. Data that poses a low risk of causing individual re-identification will be shared through secured access and use agreements with the public. Data that poses a heightened risk of re-identification if shared in public access datasets will be shared through a controlled access mechanism with authorized researchers.</p>
@@ -52,10 +66,8 @@
         All requests will be reviewed by the governance committee to ensure compliance with our Data Use Agreements and ethical standards.
     </p>
 
-    <div style="margin-top: 20px; text-align: center;">
-        <a href="https://redcap.nubic.northwestern.edu/redcap/surveys/?s=DM37NXKDHYAKXYPF" target="_blank" 
-        style="background-color: #4b2e83; color: #fff; padding: 12px 24px; text-decoration: none; 
-                border-radius: 6px; font-weight: bold; font-size: 16px; display: inline-block;">
+    <div class="action-button-container">
+        <a href="https://redcap.nubic.northwestern.edu/redcap/surveys/?s=DM37NXKDHYAKXYPF" target="_blank" class="nu-button">
             Apply Now
         </a>
     </div>

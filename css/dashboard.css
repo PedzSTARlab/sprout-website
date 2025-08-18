@@ -1070,3 +1070,76 @@
     font-size: var(--font-size-sm);
   }
 }
+
+/* Data Governance Page Styling */
+.access-level-card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--nu-purple);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.access-level-card h4 {
+    margin-top: 0;
+    color: var(--nu-purple);
+    font-size: 1.25rem;
+}
+
+.feature-list {
+    padding-left: 1.5rem;
+}
+
+.feature-list li {
+    margin-bottom: 0.75rem;
+    position: relative;
+}
+
+.faq-section {
+    margin: 1.5rem 0;
+}
+
+.faq-item {
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+}
+
+.faq-item dt {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.faq-item dd {
+    margin-left: 0;
+    padding-left: 1rem;
+}
+
+.section-subheader {
+    color: var(--nu-purple);
+    margin: 1.5rem 0 0.75rem;
+}
+
+.action-button-container {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.nu-button {
+    background-color: var(--nu-purple);
+    color: #fff;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 16px;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+}
+
+.nu-button:hover {
+    background-color: #3d1d68;
+    text-decoration: none;
+    color: white;
+}
