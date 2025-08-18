@@ -59,7 +59,7 @@ async function loadDashboardData() {
     createCityTable(dashboardData.cityTable);
     createAgeScatterChart(dashboardData.ageData);
     createIncomeGroupsChart(dashboardData.demographics.incomeGroups);
-    createRaceEthnicityChart(dashboardData.demographics.raceEthnicity);
+    createChildRaceChart(dashboardData.demographics.raceEthnicity);
     createHispanicChart(dashboardData.demographics.hispanicCounts);
     createQualityControlChart(dashboardData.qualityControl);
     
@@ -294,7 +294,7 @@ function createAgeScatterChart(ageData) {
   Plotly.newPlot('age-chart', [trace], layout, config);
 }
 
-// Create Income Groups Chart (matching Python version)
+// Create Income Groups Chart (using pie chart as requested)
 function createIncomeGroupsChart(incomeData) {
   const element = document.getElementById('income-groups-chart');
   if (!element || !incomeData) {
@@ -303,38 +303,34 @@ function createIncomeGroupsChart(incomeData) {
   }
 
   const data = [{
-    x: incomeData.map(item => item.label),
-    y: incomeData.map(item => item.value),
-    type: 'bar',
+    labels: incomeData.map(item => item.label),
+    values: incomeData.map(item => item.value),
+    type: 'pie',
     marker: {
-      color: incomeData.map(item => item.value),
-      colorscale: [[0, NU_COLORS.lightPurple], [1, NU_COLORS.purple]],
-      showscale: false
+      colors: [NU_COLORS.purple, NU_COLORS.lightPurple, NU_COLORS.gold, '#8B5A96', '#A67CAD']
     },
-    text: incomeData.map(item => `${item.percentage}%`),
+    textinfo: 'label+percent',
     textposition: 'auto',
-    hovertemplate: '<b>%{x}</b><br>Count: %{y}<br>Percentage: %{text}<extra></extra>'
+    hovertemplate: '<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>',
+    hole: 0.3  // Creates a donut chart for better visual appeal
   }];
 
   const layout = {
     title: {
-      text: 'Participants by Income Group',
+      text: 'Participants by Demographic Group',
       font: { size: 18, color: NU_COLORS.purple, family: 'Arial' }
-    },
-    xaxis: {
-      title: 'Income Group',
-      titlefont: { color: NU_COLORS.purple },
-      tickfont: { color: NU_COLORS.purple }
-    },
-    yaxis: {
-      title: 'Number of Participants',
-      titlefont: { color: NU_COLORS.purple },
-      tickfont: { color: NU_COLORS.purple }
     },
     plot_bgcolor: 'rgba(0,0,0,0)',
     paper_bgcolor: 'rgba(0,0,0,0)',
     font: { color: NU_COLORS.purple },
-    showlegend: false,
+    showlegend: true,
+    legend: {
+      orientation: 'v',
+      x: 1,
+      xanchor: 'left',
+      y: 1,
+      yanchor: 'top'
+    },
     height: 450
   };
 
@@ -346,26 +342,42 @@ function createIncomeGroupsChart(incomeData) {
   Plotly.newPlot('income-groups-chart', data, layout, config);
 }
 
-// Create Race/Ethnicity Chart (matching Python version)
-function createRaceEthnicityChart(raceData) {
-  const element = document.getElementById('race-ethnicity-chart');
+// Create Child Race Chart (using pie chart as requested)
+function createChildRaceChart(raceData) {
+  const element = document.getElementById('child-race-chart');
   if (!element || !raceData) {
-    console.warn('Race/ethnicity chart element not found or no data available');
+    console.warn('Child race chart element not found or no data available');
+    return;
+  }
+
+  // Convert array format to labels and values for Plotly
+  let labels, values;
+  if (Array.isArray(raceData)) {
+    // Data is already in array format from data processor
+    labels = raceData.map(item => item.label);
+    values = raceData.map(item => item.value);
+  } else {
+    // Data is in object format - convert it
+    labels = Object.keys(raceData);
+    values = Object.values(raceData);
+  }
+
+  if (labels.length === 0 || values.length === 0) {
+    console.warn('No race data to display');
     return;
   }
 
   const data = [{
-    x: raceData.map(item => item.label),
-    y: raceData.map(item => item.value),
-    type: 'bar',
+    labels: labels,
+    values: values,
+    type: 'pie',
     marker: {
-      color: raceData.map(item => item.value),
-      colorscale: [[0, NU_COLORS.lightPurple], [1, NU_COLORS.purple]],
-      showscale: false
+      colors: [NU_COLORS.purple, NU_COLORS.lightPurple, NU_COLORS.gold, '#8B5A96', '#A67CAD', '#C8A2C8', '#9370DB']
     },
-    text: raceData.map(item => `${item.percentage}%`),
+    textinfo: 'label+percent',
     textposition: 'auto',
-    hovertemplate: '<b>%{x}</b><br>Count: %{y}<br>Percentage: %{text}<extra></extra>'
+    hovertemplate: '<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>',
+    hole: 0.3  // Creates a donut chart for better visual appeal
   }];
 
   const layout = {
@@ -373,21 +385,17 @@ function createRaceEthnicityChart(raceData) {
       text: 'Participants by Reported Child Race',
       font: { size: 18, color: NU_COLORS.purple, family: 'Arial' }
     },
-    xaxis: {
-      title: 'Race',
-      titlefont: { color: NU_COLORS.purple },
-      tickfont: { color: NU_COLORS.purple },
-      tickangle: -45
-    },
-    yaxis: {
-      title: 'Number of Participants',
-      titlefont: { color: NU_COLORS.purple },
-      tickfont: { color: NU_COLORS.purple }
-    },
     plot_bgcolor: 'rgba(0,0,0,0)',
     paper_bgcolor: 'rgba(0,0,0,0)',
     font: { color: NU_COLORS.purple },
-    showlegend: false,
+    showlegend: true,
+    legend: {
+      orientation: 'v',
+      x: 1,
+      xanchor: 'left',
+      y: 1,
+      yanchor: 'top'
+    },
     height: 450
   };
 
@@ -396,10 +404,10 @@ function createRaceEthnicityChart(raceData) {
     responsive: true
   };
 
-  Plotly.newPlot('race-ethnicity-chart', data, layout, config);
+  Plotly.newPlot('child-race-chart', data, layout, config);
 }
 
-// Create Hispanic Chart (matching Python version)
+// Create Hispanic Chart (using pie chart as requested)
 function createHispanicChart(hispanicData) {
   const element = document.getElementById('hispanic-chart');
   if (!element || !hispanicData) {
@@ -407,18 +415,34 @@ function createHispanicChart(hispanicData) {
     return;
   }
 
+  // Convert array format to labels and values for Plotly
+  let labels, values;
+  if (Array.isArray(hispanicData)) {
+    // Data is already in array format from data processor
+    labels = hispanicData.map(item => item.label);
+    values = hispanicData.map(item => item.value);
+  } else {
+    // Data is in object format - convert it
+    labels = Object.keys(hispanicData);
+    values = Object.values(hispanicData);
+  }
+
+  if (labels.length === 0 || values.length === 0) {
+    console.warn('No Hispanic data to display');
+    return;
+  }
+
   const data = [{
-    x: hispanicData.map(item => item.label),
-    y: hispanicData.map(item => item.value),
-    type: 'bar',
+    labels: labels,
+    values: values,
+    type: 'pie',
     marker: {
-      color: hispanicData.map(item => item.value),
-      colorscale: [[0, NU_COLORS.lightPurple], [1, NU_COLORS.purple]],
-      showscale: false
+      colors: [NU_COLORS.purple, NU_COLORS.lightPurple, NU_COLORS.gold]
     },
-    text: hispanicData.map(item => `${item.percentage}%`),
+    textinfo: 'label+percent',
     textposition: 'auto',
-    hovertemplate: '<b>%{x}</b><br>Count: %{y}<br>Percentage: %{text}<extra></extra>'
+    hovertemplate: '<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>',
+    hole: 0.3  // Creates a donut chart for better visual appeal
   }];
 
   const layout = {
@@ -426,21 +450,17 @@ function createHispanicChart(hispanicData) {
       text: 'Participants by Hispanic / Latine Identification',
       font: { size: 18, color: NU_COLORS.purple, family: 'Arial' }
     },
-    xaxis: {
-      title: 'Ethnicity',
-      titlefont: { color: NU_COLORS.purple },
-      tickfont: { color: NU_COLORS.purple },
-      tickangle: -30
-    },
-    yaxis: {
-      title: 'Number of Participants',
-      titlefont: { color: NU_COLORS.purple },
-      tickfont: { color: NU_COLORS.purple }
-    },
     plot_bgcolor: 'rgba(0,0,0,0)',
     paper_bgcolor: 'rgba(0,0,0,0)',
     font: { color: NU_COLORS.purple },
-    showlegend: false,
+    showlegend: true,
+    legend: {
+      orientation: 'v',
+      x: 1,
+      xanchor: 'left',
+      y: 1,
+      yanchor: 'top'
+    },
     height: 450
   };
 
@@ -486,8 +506,10 @@ function createQualityControlChart(qcData) {
     showlegend: true,
     legend: {
       orientation: 'v',
-      x: 1.02,
-      y: 0.5,
+      x: 1,
+      xanchor: 'left',
+      y: 1,
+      yanchor: 'top',
       font: { size: 12 }
     },
     margin: { t: 50, b: 20, l: 20, r: 120 },
@@ -522,7 +544,7 @@ function showErrorMessage() {
   // Show error in main chart containers
   const chartContainers = [
     'income-groups-chart',
-    'race-ethnicity-chart'
+    'child-race-chart'
   ];
   
   chartContainers.forEach(containerId => {
@@ -551,7 +573,7 @@ window.debugDashboard = function() {
   const requiredElements = [
     'total-participants', 'avg-age', 'completion-rate', 'data-quality', 'active-studies',
     'total-segments', 'eligibility-rate',
-    'income-groups-chart', 'race-ethnicity-chart', 'us-map', 'age-chart', 'qc-chart', 'city-table'
+    'income-groups-chart', 'child-race-chart', 'hispanic-chart', 'us-map', 'age-chart', 'qc-chart', 'city-table'
   ];
   
   console.log('Checking required elements:');

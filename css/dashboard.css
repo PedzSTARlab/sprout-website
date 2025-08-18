@@ -463,6 +463,23 @@
     transform: translateY(-4px);
   }
 
+  /* Remove card styling from demographic charts */
+  #income-groups-chart .js-plotly-plot,
+  #child-race-chart .js-plotly-plot,
+  #hispanic-chart .js-plotly-plot {
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  #income-groups-chart .js-plotly-plot:hover,
+  #child-race-chart .js-plotly-plot:hover,
+  #hispanic-chart .js-plotly-plot:hover {
+    transform: none;
+  }
+
   .metric-card {
     background: var(--nu-white);
     border-radius: var(--radius);

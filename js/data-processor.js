@@ -124,11 +124,7 @@ class DataProcessor {
             uniqueParticipants: new Set(this.participantData.map(p => p.participant_id)).size,
             incomeGroups: {},
             raceEthnicity: {},
-            hispanicCounts: {
-                "Hispanic / Latine": 108,
-                "Not Hispanic": 315, 
-                "Unknown": 3
-            },
+            hispanicCounts: {},
             ageStats: {
                 min: Infinity,
                 max: -Infinity,
@@ -174,6 +170,25 @@ class DataProcessor {
                     demographics.raceEthnicity[raceName] = (demographics.raceEthnicity[raceName] || 0) + 1;
                 });
             }
+        });
+
+        // Process Hispanic/Latine data from ss_child_hisp_latx column
+        this.participantData.forEach(participant => {
+            const hispanicValue = participant.ss_child_hisp_latx ? participant.ss_child_hisp_latx.toString().trim() : '';
+            let hispanicLabel;
+            
+            // Map values like Python version: 1.0 = Hispanic, 2.0 = Not Hispanic
+            if (hispanicValue === '1' || hispanicValue === '1.0') {
+                hispanicLabel = 'Hispanic / Latine';
+            } else if (hispanicValue === '2' || hispanicValue === '2.0') {
+                hispanicLabel = 'Not Hispanic';
+            } else if (hispanicValue === '' || !hispanicValue) {
+                hispanicLabel = 'Unknown';
+            } else {
+                hispanicLabel = 'Unknown';
+            }
+            
+            demographics.hispanicCounts[hispanicLabel] = (demographics.hispanicCounts[hispanicLabel] || 0) + 1;
         });
 
         // Convert city counts from Sets to numbers
