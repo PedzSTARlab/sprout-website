@@ -729,22 +729,6 @@ function createQualityControlChart(qcData) {
     const notEligibleSegments = qcData.notEligibleSegments || 0;
     const eligibleSegments = qcData.eligibleSegments || 0;
     const passRate = qcData.passRate || '0.0';
-
-    tableHTML += `
-          </tbody>
-        </table>
-        <div style="background: linear-gradient(90deg, ${NU_COLORS.lightPurple} 0%, #A985C7 100%); 
-                    color: white; padding: 15px; border-radius: 5px; text-align: center;">
-          <h4 style="margin: 0 0 10px 0;">Overall Quality Metrics</h4>
-          <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
-            <div><strong>Total Samples:</strong> ${totalSamples.toLocaleString()}</div>
-            <div><strong>Eligible:</strong> ${eligibleSegments.toLocaleString()}</div>
-            <div><strong>Not Eligible:</strong> ${notEligibleSegments.toLocaleString()}</div>
-            <div><strong>Pass Rate:</strong> ${passRate}%</div>
-          </div>
-        </div>
-      </div>
-    `;
     
     element.innerHTML = tableHTML;
   } else {
