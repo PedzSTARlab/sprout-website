@@ -70,10 +70,11 @@
     </div>
   </div>
 
-  <!-- Feature Analysis Section -->
+    <!-- Feature Analysis Section -->
   <div class="chart-section">
     <h3 class="section-header">Feature Analysis</h3>
-    <p>Post-QC acoustic feature analysis with threshold-based quality control assessments.</p>
+    
+    <!-- Individual Feature Charts Grid -->
     <div class="feature-charts-grid">
       <div id="lufs-chart" class="chart-container"></div>
       <div id="rms-chart" class="chart-container"></div>
@@ -125,6 +126,12 @@
   <div class="chart-section">
     <h3 class="section-header">Quality Control Summary</h3>
     <div id="qc-chart" class="chart-container"></div>
+  </div>
+
+  <!-- Feature Violation Summary -->
+  <div class="chart-section">
+    <h3 class="section-header">Feature Violation Rate Summary</h3>
+    <div id="feature-violation-summary" class="chart-container"></div>
   </div>
 
 <!-- Dashboard-specific CSS -->
@@ -371,9 +378,14 @@
 
 .feature-charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 2rem;
   margin: 2rem 0;
+}
+
+.feature-charts-grid > div {
+  display: flex;
+  flex-direction: column;
 }
 
 .eligibility-by-city {

@@ -61,6 +61,12 @@ async function loadDashboardData() {
     createEligibilityChart(dashboardData.eligibilityData);
     createCityEligibilityChart(dashboardData.eligibilityData);
     
+    // Create feature charts
+    createFeatureCharts(dashboardData.featureData);
+    
+    // Create additional Python-style analysis charts
+    createFeatureViolationSummary(dashboardData.featureData);
+    
   } catch (error) {
     console.error('Error loading dashboard data from research files:', error);
     showErrorMessage();
@@ -1131,6 +1137,321 @@ window.debugDashboard = function() {
     console.log('❌ Plotly is not available');
   }
 };
+
+// Create individual feature charts
+function createFeatureCharts(featureData) {
+  if (!featureData) {
+    console.warn('No feature data available for charts');
+    return;
+  }
+
+  const featureChartMappings = {
+    'LUFS': 'lufs-chart',
+    'RMS Energy': 'rms-chart', 
+    'Relative Amplitude': 'amplitude-chart',
+    'Spectral Centroid (Hz)': 'centroid-chart',
+    'Spectral Bandwidth (Hz)': 'bandwidth-chart',
+    'Pitch Mean (Hz)': 'pitch-chart',
+    'MFCC Mean': 'mfcc-mean-chart',
+    'MFCC Std Dev': 'mfcc-std-chart'
+  };
+
+  Object.entries(featureChartMappings).forEach(([featureName, chartId]) => {
+    const data = featureData[featureName];
+    if (data && data.values && data.values.length > 0) {
+      createFeatureDistributionChart(chartId, featureName, data);
+    } else {
+      console.warn(`No data available for feature: ${featureName}`);
+    }
+  });
+}
+
+// Create individual feature distribution chart (matching Python scatter plots)
+function createFeatureDistributionChart(containerId, featureName, data) {
+  const container = document.getElementById(containerId);
+  if (!container) {
+    console.warn(`Container ${containerId} not found for feature ${featureName}`);
+    return;
+  }
+
+  // Clear container and create wrapper for chart and stats
+  container.innerHTML = '';
+  const chartDiv = document.createElement('div');
+  chartDiv.id = `${containerId}-plot`;
+  chartDiv.style.width = '100%';
+  chartDiv.style.height = '400px';
+  container.appendChild(chartDiv);
+
+  // Create scatter plot data like Python version
+  const withinRangeData = [];
+  const belowThresholdData = [];
+  const aboveThresholdData = [];
+  
+  data.values.forEach((value, index) => {
+    const point = {
+      x: index,
+      y: value,
+      text: `Sample ${index + 1}<br>Value: ${value.toFixed(3)}<br>Feature: ${featureName}`,
+      hovertemplate: '%{text}<extra></extra>'
+    };
+    
+    if (value < data.lowThreshold) {
+      belowThresholdData.push(point);
+    } else if (value > data.highThreshold) {
+      aboveThresholdData.push(point);
+    } else {
+      // value >= lowThreshold && value <= highThreshold
+      withinRangeData.push(point);
+    }
+  });
+
+  // Create traces like Python version (color-coded by threshold status)
+  const traces = [
+    {
+      x: withinRangeData.map(p => p.x),
+      y: withinRangeData.map(p => p.y),
+      type: 'scatter',
+      mode: 'markers',
+      name: 'Within Range',
+      marker: {
+        color: '#4CAF50', // Green - within thresholds
+        size: 4,
+        opacity: 0.7
+      },
+      text: withinRangeData.map(p => p.text),
+      hovertemplate: '%{text}<extra></extra>'
+    },
+    {
+      x: belowThresholdData.map(p => p.x),
+      y: belowThresholdData.map(p => p.y),
+      type: 'scatter',
+      mode: 'markers', 
+      name: 'Below Threshold',
+      marker: {
+        color: '#F44336', // Red - below threshold
+        size: 4,
+        opacity: 0.7
+      },
+      text: belowThresholdData.map(p => p.text),
+      hovertemplate: '%{text}<extra></extra>'
+    },
+    {
+      x: aboveThresholdData.map(p => p.x),
+      y: aboveThresholdData.map(p => p.y),
+      type: 'scatter',
+      mode: 'markers',
+      name: 'Above Threshold', 
+      marker: {
+        color: '#FF9800', // Orange - above threshold
+        size: 4,
+        opacity: 0.7
+      },
+      text: aboveThresholdData.map(p => p.text),
+      hovertemplate: '%{text}<extra></extra>'
+    }
+  ];
+
+  // Add threshold lines (matching Python version)
+  const shapes = [
+    // Low threshold line
+    {
+      type: 'line',
+      x0: 0,
+      x1: data.values.length - 1,
+      y0: data.lowThreshold,
+      y1: data.lowThreshold,
+      line: {
+        color: 'red',
+        width: 2,
+        dash: 'dash'
+      }
+    },
+    // High threshold line
+    {
+      type: 'line',
+      x0: 0,
+      x1: data.values.length - 1,
+      y0: data.highThreshold,
+      y1: data.highThreshold,
+      line: {
+        color: 'red',
+        width: 2,
+        dash: 'dash'
+      }
+    }
+  ];
+
+  const layout = {
+    title: {
+      text: `${featureName} Quality Control Analysis`,
+      font: { 
+        family: 'Montserrat, sans-serif',
+        size: 14,
+        color: NU_COLORS.darkPurple
+      }
+    },
+    xaxis: {
+      title: 'Sample Index',
+      font: { family: 'Lato, sans-serif', size: 11 },
+      gridcolor: NU_COLORS.lightGray
+    },
+    yaxis: {
+      title: featureName,
+      font: { family: 'Lato, sans-serif', size: 11 },
+      gridcolor: NU_COLORS.lightGray
+    },
+    shapes: shapes,
+    plot_bgcolor: 'white',
+    paper_bgcolor: 'white',
+    margin: { t: 50, r: 20, b: 60, l: 60 },
+    showlegend: true,
+    legend: {
+      x: 1,
+      xanchor: 'right',
+      y: 1,
+      font: { size: 10 }
+    },
+    annotations: [
+      {
+        x: data.values.length * 0.02,
+        y: data.lowThreshold,
+        text: `Low Threshold: ${data.lowThreshold}`,
+        showarrow: false,
+        xanchor: 'left',
+        yanchor: 'bottom',
+        font: { size: 9, color: 'red' },
+        bgcolor: 'white',
+        bordercolor: 'red',
+        borderwidth: 1
+      },
+      {
+        x: data.values.length * 0.02,
+        y: data.highThreshold,
+        text: `High Threshold: ${data.highThreshold}`,
+        showarrow: false,
+        xanchor: 'left',
+        yanchor: 'top',
+        font: { size: 9, color: 'red' },
+        bgcolor: 'white',
+        bordercolor: 'red',
+        borderwidth: 1
+      }
+    ]
+  };
+
+  const config = {
+    responsive: true,
+    displayModeBar: false
+  };
+
+  Plotly.newPlot(chartDiv, traces, layout, config);
+
+  // Add statistics text below the chart (matching Python version)
+  const violationRate = ((data.belowThreshold + data.aboveThreshold) / data.total * 100).toFixed(1);
+  let status = 'Needs Attention';
+  if (violationRate < 5) status = 'Excellent';
+  else if (violationRate < 15) status = 'Good';
+  else if (violationRate < 30) status = 'Moderate';
+  
+  const statsHtml = `
+    <div style="margin-top: 15px; padding: 12px; background: #f8f9fa; border-radius: 6px; font-size: 13px; border-left: 4px solid ${NU_COLORS.purple};">
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+        <div><strong>Total Samples:</strong> ${data.total}</div>
+        <div><strong>Within Range:</strong> <span style="color: #4CAF50;">${data.withinRange}</span></div>
+        <div><strong>Below Threshold:</strong> <span style="color: #F44336;">${data.belowThreshold}</span></div>
+        <div><strong>Above Threshold:</strong> <span style="color: #FF9800;">${data.aboveThreshold}</span></div>
+      </div>
+      <div style="margin-top: 8px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+        <div><strong>Pass Rate:</strong> ${((data.withinRange/data.total)*100).toFixed(1)}%</div>
+        <div><strong>Violation Rate:</strong> ${violationRate}%</div>
+        <div><strong>Status:</strong> <span style="font-weight: bold; color: ${violationRate < 15 ? '#4CAF50' : violationRate < 30 ? '#FF9800' : '#F44336'};">${status}</span></div>
+      </div>
+    </div>
+  `;
+  
+  // Add stats below the chart within the same container
+  const statsDiv = document.createElement('div');
+  statsDiv.innerHTML = statsHtml;
+  container.appendChild(statsDiv);
+}
+
+// Create feature violation summary chart (matching Python summary analysis)
+function createFeatureViolationSummary(featureData) {
+  const containerId = 'feature-violation-summary';
+  const container = document.getElementById(containerId);
+  if (!container || !featureData) return;
+
+  const features = Object.keys(featureData);
+  const violationRates = features.map(feature => {
+    const data = featureData[feature];
+    return ((data.belowThreshold + data.aboveThreshold) / data.total * 100).toFixed(1);
+  });
+
+  const trace = {
+    x: features,
+    y: violationRates,
+    type: 'bar',
+    name: 'Violation Rate (%)',
+    marker: {
+      color: violationRates.map(rate => {
+        if (rate < 5) return '#4CAF50'; // Green - Excellent
+        if (rate < 15) return '#FFC107'; // Yellow - Good  
+        if (rate < 30) return '#FF9800'; // Orange - Moderate
+        return '#F44336'; // Red - Needs Attention
+      }),
+      opacity: 0.8
+    },
+    text: violationRates.map(rate => `${rate}%`),
+    textposition: 'auto'
+  };
+
+  const layout = {
+    title: {
+      text: 'Feature Violation Rate Summary',
+      font: { 
+        family: 'Montserrat, sans-serif',
+        size: 16,
+        color: NU_COLORS.darkPurple
+      }
+    },
+    xaxis: {
+      title: 'Acoustic Features',
+      font: { family: 'Lato, sans-serif', size: 10 },
+      tickangle: -45,
+      tickmode: 'array',
+      tickvals: features,
+      ticktext: features.map(feature => {
+        // Shorten long feature names for better display
+        const shortNames = {
+          'LUFS': 'LUFS',
+          'RMS Energy': 'RMS Energy',
+          'Relative Amplitude': 'Rel. Amplitude',
+          'Spectral Centroid (Hz)': 'Spectral Centroid',
+          'Spectral Bandwidth (Hz)': 'Spectral Bandwidth',
+          'Pitch Mean (Hz)': 'Pitch Mean',
+          'MFCC Mean': 'MFCC Mean',
+          'MFCC Std Dev': 'MFCC Std Dev'
+        };
+        return shortNames[feature] || feature;
+      }),
+      automargin: true
+    },
+    yaxis: {
+      title: 'Violation Rate (%)',
+      font: { family: 'Lato, sans-serif', size: 11 }
+    },
+    plot_bgcolor: 'white',
+    paper_bgcolor: 'white',
+    margin: { t: 50, r: 20, b: 140, l: 60 }
+  };
+
+  const config = {
+    responsive: true,
+    displayModeBar: false
+  };
+
+  Plotly.newPlot(containerId, [trace], layout, config);
+}
 
 // Initialize dashboard when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {

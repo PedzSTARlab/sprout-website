@@ -378,6 +378,108 @@ class DataProcessor {
     }
 
     /**
+     * Generate feature data for individual feature charts
+     */
+    generateFeatureData() {
+        if (!this.qualityData || this.qualityData.length === 0) {
+            console.warn('No quality data available for feature charts');
+            return {};
+        }
+
+        const featureData = {};
+        const features = Object.keys(this.featureThresholds);
+
+        features.forEach(feature => {
+            // Extract all values for this feature
+            const values = this.qualityData
+                .map(row => parseFloat(row[feature]))
+                .filter(val => !isNaN(val));
+
+            if (values.length > 0) {
+                const [lowThresh, highThresh] = this.featureThresholds[feature];
+                
+                featureData[feature] = {
+                    values: values,
+                    lowThreshold: lowThresh,
+                    highThreshold: highThresh,
+                    mean: values.reduce((sum, val) => sum + val, 0) / values.length,
+                    min: Math.min(...values),
+                    max: Math.max(...values),
+                    belowThreshold: values.filter(val => val < lowThresh).length,
+                    withinRange: values.filter(val => val >= lowThresh && val <= highThresh).length,
+                    aboveThreshold: values.filter(val => val > highThresh).length,
+                    total: values.length
+                };
+            }
+        });
+
+        return featureData;
+    }
+
+    /**
+     * Generate city-based feature analysis (matching Python city comparisons)
+     */
+    generateCityFeatureData() {
+        if (!this.qualityData || this.qualityData.length === 0) {
+            return {};
+        }
+
+        const cityFeatureData = {};
+        const features = Object.keys(this.featureThresholds);
+
+        // Group data by city
+        const cityGroups = {};
+        this.qualityData.forEach(row => {
+            const city = row.City || 'Unknown';
+            if (!cityGroups[city]) {
+                cityGroups[city] = [];
+            }
+            cityGroups[city].push(row);
+        });
+
+        // Analyze each city
+        Object.entries(cityGroups).forEach(([city, cityData]) => {
+            cityFeatureData[city] = {
+                totalSamples: cityData.length,
+                passRate: 0,
+                featureStats: {}
+            };
+
+            let totalEligible = 0;
+            let totalProcessed = 0;
+
+            features.forEach(feature => {
+                const values = cityData
+                    .map(row => parseFloat(row[feature]))
+                    .filter(val => !isNaN(val));
+
+                if (values.length > 0) {
+                    const [lowThresh, highThresh] = this.featureThresholds[feature];
+                    const withinRange = values.filter(val => val >= lowThresh && val <= highThresh).length;
+                    const violationRate = ((values.length - withinRange) / values.length) * 100;
+
+                    cityFeatureData[city].featureStats[feature] = {
+                        samples: values.length,
+                        withinRange: withinRange,
+                        violationRate: violationRate.toFixed(1),
+                        mean: (values.reduce((sum, val) => sum + val, 0) / values.length).toFixed(3)
+                    };
+
+                    totalEligible += withinRange;
+                    totalProcessed += values.length;
+                }
+            });
+
+            // Calculate overall pass rate for the city
+            if (totalProcessed > 0) {
+                cityFeatureData[city].passRate = ((totalEligible / totalProcessed) * 100).toFixed(1);
+            }
+        });
+
+        return cityFeatureData;
+    }
+
+    /**
      * Process quality control metrics (calculate from Excel data if available, otherwise use calculated values)
      */
     processQualityMetrics() {
@@ -557,6 +659,12 @@ class DataProcessor {
 
             // Process eligibility data from quality control Excel file
             const eligibilityData = this.processEligibilityData();
+            
+            // Generate feature data AFTER quality data is loaded
+            const featureData = this.generateFeatureData();
+            
+            // Generate city-based feature analysis  
+            const cityFeatureData = this.generateCityFeatureData();
 
             // Create dashboard data structure matching Python metrics
             this.processedData = {
@@ -605,6 +713,8 @@ class DataProcessor {
                     avgSignalEnergy: quality.avgSignalEnergy,
                     avgSPL: quality.avgSPL
                 },
+                featureData: featureData, // Use the generated feature data
+                cityFeatureData: cityFeatureData, // Add city-based feature analysis
                 eligibilityData: eligibilityData,
                 metrics: {
                     ageRange: `${demographics.ageStats.min.toFixed(1)} - ${demographics.ageStats.max.toFixed(1)} years`,
