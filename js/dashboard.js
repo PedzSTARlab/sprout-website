@@ -237,7 +237,7 @@ function createCityTable(cityData) {
   element.innerHTML = tableHTML;
 }
 
-// Create age scatter plot (matching Python version)
+// Create age histogram (converted from scatter plot to histogram)
 function createAgeScatterChart(ageData) {
   const element = document.getElementById('age-chart');
   if (!element || !ageData) {
@@ -245,24 +245,97 @@ function createAgeScatterChart(ageData) {
     return;
   }
 
-  const trace = {
-    x: ageData.participantIds.map((_, i) => i),
-    y: ageData.ages,
-    mode: 'markers',
-    type: 'scatter',
+  // Calculate the range of ages to set appropriate bins
+  const minAge = Math.floor(Math.min(...ageData.ages));
+  const maxAge = Math.ceil(Math.max(...ageData.ages));
+  
+  // Calculate statistical measures
+  const sortedAges = [...ageData.ages].sort((a, b) => a - b);
+  const mean = sortedAges.reduce((sum, age) => sum + age, 0) / sortedAges.length;
+  const median = sortedAges.length % 2 === 0 
+    ? (sortedAges[sortedAges.length / 2 - 1] + sortedAges[sortedAges.length / 2]) / 2
+    : sortedAges[Math.floor(sortedAges.length / 2)];
+  const min = Math.min(...sortedAges);
+  const max = Math.max(...sortedAges);
+  
+  // Create histogram trace
+  const histogramTrace = {
+    x: ageData.ages,
+    type: 'histogram',
+    name: 'Age Distribution',
     marker: {
       color: NU_COLORS.purple,
-      size: 8,
-      opacity: 0.7
+      opacity: 0.7,
+      line: {
+        color: NU_COLORS.darkPurple,
+        width: 1
+      }
     },
-    text: ageData.participantIds,
-    customdata: ageData.ageLabels,
-    hovertemplate: 'Participant: %{text}<br>Age: %{customdata}<extra></extra>'
+    xbins: {
+      start: minAge - 0.5,
+      end: maxAge + 0.5,
+      size: 1  // 1 month bins
+    },
+    hovertemplate: 'Age: %{x} months<br>Count: %{y}<extra></extra>'
+  };
+
+  // Create trend line (polynomial fit)
+  const xValues = [];
+  const yValues = [];
+  for (let i = minAge; i <= maxAge; i++) {
+    const count = ageData.ages.filter(age => Math.floor(age + 0.5) === i).length;
+    xValues.push(i);
+    yValues.push(count);
+  }
+  
+  const trendTrace = {
+    x: xValues,
+    y: yValues,
+    type: 'scatter',
+    mode: 'lines',
+    name: 'Trend Line',
+    line: {
+      color: NU_COLORS.gold,
+      width: 3,
+      smoothing: 1.3
+    },
+    hovertemplate: 'Trend at %{x} months: %{y}<extra></extra>'
+  };
+
+  // Statistical indicator lines
+  const maxY = Math.max(...yValues) * 1.1; // Get max height for vertical lines
+  
+  const meanLine = {
+    x: [mean, mean],
+    y: [0, maxY],
+    type: 'scatter',
+    mode: 'lines',
+    name: `Mean (${mean.toFixed(1)} months)`,
+    line: {
+      color: '#FF6B6B',
+      width: 2,
+      dash: 'dash'
+    },
+    hovertemplate: `Mean: ${mean.toFixed(1)} months<extra></extra>`
+  };
+
+  const medianLine = {
+    x: [median, median],
+    y: [0, maxY],
+    type: 'scatter',
+    mode: 'lines',
+    name: `Median (${median.toFixed(1)} months)`,
+    line: {
+      color: '#4ECDC4',
+      width: 2,
+      dash: 'dot'
+    },
+    hovertemplate: `Median: ${median.toFixed(1)} months<extra></extra>`
   };
 
   const layout = {
     title: {
-      text: 'Child Age Distribution (Hover to See Age Format: e.g., 4 years 2 months)',
+      text: 'Child Age Distribution with Statistical Indicators',
       font: {
         size: 18,
         color: NU_COLORS.purple,
@@ -270,20 +343,61 @@ function createAgeScatterChart(ageData) {
       }
     },
     xaxis: {
-      title: 'Participant Index',
+      title: 'Age (Months)',
       titlefont: { color: NU_COLORS.purple },
-      tickfont: { color: NU_COLORS.purple }
+      tickfont: { color: NU_COLORS.purple },
+      tick0: minAge,
+      dtick: 1, // Show tick every 1 month
+      range: [minAge - 0.5, maxAge + 0.5]
     },
     yaxis: {
-      title: 'Age (Years)',
+      title: 'Number of Participants',
       titlefont: { color: NU_COLORS.purple },
       tickfont: { color: NU_COLORS.purple }
     },
     plot_bgcolor: 'rgba(0,0,0,0)',
     paper_bgcolor: 'rgba(0,0,0,0)',
     font: { color: NU_COLORS.purple },
-    height: 400,
-    showlegend: false
+    height: 500, // Increased height to accommodate legend
+    showlegend: true,
+    legend: {
+      orientation: 'v',
+      x: 1.02,
+      xanchor: 'left',
+      y: 1,
+      yanchor: 'top',
+      bgcolor: 'rgba(255,255,255,0.8)',
+      bordercolor: NU_COLORS.purple,
+      borderwidth: 1
+    },
+    bargap: 0.1,
+    margin: { t: 80, b: 50, l: 60, r: 150 }, // Increased top margin for annotations
+    annotations: [
+      {
+        x: mean,
+        y: maxY * 0.7, // Moved down to avoid cutoff
+        text: `μ = ${mean.toFixed(1)}`,
+        showarrow: true,
+        arrowhead: 2,
+        arrowcolor: '#FF6B6B',
+        font: { color: '#FF6B6B', size: 12 },
+        bgcolor: 'rgba(255,255,255,0.8)',
+        bordercolor: '#FF6B6B',
+        borderwidth: 1
+      },
+      {
+        x: median,
+        y: maxY * 0.6, // Moved down to avoid cutoff and overlap
+        text: `M = ${median.toFixed(1)}`,
+        showarrow: true,
+        arrowhead: 2,
+        arrowcolor: '#4ECDC4',
+        font: { color: '#4ECDC4', size: 12 },
+        bgcolor: 'rgba(255,255,255,0.8)',
+        bordercolor: '#4ECDC4',
+        borderwidth: 1
+      }
+    ]
   };
 
   const config = {
@@ -291,7 +405,10 @@ function createAgeScatterChart(ageData) {
     responsive: true
   };
 
-  Plotly.newPlot('age-chart', [trace], layout, config);
+  // Combine all traces
+  const traces = [histogramTrace, trendTrace, meanLine, medianLine];
+  
+  Plotly.newPlot('age-chart', traces, layout, config);
 }
 
 // Create Income Groups Chart (using pie chart as requested)

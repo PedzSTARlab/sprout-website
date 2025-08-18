@@ -96,7 +96,8 @@ class DataProcessor {
                 // Process age using ss_child_age column (value is in months)
                 if (row.ss_child_age && !isNaN(parseFloat(row.ss_child_age))) {
                     const ageInMonths = parseFloat(row.ss_child_age);
-                    row.age = ageInMonths / 12; // Convert months to years
+                    row.age = ageInMonths; // Keep age in months for histogram
+                    row.ageInYears = ageInMonths / 12; // Store years version for other calculations
                 }                // Map city code to full city name
                 row.City = this.cityMap[row.city_code] || row.city_code;
             });
@@ -148,12 +149,12 @@ class DataProcessor {
                 demographics.cityParticipantCounts[participant.City].add(participant.participant_id);
             }
 
-            // Age statistics
-            const age = parseFloat(participant.age);
-            if (!isNaN(age)) {
-                demographics.ageStats.min = Math.min(demographics.ageStats.min, age);
-                demographics.ageStats.max = Math.max(demographics.ageStats.max, age);
-                demographics.ageStats.total += age;
+            // Age statistics (use years for display statistics)
+            const ageInYears = parseFloat(participant.ageInYears);
+            if (!isNaN(ageInYears)) {
+                demographics.ageStats.min = Math.min(demographics.ageStats.min, ageInYears);
+                demographics.ageStats.max = Math.max(demographics.ageStats.max, ageInYears);
+                demographics.ageStats.total += ageInYears;
                 demographics.ageStats.count += 1;
             }
         });
