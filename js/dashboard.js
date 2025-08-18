@@ -544,7 +544,7 @@ function createChildRaceChart(raceData) {
   const layout = {
     title: {
       text: 'Participants by Reported Child Race',
-      font: { size: 18, color: NU_COLORS.purple, family: 'Arial' }
+      font: { size: 15, color: NU_COLORS.purple, family: 'Arial' }
     },
     plot_bgcolor: 'rgba(0,0,0,0)',
     paper_bgcolor: 'rgba(0,0,0,0)',
@@ -552,16 +552,17 @@ function createChildRaceChart(raceData) {
     showlegend: true,
     legend: {
       orientation: 'v',
-      x: 0.02,
+      x: 0.05,
       xanchor: 'left',
-      y: 0.98,
+      y: 0.92,
       yanchor: 'top',
       bgcolor: 'rgba(255,255,255,0.9)',
       bordercolor: NU_COLORS.purple,
-      borderwidth: 1
+      borderwidth: 1,
+      font: { size: 9 }
     },
-    height: 480,
-    margin: { l: 20, r: 150, t: 60, b: 80 }
+    height: 380,
+    margin: { l: 30, r: 100, t: 45, b: 50 }
   };
 
   const config = {
@@ -703,6 +704,12 @@ function createQualityControlChart(qcData) {
       `;
     });
     
+    // Calculate overall metrics from summary data
+    const totalSamples = 8796;
+    const notEligibleSegments = qcData.summaryData ? qcData.summaryData.reduce((sum, row) => sum + row.belowThreshold + row.aboveThreshold, 0) : 0;
+    const eligibleSegments = totalSamples - notEligibleSegments;
+    const passRate = ((eligibleSegments / totalSamples) * 100).toFixed(1);
+
     tableHTML += `
           </tbody>
         </table>
@@ -710,9 +717,10 @@ function createQualityControlChart(qcData) {
                     color: white; padding: 15px; border-radius: 5px; text-align: center;">
           <h4 style="margin: 0 0 10px 0;">Overall Quality Metrics</h4>
           <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
-            <div><strong>Total Segments:</strong> ${qcData.totalSegments.toLocaleString()}</div>
-            <div><strong>Eligible:</strong> ${qcData.eligibleSegments.toLocaleString()}</div>
-            <div><strong>Pass Rate:</strong> ${qcData.passRate}%</div>
+            <div><strong>Total Samples:</strong> ${totalSamples.toLocaleString()}</div>
+            <div><strong>Eligible:</strong> ${eligibleSegments.toLocaleString()}</div>
+            <div><strong>Not Eligible:</strong> ${notEligibleSegments.toLocaleString()}</div>
+            <div><strong>Pass Rate:</strong> ${passRate}%</div>
           </div>
         </div>
       </div>

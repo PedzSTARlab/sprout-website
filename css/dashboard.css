@@ -979,3 +979,94 @@
       padding: var(--space-sm);
     }
   }
+
+/* =============================
+   Insights Card Styles
+   ============================= */
+.insights-card {
+  background: var(--nu-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--nu-gray-medium);
+  margin: var(--space-lg) 0;
+  overflow: hidden;
+}
+
+.insights-content {
+  padding: var(--space-xl);
+}
+
+.insight-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: var(--space-xl);
+  gap: var(--space-lg);
+}
+
+.insight-item:last-child {
+  margin-bottom: 0;
+}
+
+.insight-icon {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--nu-purple) 0%, var(--nu-purple-light) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--nu-white);
+  font-size: var(--font-size-xl);
+  box-shadow: var(--shadow);
+}
+
+.insight-text {
+  flex: 1;
+  padding-top: var(--space-sm);
+}
+
+.insight-text h4 {
+  margin: 0 0 var(--space-sm) 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--nu-purple-dark);
+  line-height: 1.3;
+}
+
+.insight-text p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--nu-gray-darkest);
+}
+
+/* Responsive design for insights card */
+@media (max-width: 768px) {
+  .insight-item {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-md);
+  }
+
+  .insight-icon {
+    align-self: center;
+    width: 50px;
+    height: 50px;
+    font-size: var(--font-size-lg);
+  }
+
+  .insights-content {
+    padding: var(--space-lg);
+  }
+
+  .insight-text h4 {
+    font-size: var(--font-size-md);
+  }
+
+  .insight-text p {
+    font-size: var(--font-size-sm);
+  }
+}
