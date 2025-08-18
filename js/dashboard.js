@@ -945,12 +945,19 @@ function createEligibilityChart(eligibilityData) {
     plot_bgcolor: 'rgba(0,0,0,0)',
     paper_bgcolor: 'rgba(0,0,0,0)',
     font: { color: NU_COLORS.purple },
-    height: 400,
+    height: 450,
+    margin: {
+      l: 60,
+      r: 60,
+      b: 80,
+      t: 60,
+      pad: 4
+    },
     showlegend: true,
     legend: {
       orientation: 'h',
       yanchor: 'bottom',
-      y: -0.3,
+      y: -0.25,
       xanchor: 'center',
       x: 0.5
     }
@@ -996,17 +1003,32 @@ function createCityEligibilityChart(eligibilityData) {
     '0': '#DC143C'
   };
 
+  // Create abbreviated city names for better chart display
+  const cityAbbreviations = {
+    'Atlanta, GA': 'ATL',
+    'Baltimore, MD': 'BAL', 
+    'Chicago, IL': 'CHI',
+    'Dallas, TX': 'DAL',
+    'Iselin, NJ': 'ISL',
+    'Los Angeles, CA': 'LAX',
+    'Orlando, FL': 'ORL',
+    'St. Louis, MO': 'STL'
+  };
+
   const cities = Object.keys(eligibilityData.byCity);
+  const abbreviatedCities = cities.map(city => cityAbbreviations[city] || city);
   const eligibilityStatuses = [...new Set(
     Object.values(eligibilityData.byCity).flatMap(cityData => Object.keys(cityData))
   )];
 
   const data = eligibilityStatuses.map(status => ({
-    x: cities,
+    x: abbreviatedCities,
     y: cities.map(city => eligibilityData.byCity[city][status] || 0),
     name: status,
     type: 'bar',
-    marker: { color: eligibilityColors[status] || NU_COLORS.gray }
+    marker: { color: eligibilityColors[status] || NU_COLORS.gray },
+    customdata: cities,
+    hovertemplate: '<b>%{fullData.name}</b><br>%{customdata}: %{y}<extra></extra>'
   }));
 
   const layout = {
@@ -1016,7 +1038,12 @@ function createCityEligibilityChart(eligibilityData) {
     },
     xaxis: {
       title: 'City',
-      tickangle: -45
+      tickangle: 0,
+      tickfont: { size: 14 },
+      automargin: true,
+      categoryorder: 'total descending',
+      tickmode: 'linear',
+      dtick: 1
     },
     yaxis: {
       title: 'Number of Samples'
@@ -1025,14 +1052,23 @@ function createCityEligibilityChart(eligibilityData) {
     plot_bgcolor: 'rgba(0,0,0,0)',
     paper_bgcolor: 'rgba(0,0,0,0)',
     font: { color: NU_COLORS.purple },
-    height: 400,
+    height: 450,
+    width: 900,
+    margin: {
+      l: 80,
+      r: 50,
+      b: 100,
+      t: 80,
+      pad: 10
+    },
     showlegend: true,
     legend: {
       orientation: 'h',
       x: 0.5,
       xanchor: 'center',
-      y: -0.3
-    }
+      y: -0.2
+    },
+    bargap: 0.5
   };
 
   const config = {
