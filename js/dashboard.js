@@ -21,7 +21,7 @@ const chartColors = [
     NU_COLORS.darkPurple,
     NU_COLORS.gray,
     '#9B4F96', // Additional purple shade
-    '#F7931E', // Additional gold shade
+    '#F7931E', // Orange accent
     '#5A4FCF', // Additional blue-purple
     '#C5B358', // Muted gold
     '#8B7355'  // Brown accent
@@ -428,8 +428,23 @@ function createIncomeGroupsChart(incomeData) {
     },
     textinfo: 'label+percent',
     textposition: 'auto',
+    insidetextorientation: 'radial',
+    textfont: {
+      size: 11,
+      color: 'white',
+      family: 'Arial, sans-serif',
+      weight: 'bold'
+    },
+    outsidetextfont: {
+      size: 11,
+      color: '#4E2A84', // Explicit purple color instead of NU_COLORS.purple
+      family: 'Arial, sans-serif',
+      weight: 'bold'
+    },
     hovertemplate: '<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>',
-    hole: 0.3  // Creates a donut chart for better visual appeal
+    hole: 0.3,  // Creates a donut chart for better visual appeal
+    pull: [0, 0, 0, 0, 0], // No slice separation for cleaner look
+    showlegend: true
   }];
 
   const layout = {
@@ -443,12 +458,16 @@ function createIncomeGroupsChart(incomeData) {
     showlegend: true,
     legend: {
       orientation: 'v',
-      x: 1,
+      x: 0.75,
       xanchor: 'left',
-      y: 1,
-      yanchor: 'top'
+      y: 0.85,
+      yanchor: 'top',
+      bgcolor: 'rgba(255,255,255,0.9)',
+      bordercolor: NU_COLORS.purple,
+      borderwidth: 1
     },
-    height: 450
+    height: 400,
+    margin: { l: 40, r: 120, t: 60, b: 60 }
   };
 
   const config = {
@@ -467,6 +486,8 @@ function createChildRaceChart(raceData) {
     return;
   }
 
+  console.log('Race data received:', raceData); // Debug logging
+
   // Convert array format to labels and values for Plotly
   let labels, values;
   if (Array.isArray(raceData)) {
@@ -484,6 +505,14 @@ function createChildRaceChart(raceData) {
     return;
   }
 
+  console.log('Race labels:', labels); // Debug logging
+  console.log('Race values:', values); // Debug logging
+
+  // Create custom textposition array to force "Black or African American" inside
+  const textpositions = labels.map(label => 
+    label === 'Black or African American' ? 'inside' : 'auto'
+  );
+
   const data = [{
     labels: labels,
     values: values,
@@ -492,9 +521,24 @@ function createChildRaceChart(raceData) {
       colors: [NU_COLORS.purple, NU_COLORS.lightPurple, NU_COLORS.gold, '#8B5A96', '#A67CAD', '#C8A2C8', '#9370DB']
     },
     textinfo: 'label+percent',
-    textposition: 'auto',
+    textposition: textpositions,
+    insidetextorientation: 'radial',
+    textfont: {
+      size: 9,
+      color: 'white',
+      family: 'Arial, sans-serif',
+      weight: 'bold'
+    },
+    outsidetextfont: {
+      size: 9,
+      color: '#4E2A84', // Explicit purple color instead of NU_COLORS.purple
+      family: 'Arial, sans-serif',
+      weight: 'bold'
+    },
     hovertemplate: '<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>',
-    hole: 0.3  // Creates a donut chart for better visual appeal
+    hole: 0.3,  // Creates a donut chart for better visual appeal
+    pull: [0, 0, 0, 0, 0, 0, 0], // No slice separation for cleaner look
+    showlegend: true
   }];
 
   const layout = {
@@ -508,12 +552,16 @@ function createChildRaceChart(raceData) {
     showlegend: true,
     legend: {
       orientation: 'v',
-      x: 1,
+      x: 0.02,
       xanchor: 'left',
-      y: 1,
-      yanchor: 'top'
+      y: 0.98,
+      yanchor: 'top',
+      bgcolor: 'rgba(255,255,255,0.9)',
+      bordercolor: NU_COLORS.purple,
+      borderwidth: 1
     },
-    height: 450
+    height: 480,
+    margin: { l: 20, r: 150, t: 60, b: 80 }
   };
 
   const config = {
@@ -558,8 +606,23 @@ function createHispanicChart(hispanicData) {
     },
     textinfo: 'label+percent',
     textposition: 'auto',
+    insidetextorientation: 'radial',
+    textfont: {
+      size: 12,
+      color: 'white',
+      family: 'Arial, sans-serif',
+      weight: 'bold'
+    },
+    outsidetextfont: {
+      size: 12,
+      color: '#4E2A84', // Explicit purple color instead of NU_COLORS.purple
+      family: 'Arial, sans-serif',
+      weight: 'bold'
+    },
     hovertemplate: '<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>',
-    hole: 0.3  // Creates a donut chart for better visual appeal
+    hole: 0.3,  // Creates a donut chart for better visual appeal
+    pull: [0, 0, 0], // No slice separation for cleaner look
+    showlegend: true
   }];
 
   const layout = {
@@ -573,12 +636,16 @@ function createHispanicChart(hispanicData) {
     showlegend: true,
     legend: {
       orientation: 'v',
-      x: 1,
+      x: 0.75,
       xanchor: 'left',
-      y: 1,
-      yanchor: 'top'
+      y: 0.85,
+      yanchor: 'top',
+      bgcolor: 'rgba(255,255,255,0.9)',
+      bordercolor: NU_COLORS.purple,
+      borderwidth: 1
     },
-    height: 450
+    height: 400,
+    margin: { l: 40, r: 120, t: 60, b: 60 }
   };
 
   const config = {
@@ -589,7 +656,7 @@ function createHispanicChart(hispanicData) {
   Plotly.newPlot('hispanic-chart', data, layout, config);
 }
 
-// Create Quality Control Chart (matching Python version)
+// Create Quality Control Chart (matching Python version with summary table)
 function createQualityControlChart(qcData) {
   const element = document.getElementById('qc-chart');
   if (!element || !qcData) {
@@ -597,50 +664,108 @@ function createQualityControlChart(qcData) {
     return;
   }
 
-  const data = [{
-    values: [qcData.eligibleSegments, qcData.notEligibleSegments],
-    labels: [`Eligible (${qcData.passRate}%)`, 'Not Eligible'],
-    type: 'pie',
-    hole: 0.3,
-    marker: {
-      colors: ['#2E8B57', '#DC143C'] // Green for eligible, red for not eligible
-    },
-    textposition: 'inside',
-    textinfo: 'label+percent',
-    textfont: {
-      size: 12,
-      color: 'white',
-      family: 'Arial, sans-serif'
-    },
-    hovertemplate: '<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>'
-  }];
+  // Check if we have summary data (from actual Excel processing)
+  if (qcData.summaryData && qcData.summaryData.length > 0) {
+    // Create a detailed table like the Python version
+    let tableHTML = `
+      <div style="font-family: Arial, sans-serif;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <thead>
+            <tr style="background-color: ${NU_COLORS.purple}; color: white;">
+              <th style="padding: 15px 12px; text-align: left; border: 1px solid ${NU_COLORS.darkPurple}; font-weight: 600; font-size: 14px;">Feature</th>
+              <th style="padding: 15px 12px; text-align: center; border: 1px solid ${NU_COLORS.darkPurple}; font-weight: 600; font-size: 14px;">Total Samples</th>
+              <th style="padding: 15px 12px; text-align: center; border: 1px solid ${NU_COLORS.darkPurple}; font-weight: 600; font-size: 14px;">Within Range</th>
+              <th style="padding: 15px 12px; text-align: center; border: 1px solid ${NU_COLORS.darkPurple}; font-weight: 600; font-size: 14px;">Below Threshold</th>
+              <th style="padding: 15px 12px; text-align: center; border: 1px solid ${NU_COLORS.darkPurple}; font-weight: 600; font-size: 14px;">Above Threshold</th>
+              <th style="padding: 15px 12px; text-align: center; border: 1px solid ${NU_COLORS.darkPurple}; font-weight: 600; font-size: 14px;">Violation Rate</th>
+              <th style="padding: 15px 12px; text-align: center; border: 1px solid ${NU_COLORS.darkPurple}; font-weight: 600; font-size: 14px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+    
+    qcData.summaryData.forEach((row, index) => {
+      const bgColor = index % 2 === 0 ? '#FFFFFF' : '#F8F9FA';
+      const statusColor = row.status === 'Excellent' ? '#28A745' : 
+                         row.status === 'Good' ? '#17A2B8' :
+                         row.status === 'Moderate' ? '#FD7E14' : '#DC3545';
+      
+      tableHTML += `
+        <tr style="background-color: ${bgColor};">
+          <td style="padding: 10px; border: 1px solid #DEE2E6; font-weight: 600; color: #212529;">${row.feature}</td>
+          <td style="padding: 10px; border: 1px solid #DEE2E6; text-align: center; color: #495057;">${row.totalSamples.toLocaleString()}</td>
+          <td style="padding: 10px; border: 1px solid #DEE2E6; text-align: center; color: #495057;">${row.withinRange.toLocaleString()}</td>
+          <td style="padding: 10px; border: 1px solid #DEE2E6; text-align: center; color: #495057;">${row.belowThreshold.toLocaleString()}</td>
+          <td style="padding: 10px; border: 1px solid #DEE2E6; text-align: center; color: #495057;">${row.aboveThreshold.toLocaleString()}</td>
+          <td style="padding: 10px; border: 1px solid #DEE2E6; text-align: center; color: #495057; font-weight: 600;">${row.violationRate.toFixed(1)}%</td>
+          <td style="padding: 10px; border: 1px solid #DEE2E6; text-align: center; color: ${statusColor}; font-weight: 700; font-size: 14px;">${row.status}</td>
+        </tr>
+      `;
+    });
+    
+    tableHTML += `
+          </tbody>
+        </table>
+        <div style="background: linear-gradient(90deg, ${NU_COLORS.lightPurple} 0%, #A985C7 100%); 
+                    color: white; padding: 15px; border-radius: 5px; text-align: center;">
+          <h4 style="margin: 0 0 10px 0;">Overall Quality Metrics</h4>
+          <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+            <div><strong>Total Segments:</strong> ${qcData.totalSegments.toLocaleString()}</div>
+            <div><strong>Eligible:</strong> ${qcData.eligibleSegments.toLocaleString()}</div>
+            <div><strong>Pass Rate:</strong> ${qcData.passRate}%</div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    element.innerHTML = tableHTML;
+  } else {
+    // Fallback: Create simple pie chart for basic metrics
+    const data = [{
+      values: [qcData.eligibleSegments, qcData.notEligibleSegments],
+      labels: [`Eligible (${qcData.passRate}%)`, 'Not Eligible'],
+      type: 'pie',
+      hole: 0.3,
+      marker: {
+        colors: ['#2E8B57', '#DC143C'] // Green for eligible, red for not eligible
+      },
+      textposition: 'inside',
+      textinfo: 'label+percent',
+      textfont: {
+        size: 12,
+        color: 'white',
+        family: 'Arial, sans-serif'
+      },
+      hovertemplate: '<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>'
+    }];
 
-  const layout = {
-    title: {
-      text: 'Overall Eligibility Analysis',
-      font: { size: 18, color: NU_COLORS.purple, family: 'Arial' }
-    },
-    showlegend: true,
-    legend: {
-      orientation: 'v',
-      x: 1,
-      xanchor: 'left',
-      y: 1,
-      yanchor: 'top',
-      font: { size: 12 }
-    },
-    margin: { t: 50, b: 20, l: 20, r: 120 },
-    paper_bgcolor: 'white',
-    plot_bgcolor: 'white',
-    height: 400
-  };
+    const layout = {
+      title: {
+        text: 'Overall Eligibility Analysis',
+        font: { size: 18, color: NU_COLORS.purple, family: 'Arial' }
+      },
+      showlegend: true,
+      legend: {
+        orientation: 'v',
+        x: 1,
+        xanchor: 'left',
+        y: 1,
+        yanchor: 'top',
+        font: { size: 12 }
+      },
+      margin: { t: 50, b: 20, l: 20, r: 120 },
+      paper_bgcolor: 'white',
+      plot_bgcolor: 'white',
+      height: 400
+    };
 
-  const config = {
-    displayModeBar: false,
-    responsive: true
-  };
+    const config = {
+      displayModeBar: false,
+      responsive: true
+    };
 
-  Plotly.newPlot('qc-chart', data, layout, config);
+    Plotly.newPlot('qc-chart', data, layout, config);
+  }
 }
 
 // Show error message if data loading fails

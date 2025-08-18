@@ -228,6 +228,114 @@ class DataProcessor {
     }
 
     /**
+     * Load and process Excel quality control data from Post_qc_summary.xlsx
+     */
+    async loadQualityData() {
+        try {
+            // Check if SheetJS is available
+            if (typeof XLSX === 'undefined') {
+                console.warn('SheetJS not available, using simulated QC data');
+                return this.processQualityMetrics(); // Fallback to simulated data
+            }
+
+            const response = await fetch('data/Post_qc_summary.xlsx');
+            if (!response.ok) {
+                throw new Error('Quality data file not found');
+            }
+            
+            const arrayBuffer = await response.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            
+            // Read the "All_data" sheet like the Python version
+            const worksheet = workbook.Sheets['All_data'] || workbook.Sheets[workbook.SheetNames[0]];
+            const data = XLSX.utils.sheet_to_json(worksheet);
+            
+            console.log(`Loaded ${data.length} QC records from Excel`);
+            console.log('Sample Excel data:', data.slice(0, 3)); // Show first 3 records
+            console.log('Excel sheet names:', workbook.SheetNames);
+            this.qualityData = data;
+            return this.processQualityDataFromExcel();
+        } catch (error) {
+            console.warn('Error loading quality data, using simulated data:', error);
+            return this.processQualityMetrics(); // Fallback to simulated data
+        }
+    }
+
+    /**
+     * Process actual quality control data from Excel (matching Python approach)
+     */
+    processQualityDataFromExcel() {
+        if (!this.qualityData || this.qualityData.length === 0) {
+            return this.processQualityMetrics(); // Fallback
+        }
+
+        const features = Object.keys(this.featureThresholds);
+        let summaryData = [];
+        let totalEligible = 0;
+        let totalProcessed = 0;
+
+        // Process each feature like the Python version
+        features.forEach(feature => {
+            // Find the feature in the Excel data (handle potential column name variations)
+            const featureColumn = this.qualityData.filter(row => 
+                row[feature] !== undefined && row[feature] !== null && row[feature] !== ''
+            );
+
+            if (featureColumn.length === 0) return;
+
+            // Convert values to numbers and filter out invalid data
+            const validData = featureColumn
+                .map(row => parseFloat(row[feature]))
+                .filter(val => !isNaN(val));
+
+            if (validData.length === 0) return;
+
+            const [lowThresh, highThresh] = this.featureThresholds[feature];
+            
+            const totalSamples = validData.length;
+            const belowThresh = validData.filter(val => val < lowThresh).length;
+            const aboveThresh = validData.filter(val => val > highThresh).length;
+            const withinRange = totalSamples - belowThresh - aboveThresh;
+            const violationRate = ((belowThresh + aboveThresh) / totalSamples) * 100;
+
+            // Determine status based on violation rate (like Python)
+            let status;
+            if (violationRate < 5) status = "Excellent";
+            else if (violationRate < 15) status = "Good";
+            else if (violationRate < 30) status = "Moderate";
+            else status = "Needs Attention";
+
+            summaryData.push({
+                feature: feature,
+                totalSamples: totalSamples,
+                withinRange: withinRange,
+                belowThreshold: belowThresh,
+                aboveThreshold: aboveThresh,
+                violationRate: violationRate,
+                status: status
+            });
+
+            totalEligible += withinRange;
+            totalProcessed += totalSamples;
+        });
+
+        // Calculate overall metrics
+        const overallPassRate = totalProcessed > 0 ? (totalEligible / totalProcessed) * 100 : 0;
+        const notEligible = totalProcessed - totalEligible;
+
+        return {
+            totalSegments: totalProcessed,
+            eligibleSegments: totalEligible,
+            notEligibleSegments: notEligible,
+            passRate: overallPassRate.toFixed(1),
+            summaryData: summaryData,
+            avgSignalEnergy: 0.85, // These could be calculated from actual data if available
+            avgSPL: 65.2,
+            qualityScore: overallPassRate
+        };
+    }
+
+    /**
      * Process quality control metrics (simulated based on Python thresholds)
      */
     processQualityMetrics() {
@@ -254,7 +362,9 @@ class DataProcessor {
 
             const demographics = this.processParticipantDemographics();
             const geographic = this.generateGeographicData(demographics);
-            const quality = this.processQualityMetrics();
+            
+            // Load and process quality control data
+            const quality = await this.loadQualityData();
 
             // Create dashboard data structure matching Python metrics
             this.processedData = {
@@ -299,6 +409,7 @@ class DataProcessor {
                     eligibleSegments: quality.eligibleSegments,
                     notEligibleSegments: quality.notEligibleSegments,
                     passRate: quality.passRate,
+                    summaryData: quality.summaryData, // Add the summary data for the table
                     avgSignalEnergy: quality.avgSignalEnergy,
                     avgSPL: quality.avgSPL
                 },
