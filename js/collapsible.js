@@ -3,15 +3,13 @@ document.addEventListener('DOMContentLoaded', function() {
     initCollapsiblePanels();
 
     // Re-initialize when tab content is loaded
-    document.addEventListener('tabContentLoaded', function(event) {
-        console.log('Tab content loaded:', event.detail.tabId);
-        setTimeout(() => {
-            initCollapsiblePanels();
-            Prism.highlightAll();
-        }, 100); // Small delay to ensure DOM is updated
-    });
-
-    // Also initialize on window load to catch any missed panels
+// Event listener for tab content loaded (useful for dynamic initialization)
+document.addEventListener('tabContentLoaded', (event) => {
+    if (event.detail.tabId === 'dashboard') {
+        // Initialize any dashboard-specific collapsible content
+        initializeCollapsiblePanels();
+    }
+});    // Also initialize on window load to catch any missed panels
     window.addEventListener('load', function() {
         initCollapsiblePanels();
         Prism.highlightAll();
@@ -19,9 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initCollapsiblePanels() {
-    console.log('Initializing collapsible panels');
     const panels = document.querySelectorAll('.collapsible-panel');
-    console.log('Found panels:', panels.length);
 
     panels.forEach((panel, index) => {
         const header = panel.querySelector('.collapsible-header');
@@ -37,7 +33,6 @@ function initCollapsiblePanels() {
             return;
         }
 
-        console.log('Initializing panel:', index);
         header.setAttribute('data-initialized', 'true');
 
         // Make sure the initial state is correct
@@ -47,7 +42,6 @@ function initCollapsiblePanels() {
 
         header.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Panel clicked:', index);
 
             // Toggle active class
             this.classList.toggle('active');

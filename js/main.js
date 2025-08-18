@@ -29,14 +29,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Special handling for dashboard tab
                     if (tab.id === 'dashboard') {
-                        console.log('Dashboard tab loaded, ensuring dashboard script is loaded...');
-                        
                         // Make sure dashboard script is loaded
                         if (!window.dashboardScriptLoaded) {
                             const script = document.createElement('script');
                             script.src = 'js/dashboard.js';
                             script.onload = () => {
-                                console.log('Dashboard script loaded, calling loadDashboardData...');
                                 window.dashboardScriptLoaded = true;
                                 if (typeof loadDashboardData === 'function') {
                                     loadDashboardData();
@@ -46,7 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         } else {
                             // Script already loaded, just call the function
                             setTimeout(() => {
-                                console.log('Dashboard script already loaded, calling loadDashboardData...');
                                 if (typeof loadDashboardData === 'function') {
                                     loadDashboardData();
                                 } else {

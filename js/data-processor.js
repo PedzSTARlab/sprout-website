@@ -104,7 +104,6 @@ class DataProcessor {
 
             // Filter out rows without city_code or age (like Python version)
             this.participantData = data.filter(row => row.city_code && row.age);
-            console.log(`Loaded ${this.participantData.length} participants from TSV`);
             return this.participantData;
         } catch (error) {
             console.error('Error loading participant data:', error);
@@ -234,8 +233,8 @@ class DataProcessor {
         try {
             // Check if SheetJS is available
             if (typeof XLSX === 'undefined') {
-                console.warn('SheetJS not available, using simulated QC data');
-                return this.processQualityMetrics(); // Fallback to simulated data
+                console.warn('SheetJS not available, loading fallback data');
+                return this.processQualityMetrics();
             }
 
             const response = await fetch('data/Post_qc_summary.xlsx');
@@ -250,14 +249,31 @@ class DataProcessor {
             const worksheet = workbook.Sheets['All_data'] || workbook.Sheets[workbook.SheetNames[0]];
             const data = XLSX.utils.sheet_to_json(worksheet);
             
-            console.log(`Loaded ${data.length} QC records from Excel`);
-            console.log('Sample Excel data:', data.slice(0, 3)); // Show first 3 records
-            console.log('Excel sheet names:', workbook.SheetNames);
-            this.qualityData = data;
+            // Process Excel data like Python code - add CityCode, FileName, and City columns
+            this.qualityData = data.map(row => {
+                const processedRow = { ...row };
+                
+                // Extract city code from 'Segment File' column (matching Python regex)
+                if (row['Segment File']) {
+                    const segmentFile = String(row['Segment File']);
+                    const cityMatch = segmentFile.match(/ds-([A-Z]{3})/);
+                    if (cityMatch) {
+                        processedRow.CityCode = cityMatch[1];
+                        processedRow.City = this.cityMap[cityMatch[1]] || cityMatch[1];
+                    }
+                    
+                    // Extract filename (matching Python logic)
+                    const pathParts = segmentFile.split('/');
+                    processedRow.FileName = pathParts[pathParts.length - 1];
+                }
+                
+                return processedRow;
+            });
+            
             return this.processQualityDataFromExcel();
         } catch (error) {
-            console.warn('Error loading quality data, using simulated data:', error);
-            return this.processQualityMetrics(); // Fallback to simulated data
+            console.warn('Error loading quality data, falling back to calculated data:', error);
+            return this.processQualityMetrics();
         }
     }
 
@@ -319,34 +335,207 @@ class DataProcessor {
             totalProcessed += totalSamples;
         });
 
-        // Calculate overall metrics
+        // Calculate overall metrics from actual data
         const overallPassRate = totalProcessed > 0 ? (totalEligible / totalProcessed) * 100 : 0;
         const notEligible = totalProcessed - totalEligible;
 
-        return {
+        // Calculate average Signal Energy and SPL from actual Excel data
+        let avgSignalEnergy = 0;
+        let avgSPL = 0;
+        
+        if (this.qualityData && this.qualityData.length > 0) {
+            // Calculate average Signal Energy
+            const signalEnergyData = this.qualityData
+                .map(row => parseFloat(row['Signal Energy']))
+                .filter(val => !isNaN(val));
+            
+            if (signalEnergyData.length > 0) {
+                avgSignalEnergy = signalEnergyData.reduce((sum, val) => sum + val, 0) / signalEnergyData.length;
+            }
+
+            // Calculate average SPL (dB)
+            const splData = this.qualityData
+                .map(row => parseFloat(row['SPL (dB)']))
+                .filter(val => !isNaN(val));
+                
+            if (splData.length > 0) {
+                avgSPL = splData.reduce((sum, val) => sum + val, 0) / splData.length;
+            }
+        }
+
+        const result = {
             totalSegments: totalProcessed,
             eligibleSegments: totalEligible,
             notEligibleSegments: notEligible,
             passRate: overallPassRate.toFixed(1),
             summaryData: summaryData,
-            avgSignalEnergy: 0.85, // These could be calculated from actual data if available
-            avgSPL: 65.2,
+            avgSignalEnergy: parseFloat(avgSignalEnergy.toFixed(6)), // 6 decimal places like the data shows
+            avgSPL: parseFloat(avgSPL.toFixed(2)), // 2 decimal places for SPL
             qualityScore: overallPassRate
         };
+
+        return result;
     }
 
     /**
-     * Process quality control metrics (simulated based on Python thresholds)
+     * Process quality control metrics (calculate from Excel data if available, otherwise use calculated values)
      */
     processQualityMetrics() {
+        // If we have Excel data, calculate from actual data
+        if (this.qualityData && this.qualityData.length > 0) {
+            // Count eligible/not eligible from the "Eligible for Research" column
+            let eligibleCount = 0;
+            let notEligibleCount = 0;
+            let totalSegments = 0;
+
+            this.qualityData.forEach(row => {
+                const eligibleValue = row['Eligible for Research'];
+                if (eligibleValue === 'Yes' || eligibleValue === 'yes' || eligibleValue === true || eligibleValue === 1) {
+                    eligibleCount++;
+                } else if (eligibleValue === 'No' || eligibleValue === 'no' || eligibleValue === false || eligibleValue === 0) {
+                    notEligibleCount++;
+                }
+                totalSegments++;
+            });
+
+            const passRate = totalSegments > 0 ? (eligibleCount / totalSegments) * 100 : 0;
+
+            // Calculate average Signal Energy and SPL from actual data
+            const signalEnergyData = this.qualityData
+                .map(row => parseFloat(row['Signal Energy']))
+                .filter(val => !isNaN(val));
+            
+            const avgSignalEnergy = signalEnergyData.length > 0 
+                ? signalEnergyData.reduce((sum, val) => sum + val, 0) / signalEnergyData.length 
+                : 0;
+
+            const splData = this.qualityData
+                .map(row => parseFloat(row['SPL (dB)']))
+                .filter(val => !isNaN(val));
+                
+            const avgSPL = splData.length > 0 
+                ? splData.reduce((sum, val) => sum + val, 0) / splData.length 
+                : 0;
+
+            const result = {
+                totalSegments: totalSegments,
+                eligibleSegments: eligibleCount,
+                notEligibleSegments: notEligibleCount,
+                passRate: passRate.toFixed(1),
+                avgSignalEnergy: parseFloat(avgSignalEnergy.toFixed(6)),
+                avgSPL: parseFloat(avgSPL.toFixed(2)),
+                qualityScore: parseFloat(passRate.toFixed(1))
+            };
+
+            return result;
+        } else {
+            // Fallback: return empty data structure if no Excel data available
+            console.warn('No Excel data available for quality metrics calculation');
+            return {
+                totalSegments: 0,
+                eligibleSegments: 0,
+                notEligibleSegments: 0,
+                passRate: '0.0',
+                avgSignalEnergy: 0,
+                avgSPL: 0,
+                qualityScore: 0
+            };
+        }
+    }
+
+    /**
+     * Process eligibility data from Excel quality control data (matching Python approach)
+     */
+    processEligibilityData() {
+        if (!this.qualityData || this.qualityData.length === 0) {
+            console.warn('No quality data available for eligibility analysis');
+            return { overall: {}, byCity: {} };
+        }
+
+        // Look for eligibility columns in Excel data (matching Python logic)
+        const eligibilityColumns = Object.keys(this.qualityData[0] || {}).filter(col => 
+            col.toLowerCase().includes('eligible') || col.toLowerCase().includes('eligibility')
+        );
+
+        if (eligibilityColumns.length === 0) {
+            console.warn('No eligibility columns found in Excel data');
+            return { overall: {}, byCity: {} };
+        }
+
+        // Use the first eligibility column found (like Python code)
+        const eligibilityCol = eligibilityColumns[0];
+
+        // Clean and prepare eligibility data (matching Python logic)
+        const eligibilityData = this.qualityData.filter(row => {
+            const value = row[eligibilityCol];
+            return value !== undefined && 
+                   value !== null && 
+                   value !== '' &&
+                   (value === 'Yes' || value === 'No' || value === 'True' || value === 'False' || 
+                    value === true || value === false || value === 1 || value === 0 ||
+                    value === '1' || value === '0');
+        });
+
+        if (eligibilityData.length === 0) {
+            console.warn('No valid eligibility data found');
+            return { overall: {}, byCity: {} };
+        }
+
+        // Count overall eligibility status (exactly like Python)
+        const overallCounts = {};
+        const byCityCounts = {};
+
+        // Process each row of eligibility data
+        eligibilityData.forEach(row => {
+            // Convert to string for consistent handling (like Python)
+            let eligibilityStatus = String(row[eligibilityCol]).trim();
+            
+            // Normalize eligibility status (matching Python mappings exactly)
+            const eligibleVariations = ['Eligible', 'Pass', 'True', '1', 'true', 'TRUE', 'pass', 'PASS', 'eligible', 'ELIGIBLE', 'Yes', 'YES', 'yes'];
+            const notEligibleVariations = ['Not Eligible', 'Fail', 'False', '0', 'false', 'FALSE', 'fail', 'FAIL', 'not eligible', 'NOT ELIGIBLE', 'No', 'NO', 'no'];
+            
+            if (eligibleVariations.includes(eligibilityStatus) || 
+                (typeof row[eligibilityCol] === 'number' && row[eligibilityCol] === 1) ||
+                (typeof row[eligibilityCol] === 'boolean' && row[eligibilityCol] === true)) {
+                eligibilityStatus = 'Eligible';
+            } else if (notEligibleVariations.includes(eligibilityStatus) ||
+                      (typeof row[eligibilityCol] === 'number' && row[eligibilityCol] === 0) ||
+                      (typeof row[eligibilityCol] === 'boolean' && row[eligibilityCol] === false)) {
+                eligibilityStatus = 'Not Eligible';
+            }
+
+            // Count overall
+            overallCounts[eligibilityStatus] = (overallCounts[eligibilityStatus] || 0) + 1;
+
+            // Count by city if city data exists (matching Python approach)
+            let city = 'Unknown';
+            
+            // Try to extract city from various possible columns
+            if (row.City) {
+                city = row.City;
+            } else if (row.city) {
+                city = row.city;
+            } else if (row.CityCode) {
+                city = this.cityMap[row.CityCode] || row.CityCode;
+            } else if (row['Segment File']) {
+                // Extract city code from filename like Python does
+                const match = row['Segment File'].match(/ds-([A-Z]{3})/);
+                if (match) {
+                    const cityCode = match[1];
+                    city = this.cityMap[cityCode] || cityCode;
+                }
+            }
+
+            if (!byCityCounts[city]) {
+                byCityCounts[city] = {};
+            }
+            byCityCounts[city][eligibilityStatus] = (byCityCounts[city][eligibilityStatus] || 0) + 1;
+        });
+
         return {
-            totalSegments: 8796, // From Python hard-coded values
-            eligibleSegments: 7929,
-            notEligibleSegments: 867,
-            passRate: 90.1,
-            avgSignalEnergy: 0.85,
-            avgSPL: 65.2,
-            qualityScore: 92.3
+            overall: overallCounts,
+            byCity: byCityCounts,
+            totalProcessed: eligibilityData.length
         };
     }
 
@@ -365,6 +554,9 @@ class DataProcessor {
             
             // Load and process quality control data
             const quality = await this.loadQualityData();
+
+            // Process eligibility data from quality control Excel file
+            const eligibilityData = this.processEligibilityData();
 
             // Create dashboard data structure matching Python metrics
             this.processedData = {
@@ -413,16 +605,13 @@ class DataProcessor {
                     avgSignalEnergy: quality.avgSignalEnergy,
                     avgSPL: quality.avgSPL
                 },
+                eligibilityData: eligibilityData,
                 metrics: {
-                    enrollmentTarget: 500,
-                    currentEnrollment: demographics.uniqueParticipants,
-                    enrollmentRate: ((demographics.uniqueParticipants / 500) * 100).toFixed(1),
                     ageRange: `${demographics.ageStats.min.toFixed(1)} - ${demographics.ageStats.max.toFixed(1)} years`,
                     dataCollectionSites: Object.keys(demographics.cityParticipantCounts).length
                 }
             };
 
-            console.log('Dashboard data generated from real research files (Python method):', this.processedData);
             return this.processedData;
 
         } catch (error) {

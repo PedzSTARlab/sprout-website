@@ -89,6 +89,31 @@
   <!-- Overall Eligibility Analysis -->
   <div class="chart-section">
     <h3 class="section-header">Overall Eligibility Analysis</h3>
+    
+    <!-- Eligibility Summary Metrics -->
+    <div class="metrics-grid" style="margin-bottom: 2rem;">
+      <div class="metric-card">
+        <div class="help-icon" data-tooltip="Number of samples that passed all quality control thresholds">?</div>
+        <div class="metric-value" id="eligible-samples">-</div>
+        <div class="metric-label">Eligible Samples</div>
+      </div>
+      <div class="metric-card">
+        <div class="help-icon" data-tooltip="Number of samples that failed quality control thresholds">?</div>
+        <div class="metric-value" id="not-eligible-samples">-</div>
+        <div class="metric-label">Not Eligible</div>
+      </div>
+      <div class="metric-card">
+        <div class="help-icon" data-tooltip="Total number of audio samples processed">?</div>
+        <div class="metric-value" id="total-samples">-</div>
+        <div class="metric-label">Total Samples</div>
+      </div>
+      <div class="metric-card">
+        <div class="help-icon" data-tooltip="Percentage of samples that passed quality control">?</div>
+        <div class="metric-value" id="eligibility-rate">-</div>
+        <div class="metric-label">Eligibility Rate</div>
+      </div>
+    </div>
+    
     <div id="eligibility-chart" class="chart-container"></div>
     
     <div class="eligibility-by-city">

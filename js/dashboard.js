@@ -1,5 +1,4 @@
-// SPROUT Dashboard JavaScript - Now using Real Research Data
-console.log('Dashboard JavaScript loaded successfully');
+// SPROUT Dashboard JavaScript - Real Research Data Processing
 
 // Northwestern University brand colors
 const NU_COLORS = {
@@ -33,11 +32,8 @@ let dataProcessor = null;
 // Load dashboard data from real research files
 async function loadDashboardData() {
   try {
-    console.log('Loading dashboard data from real research files...');
-    
     // Wait for DOM elements to be ready
     if (!document.getElementById('total-participants')) {
-      console.log('Dashboard elements not ready, retrying in 500ms...');
       setTimeout(loadDashboardData, 500);
       return;
     }
@@ -49,10 +45,10 @@ async function loadDashboardData() {
     
     // Generate dashboard data from TSV/Excel files
     dashboardData = await dataProcessor.generateDashboardData();
-    console.log('Dashboard data loaded successfully from research files:', dashboardData);
     
     // Update metrics
     updateMetrics(dashboardData.overview);
+    updateEligibilityMetrics(dashboardData.eligibilityData);
     
     // Create comprehensive charts matching Python version
     createUSMap(dashboardData.geographic);
@@ -62,8 +58,8 @@ async function loadDashboardData() {
     createChildRaceChart(dashboardData.demographics.raceEthnicity);
     createHispanicChart(dashboardData.demographics.hispanicCounts);
     createQualityControlChart(dashboardData.qualityControl);
-    
-    console.log('Dashboard initialized successfully with real research data');
+    createEligibilityChart(dashboardData.eligibilityData);
+    createCityEligibilityChart(dashboardData.eligibilityData);
     
   } catch (error) {
     console.error('Error loading dashboard data from research files:', error);
@@ -84,6 +80,35 @@ function updateMetrics(overview) {
     const element = document.getElementById(id);
     if (element) {
       element.textContent = value;
+    }
+  });
+}
+
+// Update eligibility metric cards
+function updateEligibilityMetrics(eligibilityData) {
+  if (!eligibilityData || !eligibilityData.overall) {
+    console.warn('No eligibility data available for metrics update');
+    return;
+  }
+
+  const eligible = eligibilityData.overall['Eligible'] || 0;
+  const notEligible = eligibilityData.overall['Not Eligible'] || 0;
+  const total = eligible + notEligible;
+  const rate = total > 0 ? ((eligible / total) * 100) : 0;
+
+  const elements = {
+    'eligible-samples': eligible.toLocaleString(),
+    'not-eligible-samples': notEligible.toLocaleString(),
+    'total-samples': total.toLocaleString(),
+    'eligibility-rate': `${rate.toFixed(1)}%`
+  };
+
+  Object.entries(elements).forEach(([id, value]) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.textContent = value;
+    } else {
+      console.warn(`Element with id '${id}' not found`);
     }
   });
 }
@@ -486,8 +511,6 @@ function createChildRaceChart(raceData) {
     return;
   }
 
-  console.log('Race data received:', raceData); // Debug logging
-
   // Convert array format to labels and values for Plotly
   let labels, values;
   if (Array.isArray(raceData)) {
@@ -504,9 +527,6 @@ function createChildRaceChart(raceData) {
     console.warn('No race data to display');
     return;
   }
-
-  console.log('Race labels:', labels); // Debug logging
-  console.log('Race values:', values); // Debug logging
 
   // Create custom textposition array to force "Black or African American" inside
   const textpositions = labels.map(label => 
@@ -704,11 +724,11 @@ function createQualityControlChart(qcData) {
       `;
     });
     
-    // Calculate overall metrics from summary data
-    const totalSamples = 8796;
-    const notEligibleSegments = qcData.summaryData ? qcData.summaryData.reduce((sum, row) => sum + row.belowThreshold + row.aboveThreshold, 0) : 0;
-    const eligibleSegments = totalSamples - notEligibleSegments;
-    const passRate = ((eligibleSegments / totalSamples) * 100).toFixed(1);
+    // Calculate overall metrics from actual data
+    const totalSamples = qcData.totalSegments || 0;
+    const notEligibleSegments = qcData.notEligibleSegments || 0;
+    const eligibleSegments = qcData.eligibleSegments || 0;
+    const passRate = qcData.passRate || '0.0';
 
     tableHTML += `
           </tbody>
@@ -776,6 +796,253 @@ function createQualityControlChart(qcData) {
   }
 }
 
+// Create Overall Eligibility Analysis Chart (Scatter Plot like Python version)
+function createEligibilityChart(eligibilityData) {
+  const element = document.getElementById('eligibility-chart');
+  if (!element) {
+    console.warn('Eligibility chart element not found');
+    return;
+  }
+
+  if (!eligibilityData || !eligibilityData.overall || Object.keys(eligibilityData.overall).length === 0) {
+    console.warn('No eligibility data available for chart creation');
+    element.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: ${NU_COLORS.gray};">
+        <h3>No Eligibility Data Available</h3>
+        <p>Unable to load eligibility data from Excel file.</p>
+        <p>Please check if the Excel file contains eligibility columns.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Get eligibility data with feature information from data processor
+  if (!dataProcessor || !dataProcessor.qualityData) {
+    console.warn('No quality data available for scatter plot, creating summary chart instead');
+    
+    // Create a simple bar chart showing eligibility counts
+    const labels = Object.keys(eligibilityData.overall);
+    const values = Object.values(eligibilityData.overall);
+    
+    const data = [{
+      x: labels,
+      y: values,
+      type: 'bar',
+      marker: {
+        color: labels.map(label => label === 'Eligible' ? '#2E8B57' : '#DC143C')
+      },
+      text: values.map(v => v.toLocaleString()),
+      textposition: 'auto'
+    }];
+
+    const layout = {
+      title: {
+        text: 'Overall Eligibility Analysis',
+        font: { size: 18, color: NU_COLORS.purple, family: 'Arial' }
+      },
+      xaxis: { title: 'Eligibility Status', color: NU_COLORS.purple },
+      yaxis: { title: 'Number of Samples', color: NU_COLORS.purple },
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      font: { color: NU_COLORS.purple },
+      height: 400
+    };
+
+    const config = { displayModeBar: false, responsive: true };
+    Plotly.newPlot('eligibility-chart', data, layout, config);
+    return;
+  }
+
+  // Create eligibility scatter plot like Python version
+  const eligibilityColors = {
+    'Eligible': '#2E8B57',
+    'Not Eligible': '#DC143C',
+    'Pass': '#2E8B57',
+    'Fail': '#DC143C',
+    'Yes': '#2E8B57',
+    'No': '#DC143C',
+    'True': '#2E8B57',
+    'False': '#DC143C',
+    '1': '#2E8B57',
+    '0': '#DC143C',
+    'Pending': '#FF8C00',
+    'Under Review': NU_COLORS.lightPurple
+  };
+
+  // Process eligibility data with feature values (matching Python approach)
+  const scatterData = [];
+  const featureForPlot = 'Spectral Bandwidth (Hz)'; // Same as Python version
+  
+  dataProcessor.qualityData.forEach((row, index) => {
+    const eligibilityValue = row['Eligible for Research'];
+    const featureValue = parseFloat(row[featureForPlot]);
+    
+    if (eligibilityValue && !isNaN(featureValue)) {
+      // Map eligibility value to standard format
+      let eligibilityStatus = eligibilityValue === 'Yes' ? 'Eligible' : 
+                             eligibilityValue === 'No' ? 'Not Eligible' : eligibilityValue;
+      
+      scatterData.push({
+        x: index,
+        y: featureValue,
+        eligibilityStatus: eligibilityStatus,
+        fileName: row.FileName || 'Unknown',
+        city: row.City || 'Unknown'
+      });
+    }
+  });
+
+  // Group data by eligibility status for different traces
+  const eligibleData = scatterData.filter(d => d.eligibilityStatus === 'Eligible');
+  const notEligibleData = scatterData.filter(d => d.eligibilityStatus === 'Not Eligible');
+
+  const data = [
+    {
+      x: eligibleData.map(d => d.x),
+      y: eligibleData.map(d => d.y),
+      mode: 'markers',
+      type: 'scatter',
+      name: 'Eligible',
+      marker: {
+        color: eligibilityColors['Eligible'],
+        size: 8,
+        opacity: 0.7,
+        line: { width: 1, color: 'white' }
+      },
+      text: eligibleData.map(d => `${d.fileName}<br>${d.city}`),
+      hovertemplate: '<b>%{text}</b><br>Sample Index: %{x}<br>Spectral Bandwidth: %{y:.1f} Hz<br>Status: Eligible<extra></extra>'
+    },
+    {
+      x: notEligibleData.map(d => d.x),
+      y: notEligibleData.map(d => d.y),
+      mode: 'markers',
+      type: 'scatter',
+      name: 'Not Eligible',
+      marker: {
+        color: eligibilityColors['Not Eligible'],
+        size: 8,
+        opacity: 0.7,
+        line: { width: 1, color: 'white' }
+      },
+      text: notEligibleData.map(d => `${d.fileName}<br>${d.city}`),
+      hovertemplate: '<b>%{text}</b><br>Sample Index: %{x}<br>Spectral Bandwidth: %{y:.1f} Hz<br>Status: Not Eligible<extra></extra>'
+    }
+  ];
+
+  const layout = {
+    title: {
+      text: 'Overall Eligibility Status by All Features',
+      font: { size: 18, color: NU_COLORS.purple, family: 'Arial' }
+    },
+    xaxis: {
+      title: 'Sample Index',
+      color: NU_COLORS.purple
+    },
+    yaxis: {
+      title: 'All Features',
+      color: NU_COLORS.purple
+    },
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: NU_COLORS.purple },
+    height: 400,
+    showlegend: true,
+    legend: {
+      orientation: 'h',
+      yanchor: 'bottom',
+      y: -0.3,
+      xanchor: 'center',
+      x: 0.5
+    }
+  };
+
+  const config = {
+    displayModeBar: false,
+    responsive: true
+  };
+
+  Plotly.newPlot('eligibility-chart', data, layout, config);
+}
+
+// Create City-specific Eligibility Chart
+function createCityEligibilityChart(eligibilityData) {
+  const element = document.getElementById('city-eligibility-chart');
+  if (!element) {
+    console.warn('City eligibility chart element not found');
+    return;
+  }
+
+  if (!eligibilityData || !eligibilityData.byCity || Object.keys(eligibilityData.byCity).length === 0) {
+    console.warn('No city eligibility data available');
+    element.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: ${NU_COLORS.gray};">
+        <h3>No City Eligibility Data Available</h3>
+        <p>Unable to load city-specific eligibility data from Excel file.</p>
+      </div>
+    `;
+    return;
+  }
+
+  const eligibilityColors = {
+    'Eligible': '#2E8B57',
+    'Not Eligible': '#DC143C',
+    'Pass': '#2E8B57',
+    'Fail': '#DC143C',
+    'Yes': '#2E8B57',
+    'No': '#DC143C',
+    'True': '#2E8B57',
+    'False': '#DC143C',
+    '1': '#2E8B57',
+    '0': '#DC143C'
+  };
+
+  const cities = Object.keys(eligibilityData.byCity);
+  const eligibilityStatuses = [...new Set(
+    Object.values(eligibilityData.byCity).flatMap(cityData => Object.keys(cityData))
+  )];
+
+  const data = eligibilityStatuses.map(status => ({
+    x: cities,
+    y: cities.map(city => eligibilityData.byCity[city][status] || 0),
+    name: status,
+    type: 'bar',
+    marker: { color: eligibilityColors[status] || NU_COLORS.gray }
+  }));
+
+  const layout = {
+    title: {
+      text: 'Eligibility Status Distribution by City',
+      font: { size: 16, color: NU_COLORS.purple, family: 'Arial' }
+    },
+    xaxis: {
+      title: 'City',
+      tickangle: -45
+    },
+    yaxis: {
+      title: 'Number of Samples'
+    },
+    barmode: 'stack',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: NU_COLORS.purple },
+    height: 400,
+    showlegend: true,
+    legend: {
+      orientation: 'h',
+      x: 0.5,
+      xanchor: 'center',
+      y: -0.3
+    }
+  };
+
+  const config = {
+    displayModeBar: false,
+    responsive: true
+  };
+
+  Plotly.newPlot('city-eligibility-chart', data, layout, config);
+}
+
 // Show error message if data loading fails
 function showErrorMessage() {
   const errorHtml = `
@@ -816,24 +1083,21 @@ window.testDataLoading = async function() {
   }
 };
 
-// Debug function to check all dashboard elements
+// Debug function to check all dashboard elements (for development only)
 window.debugDashboard = function() {
-  console.log('=== Dashboard Debug Information ===');
-  
   const requiredElements = [
     'total-participants', 'avg-age', 'completion-rate', 'data-quality', 'active-studies',
     'total-segments', 'eligibility-rate',
     'income-groups-chart', 'child-race-chart', 'hispanic-chart', 'us-map', 'age-chart', 'qc-chart', 'city-table'
   ];
   
-  console.log('Checking required elements:');
   requiredElements.forEach(id => {
     const element = document.getElementById(id);
-    console.log(`  ${id}: ${element ? '✅ Found' : '❌ Missing'}`);
+    console.log(`${id}: ${element ? '✅ Found' : '❌ Missing'}`);
   });
   
-  console.log('Current dashboard data:', dashboardData);
-  console.log('Data processor:', dataProcessor);
+  if (dashboardData) console.log('Dashboard data loaded successfully');
+  if (dataProcessor) console.log('Data processor initialized');
   
   if (typeof DataProcessor !== 'undefined') {
     console.log('✅ DataProcessor class is available');
@@ -850,14 +1114,13 @@ window.debugDashboard = function() {
 
 // Initialize dashboard when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM loaded, initializing dashboard...');
   setTimeout(loadDashboardData, 100);
 });
 
 // Fallback initialization if DOMContentLoaded already fired
 if (document.readyState === 'loading') {
-  console.log('Document still loading, waiting for DOMContentLoaded');
+  // Document still loading, event listener will handle it
 } else {
-  console.log('Document already loaded, initializing dashboard immediately');
+  // Document already loaded, initialize immediately
   setTimeout(loadDashboardData, 100);
 }
