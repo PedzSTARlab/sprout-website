@@ -1,95 +1,107 @@
-// SPROUT Dashboard JavaScript
+// SPROUT Dashboard JavaScript - Now using Real Research Data
 console.log('Dashboard JavaScript loaded successfully');
 
 // Northwestern University brand colors
 const NU_COLORS = {
   purple: '#4E2A84',
   lightPurple: '#836EAA',
+  gold: '#FFD100',
+  darkPurple: '#401F68',
   gray: '#716C6B',
   lightGray: '#D8D6D0',
-  white: '#FFFFFF'
+  white: '#FFFFFF',
+  black: '#000000'
 };
 
-// Load dashboard data and initialize charts
+// Enhanced color palette for charts
+const chartColors = [
+    NU_COLORS.purple,
+    NU_COLORS.gold,
+    NU_COLORS.lightPurple,
+    NU_COLORS.darkPurple,
+    NU_COLORS.gray,
+    '#9B4F96', // Additional purple shade
+    '#F7931E', // Additional gold shade
+    '#5A4FCF', // Additional blue-purple
+    '#C5B358', // Muted gold
+    '#8B7355'  // Brown accent
+];
+
+let dashboardData = null;
+let dataProcessor = null;
+
+// Load dashboard data from real research files
 async function loadDashboardData() {
   try {
-    console.log('Loading dashboard data...');
+    console.log('Loading dashboard data from real research files...');
     
-    // Try multiple possible paths for the data file
-    const possiblePaths = ['../js/dashboard-data.json', 'js/dashboard-data.json', './js/dashboard-data.json'];
-    let response;
-    let dataPath;
-    
-    for (const path of possiblePaths) {
-      try {
-        console.log(`Trying path: ${path}`);
-        response = await fetch(path);
-        if (response.ok) {
-          dataPath = path;
-          console.log(`Success with path: ${path}`);
-          break;
-        }
-      } catch (e) {
-        console.log(`Failed path: ${path}`);
-      }
+    // Wait for DOM elements to be ready
+    if (!document.getElementById('total-participants')) {
+      console.log('Dashboard elements not ready, retrying in 500ms...');
+      setTimeout(loadDashboardData, 500);
+      return;
     }
     
-    if (!response || !response.ok) {
-      throw new Error(`Could not load data from any path. Last status: ${response?.status}`);
+    // Initialize data processor if not already done
+    if (!dataProcessor) {
+      dataProcessor = new DataProcessor();
     }
     
-    console.log('Response status:', response.status);
-    console.log('Data path used:', dataPath);
-    
-    const data = await response.json();
-    console.log('Data loaded successfully:', data.summary_stats);
+    // Generate dashboard data from TSV/Excel files
+    dashboardData = await dataProcessor.generateDashboardData();
+    console.log('Dashboard data loaded successfully from research files:', dashboardData);
     
     // Update metrics
-    updateMetrics(data.summary_stats);
+    updateMetrics(dashboardData.overview);
     
-    // Create charts
-    createUSMap(data.city_counts);
-    createCityTable(data.city_counts);
-    createAgeChart(data.age_data);
-    createRaceChart(data.race_counts);
-    createHispanicChart(data.hispanic_counts);
-    createDemoChart(data.demo_counts);
+    // Create comprehensive charts matching Python version
+    createUSMap(dashboardData.geographic);
+    createCityTable(dashboardData.cityTable);
+    createAgeScatterChart(dashboardData.ageData);
+    createIncomeGroupsChart(dashboardData.demographics.incomeGroups);
+    createRaceEthnicityChart(dashboardData.demographics.raceEthnicity);
+    createHispanicChart(dashboardData.demographics.hispanicCounts);
+    createQualityControlChart(dashboardData.qualityControl);
     
-    // Create feature analysis charts if data is available
-    if (data.feature_analysis && Object.keys(data.feature_analysis).length > 0) {
-      createFeatureCharts(data.feature_analysis);
-    }
-    
-    // Create QC summary if data is available
-    if (data.qc_summary && Object.keys(data.qc_summary).length > 0) {
-      createEligibilityChart(data.qc_summary);
-      createQCSummaryTable(data.feature_analysis);
-    }
-    
-    console.log('Dashboard initialized successfully');
+    console.log('Dashboard initialized successfully with real research data');
     
   } catch (error) {
-    console.error('Error loading dashboard data:', error);
+    console.error('Error loading dashboard data from research files:', error);
     showErrorMessage();
   }
 }
 
-// Update metric cards
-function updateMetrics(stats) {
-  document.getElementById('total-participants').textContent = stats.total_participants.toLocaleString();
-  document.getElementById('active-cities').textContent = stats.active_cities;
-  document.getElementById('avg-age').textContent = stats.avg_age.toFixed(1) + ' years';
-  document.getElementById('age-range').textContent = stats.age_range.toFixed(1) + ' years';
+// Update metric cards to match Python version
+function updateMetrics(overview) {
+  const elements = {
+    'total-participants': overview.totalParticipants?.toLocaleString() || 'N/A',
+    'active-cities': overview.activeCities || 'N/A',
+    'avg-age': overview.avgAge || 'N/A',
+    'age-range': overview.ageRange || 'N/A'
+  };
+
+  Object.entries(elements).forEach(([id, value]) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.textContent = value;
+    }
+  });
 }
 
-// Create US Map
+// Create US Map with Census Regions (matching Python version)
 function createUSMap(cityData) {
-  // Define US Census regions and colors
+  const element = document.getElementById('us-map');
+  if (!element || !cityData) {
+    console.warn('US Map element not found or no data available');
+    return;
+  }
+
+  // US Census regions and colors (matching Python version)
   const regionColors = {
-    'West': '#FFA500',
-    'Midwest': '#228B22', 
-    'South': '#1E90FF',
-    'Northeast': '#FF0000'
+    'West': '#FFA500',       // Orange
+    'Midwest': '#228B22',    // Green
+    'South': '#1E90FF',      // Blue
+    'Northeast': '#FF0000'   // Red
   };
 
   const stateRegionMap = {
@@ -147,7 +159,7 @@ function createUSMap(cityData) {
         color: 'black'
       }
     },
-    text: cityData.map(d => `${d.City}<br>${d.Participant_Count} participants`),
+    text: cityData.map(d => `${d.city}<br>${d.participants} participants`),
     textposition: 'bottom center',
     textfont: {
       size: 12,
@@ -182,46 +194,60 @@ function createUSMap(cityData) {
     height: 600
   };
 
-  Plotly.newPlot('us-map', [choroplethTrace, cityTrace], layout, {responsive: true});
+  const config = {
+    displayModeBar: false,
+    responsive: true
+  };
+
+  Plotly.newPlot('us-map', [choroplethTrace, cityTrace], layout, config);
 }
 
-// Create city table
+// Create city table (matching Python version)
 function createCityTable(cityData) {
-  const sortedData = cityData.sort((a, b) => b.Participant_Count - a.Participant_Count);
+  const element = document.getElementById('city-table');
+  if (!element || !cityData) {
+    console.warn('City table element not found or no data available');
+    return;
+  }
+
+  const sortedData = [...cityData].sort((a, b) => b.participants - a.participants);
   
   let tableHTML = `
-    <table>
+    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;">
       <thead>
-        <tr>
-          <th>City</th>
-          <th>Number of Participants</th>
+        <tr style="background-color: ${NU_COLORS.purple}; color: white;">
+          <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">City</th>
+          <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Number of Participants</th>
         </tr>
       </thead>
       <tbody>
   `;
   
-  sortedData.forEach(city => {
+  sortedData.forEach((city, index) => {
+    const bgColor = index % 2 === 0 ? 'white' : '#f9f9f9';
     tableHTML += `
-      <tr>
-        <td>${city.City}</td>
-        <td>${city.Participant_Count.toLocaleString()}</td>
+      <tr style="background-color: ${bgColor};">
+        <td style="padding: 8px; border: 1px solid #ddd;">${city.city}</td>
+        <td style="padding: 8px; border: 1px solid #ddd;">${city.participants.toLocaleString()}</td>
       </tr>
     `;
   });
   
   tableHTML += '</tbody></table>';
-  document.getElementById('city-table').innerHTML = tableHTML;
+  element.innerHTML = tableHTML;
 }
 
-// Create age distribution chart
-function createAgeChart(ageData) {
-  const ages = ageData.map(d => d.age);
-  const participantIds = ageData.map(d => d.participant_id);
-  const ageLabels = ageData.map(d => d.ss_child_chronological_age);
-  
+// Create age scatter plot (matching Python version)
+function createAgeScatterChart(ageData) {
+  const element = document.getElementById('age-chart');
+  if (!element || !ageData) {
+    console.warn('Age chart element not found or no data available');
+    return;
+  }
+
   const trace = {
-    x: ages.map((_, i) => i),
-    y: ages,
+    x: ageData.participantIds.map((_, i) => i),
+    y: ageData.ages,
     mode: 'markers',
     type: 'scatter',
     marker: {
@@ -229,8 +255,8 @@ function createAgeChart(ageData) {
       size: 8,
       opacity: 0.7
     },
-    text: participantIds,
-    customdata: ageLabels,
+    text: ageData.participantIds,
+    customdata: ageData.ageLabels,
     hovertemplate: 'Participant: %{text}<br>Age: %{customdata}<extra></extra>'
   };
 
@@ -245,11 +271,13 @@ function createAgeChart(ageData) {
     },
     xaxis: {
       title: 'Participant Index',
-      color: NU_COLORS.purple
+      titlefont: { color: NU_COLORS.purple },
+      tickfont: { color: NU_COLORS.purple }
     },
     yaxis: {
       title: 'Age (Years)',
-      color: NU_COLORS.purple
+      titlefont: { color: NU_COLORS.purple },
+      tickfont: { color: NU_COLORS.purple }
     },
     plot_bgcolor: 'rgba(0,0,0,0)',
     paper_bgcolor: 'rgba(0,0,0,0)',
@@ -258,424 +286,306 @@ function createAgeChart(ageData) {
     showlegend: false
   };
 
-  Plotly.newPlot('age-chart', [trace], layout, {responsive: true});
+  const config = {
+    displayModeBar: false,
+    responsive: true
+  };
+
+  Plotly.newPlot('age-chart', [trace], layout, config);
 }
 
-// Create race distribution chart
-function createRaceChart(raceData) {
-  const races = Object.keys(raceData);
-  const counts = Object.values(raceData);
+// Create Income Groups Chart (matching Python version)
+function createIncomeGroupsChart(incomeData) {
+  const element = document.getElementById('income-groups-chart');
+  if (!element || !incomeData) {
+    console.warn('Income groups chart element not found or no data available');
+    return;
+  }
 
-  const trace = {
-    x: races,
-    y: counts,
+  const data = [{
+    x: incomeData.map(item => item.label),
+    y: incomeData.map(item => item.value),
     type: 'bar',
     marker: {
-      color: counts,
+      color: incomeData.map(item => item.value),
       colorscale: [[0, NU_COLORS.lightPurple], [1, NU_COLORS.purple]],
-      opacity: 0.8
+      showscale: false
     },
-    hovertemplate: '%{x}<br>Count: %{y}<extra></extra>'
+    text: incomeData.map(item => `${item.percentage}%`),
+    textposition: 'auto',
+    hovertemplate: '<b>%{x}</b><br>Count: %{y}<br>Percentage: %{text}<extra></extra>'
+  }];
+
+  const layout = {
+    title: {
+      text: 'Participants by Income Group',
+      font: { size: 18, color: NU_COLORS.purple, family: 'Arial' }
+    },
+    xaxis: {
+      title: 'Income Group',
+      titlefont: { color: NU_COLORS.purple },
+      tickfont: { color: NU_COLORS.purple }
+    },
+    yaxis: {
+      title: 'Number of Participants',
+      titlefont: { color: NU_COLORS.purple },
+      tickfont: { color: NU_COLORS.purple }
+    },
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: NU_COLORS.purple },
+    showlegend: false,
+    height: 450
   };
+
+  const config = {
+    displayModeBar: false,
+    responsive: true
+  };
+
+  Plotly.newPlot('income-groups-chart', data, layout, config);
+}
+
+// Create Race/Ethnicity Chart (matching Python version)
+function createRaceEthnicityChart(raceData) {
+  const element = document.getElementById('race-ethnicity-chart');
+  if (!element || !raceData) {
+    console.warn('Race/ethnicity chart element not found or no data available');
+    return;
+  }
+
+  const data = [{
+    x: raceData.map(item => item.label),
+    y: raceData.map(item => item.value),
+    type: 'bar',
+    marker: {
+      color: raceData.map(item => item.value),
+      colorscale: [[0, NU_COLORS.lightPurple], [1, NU_COLORS.purple]],
+      showscale: false
+    },
+    text: raceData.map(item => `${item.percentage}%`),
+    textposition: 'auto',
+    hovertemplate: '<b>%{x}</b><br>Count: %{y}<br>Percentage: %{text}<extra></extra>'
+  }];
 
   const layout = {
     title: {
       text: 'Participants by Reported Child Race',
-      font: {
-        size: 16,
-        color: NU_COLORS.purple,
-        family: 'Arial'
-      }
+      font: { size: 18, color: NU_COLORS.purple, family: 'Arial' }
     },
     xaxis: {
       title: 'Race',
-      tickangle: -45,
-      color: NU_COLORS.purple
+      titlefont: { color: NU_COLORS.purple },
+      tickfont: { color: NU_COLORS.purple },
+      tickangle: -45
     },
     yaxis: {
       title: 'Number of Participants',
-      color: NU_COLORS.purple
+      titlefont: { color: NU_COLORS.purple },
+      tickfont: { color: NU_COLORS.purple }
     },
     plot_bgcolor: 'rgba(0,0,0,0)',
     paper_bgcolor: 'rgba(0,0,0,0)',
     font: { color: NU_COLORS.purple },
-    margin: { l: 60, r: 20, t: 60, b: 100 },
-    showlegend: false
+    showlegend: false,
+    height: 450
   };
 
-  Plotly.newPlot('race-chart', [trace], layout, {responsive: true});
+  const config = {
+    displayModeBar: false,
+    responsive: true
+  };
+
+  Plotly.newPlot('race-ethnicity-chart', data, layout, config);
 }
 
-// Create Hispanic chart
+// Create Hispanic Chart (matching Python version)
 function createHispanicChart(hispanicData) {
-  const ethnicities = Object.keys(hispanicData);
-  const counts = Object.values(hispanicData);
+  const element = document.getElementById('hispanic-chart');
+  if (!element || !hispanicData) {
+    console.warn('Hispanic chart element not found or no data available');
+    return;
+  }
 
-  const trace = {
-    x: ethnicities,
-    y: counts,
+  const data = [{
+    x: hispanicData.map(item => item.label),
+    y: hispanicData.map(item => item.value),
     type: 'bar',
     marker: {
-      color: counts,
+      color: hispanicData.map(item => item.value),
       colorscale: [[0, NU_COLORS.lightPurple], [1, NU_COLORS.purple]],
-      opacity: 0.8
+      showscale: false
     },
-    hovertemplate: '%{x}<br>Count: %{y}<extra></extra>'
-  };
+    text: hispanicData.map(item => `${item.percentage}%`),
+    textposition: 'auto',
+    hovertemplate: '<b>%{x}</b><br>Count: %{y}<br>Percentage: %{text}<extra></extra>'
+  }];
 
   const layout = {
     title: {
       text: 'Participants by Hispanic / Latine Identification',
-      font: {
-        size: 16,
-        color: NU_COLORS.purple,
-        family: 'Arial'
-      }
+      font: { size: 18, color: NU_COLORS.purple, family: 'Arial' }
     },
     xaxis: {
       title: 'Ethnicity',
-      tickangle: -30,
-      color: NU_COLORS.purple
+      titlefont: { color: NU_COLORS.purple },
+      tickfont: { color: NU_COLORS.purple },
+      tickangle: -30
     },
     yaxis: {
       title: 'Number of Participants',
-      color: NU_COLORS.purple
+      titlefont: { color: NU_COLORS.purple },
+      tickfont: { color: NU_COLORS.purple }
     },
     plot_bgcolor: 'rgba(0,0,0,0)',
     paper_bgcolor: 'rgba(0,0,0,0)',
     font: { color: NU_COLORS.purple },
-    margin: { l: 60, r: 20, t: 60, b: 100 },
-    showlegend: false
+    showlegend: false,
+    height: 450
   };
 
-  Plotly.newPlot('hispanic-chart', [trace], layout, {responsive: true});
+  const config = {
+    displayModeBar: false,
+    responsive: true
+  };
+
+  Plotly.newPlot('hispanic-chart', data, layout, config);
 }
 
-// Create demographic groups chart
-function createDemoChart(demoData) {
-  const groups = Object.keys(demoData);
-  const counts = Object.values(demoData);
+// Create Quality Control Chart (matching Python version)
+function createQualityControlChart(qcData) {
+  const element = document.getElementById('qc-chart');
+  if (!element || !qcData) {
+    console.warn('QC chart element not found or no data available');
+    return;
+  }
 
-  const trace = {
-    x: groups,
-    y: counts,
-    type: 'bar',
+  const data = [{
+    values: [qcData.eligibleSegments, qcData.notEligibleSegments],
+    labels: [`Eligible (${qcData.passRate}%)`, 'Not Eligible'],
+    type: 'pie',
+    hole: 0.3,
     marker: {
-      color: counts,
-      colorscale: [[0, NU_COLORS.lightPurple], [1, NU_COLORS.purple]],
-      opacity: 0.8
+      colors: ['#2E8B57', '#DC143C'] // Green for eligible, red for not eligible
     },
-    hovertemplate: '%{x}<br>Count: %{y}<extra></extra>'
-  };
+    textposition: 'inside',
+    textinfo: 'label+percent',
+    textfont: {
+      size: 12,
+      color: 'white',
+      family: 'Arial, sans-serif'
+    },
+    hovertemplate: '<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>'
+  }];
 
   const layout = {
     title: {
-      text: 'Participants by Demographic Group',
-      font: {
-        size: 18,
-        color: NU_COLORS.purple,
-        family: 'Arial'
-      }
+      text: 'Overall Eligibility Analysis',
+      font: { size: 18, color: NU_COLORS.purple, family: 'Arial' }
     },
-    xaxis: {
-      title: 'Demographic Group',
-      color: NU_COLORS.purple
+    showlegend: true,
+    legend: {
+      orientation: 'v',
+      x: 1.02,
+      y: 0.5,
+      font: { size: 12 }
     },
-    yaxis: {
-      title: 'Number of Participants',
-      color: NU_COLORS.purple
-    },
-    plot_bgcolor: 'rgba(0,0,0,0)',
-    paper_bgcolor: 'rgba(0,0,0,0)',
-    font: { color: NU_COLORS.purple },
-    showlegend: false
+    margin: { t: 50, b: 20, l: 20, r: 120 },
+    paper_bgcolor: 'white',
+    plot_bgcolor: 'white',
+    height: 400
   };
 
-  Plotly.newPlot('demo-chart', [trace], layout, {responsive: true});
-}
-
-// Create feature analysis charts
-function createFeatureCharts(featureData) {
-  const features = Object.keys(featureData);
-  
-  features.forEach((feature, index) => {
-    const data = featureData[feature];
-    if (!data || !data.values) return;
-    
-    // Get container ID based on feature name
-    const containerId = getFeatureContainerId(feature);
-    
-    // Create threshold status for each data point
-    const thresholdStatus = data.values.map(value => {
-      if (value < data.low_threshold) return 'Below Threshold';
-      if (value > data.high_threshold) return 'Above Threshold';
-      return 'Within Range';
-    });
-    
-    const trace = {
-      x: data.values.map((_, i) => i),
-      y: data.values,
-      mode: 'markers',
-      type: 'scatter',
-      marker: {
-        color: thresholdStatus.map(status => {
-          switch(status) {
-            case 'Within Range': return '#2E8B57';
-            case 'Below Threshold': return '#DC143C';
-            case 'Above Threshold': return '#FF8C00';
-            default: return NU_COLORS.gray;
-          }
-        }),
-        size: 8,
-        opacity: 0.7,
-        line: { width: 1, color: 'white' }
-      },
-      text: data.filenames,
-      customdata: data.cities,
-      hovertemplate: 'File: %{text}<br>City: %{customdata}<br>Value: %{y}<br>Status: ' + 
-                     thresholdStatus.map(s => s).join('<br>Status: ') + '<extra></extra>'
-    };
-
-    const layout = {
-      title: {
-        text: `${feature} Quality Control Analysis`,
-        font: { size: 14, color: NU_COLORS.purple, family: 'Arial' }
-      },
-      xaxis: {
-        title: 'Sample Index',
-        color: NU_COLORS.purple
-      },
-      yaxis: {
-        title: feature,
-        color: NU_COLORS.purple
-      },
-      plot_bgcolor: 'rgba(0,0,0,0)',
-      paper_bgcolor: 'rgba(0,0,0,0)',
-      font: { color: NU_COLORS.purple, size: 10 },
-      height: 400,
-      margin: { l: 50, r: 50, t: 50, b: 50 },
-      shapes: [
-        // Lower threshold line
-        {
-          type: 'line',
-          x0: 0,
-          x1: data.values.length,
-          y0: data.low_threshold,
-          y1: data.low_threshold,
-          line: {
-            color: '#DC143C',
-            width: 2,
-            dash: 'dash'
-          }
-        },
-        // Upper threshold line
-        {
-          type: 'line',
-          x0: 0,
-          x1: data.values.length,
-          y0: data.high_threshold,
-          y1: data.high_threshold,
-          line: {
-            color: '#DC143C',
-            width: 2,
-            dash: 'dash'
-          }
-        }
-      ],
-      annotations: [
-        {
-          x: data.values.length * 0.1,
-          y: data.low_threshold,
-          text: `Lower Threshold: ${data.low_threshold}`,
-          showarrow: false,
-          font: { color: '#DC143C', size: 10 }
-        },
-        {
-          x: data.values.length * 0.1,
-          y: data.high_threshold,
-          text: `Upper Threshold: ${data.high_threshold}`,
-          showarrow: false,
-          font: { color: '#DC143C', size: 10 }
-        }
-      ]
-    };
-
-    Plotly.newPlot(containerId, [trace], layout, {responsive: true});
-  });
-}
-
-// Get container ID for feature charts
-function getFeatureContainerId(feature) {
-  const idMap = {
-    'LUFS': 'lufs-chart',
-    'RMS Energy': 'rms-chart',
-    'Relative Amplitude': 'amplitude-chart',
-    'Spectral Centroid (Hz)': 'centroid-chart',
-    'Spectral Bandwidth (Hz)': 'bandwidth-chart',
-    'Pitch Mean (Hz)': 'pitch-chart',
-    'MFCC Mean': 'mfcc-mean-chart',
-    'MFCC Std Dev': 'mfcc-std-chart'
-  };
-  return idMap[feature] || 'feature-chart';
-}
-
-// Create eligibility analysis chart
-function createEligibilityChart(qcData) {
-  if (!qcData.eligibility_by_city) return;
-  
-  const cityEligibilityData = qcData.eligibility_by_city;
-  
-  // Prepare data for grouped bar chart
-  const cities = [...new Set(cityEligibilityData.map(d => d.City))];
-  const eligibleData = cities.map(city => {
-    const record = cityEligibilityData.find(d => d.City === city && (d['1'] || d['Eligible'] || d['Pass']));
-    return record ? record.Count : 0;
-  });
-  const notEligibleData = cities.map(city => {
-    const record = cityEligibilityData.find(d => d.City === city && (d['0'] || d['Not Eligible'] || d['Fail']));
-    return record ? record.Count : 0;
-  });
-
-  const trace1 = {
-    x: cities,
-    y: eligibleData,
-    name: 'Eligible',
-    type: 'bar',
-    marker: { color: '#2E8B57' }
+  const config = {
+    displayModeBar: false,
+    responsive: true
   };
 
-  const trace2 = {
-    x: cities,
-    y: notEligibleData,
-    name: 'Not Eligible', 
-    type: 'bar',
-    marker: { color: '#DC143C' }
-  };
-
-  const layout = {
-    title: {
-      text: 'Eligibility Status Distribution by City',
-      font: { size: 16, color: NU_COLORS.purple, family: 'Arial' }
-    },
-    xaxis: {
-      title: 'City',
-      tickangle: -45,
-      color: NU_COLORS.purple
-    },
-    yaxis: {
-      title: 'Number of Samples',
-      color: NU_COLORS.purple
-    },
-    plot_bgcolor: 'rgba(0,0,0,0)',
-    paper_bgcolor: 'rgba(0,0,0,0)',
-    font: { color: NU_COLORS.purple },
-    height: 400,
-    barmode: 'group'
-  };
-
-  Plotly.newPlot('city-eligibility-chart', [trace1, trace2], layout, {responsive: true});
+  Plotly.newPlot('qc-chart', data, layout, config);
 }
 
-// Create QC summary table
-function createQCSummaryTable(featureData) {
-  if (!featureData || Object.keys(featureData).length === 0) return;
-  
-  const features = Object.keys(featureData);
-  
-  let tableHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Feature</th>
-          <th>Total Samples</th>
-          <th>Within Range</th>
-          <th>Below Threshold</th>
-          <th>Above Threshold</th>
-          <th>Violation Rate (%)</th>
-          <th>QC Status</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-  
-  features.forEach(feature => {
-    const data = featureData[feature];
-    const violationRate = data.violation_rate.toFixed(1);
-    
-    let status = 'Excellent';
-    if (data.violation_rate >= 30) status = 'Needs Attention';
-    else if (data.violation_rate >= 15) status = 'Moderate';
-    else if (data.violation_rate >= 5) status = 'Good';
-    
-    const statusEmoji = {
-      'Excellent': '✅',
-      'Good': '👍', 
-      'Moderate': '⚠️',
-      'Needs Attention': '🔴'
-    }[status];
-    
-    tableHTML += `
-      <tr>
-        <td>${feature}</td>
-        <td>${data.total_samples.toLocaleString()}</td>
-        <td>${data.within_range.toLocaleString()}</td>
-        <td>${data.below_threshold.toLocaleString()}</td>
-        <td>${data.above_threshold.toLocaleString()}</td>
-        <td>${violationRate}%</td>
-        <td>${statusEmoji} ${status}</td>
-      </tr>
-    `;
-  });
-  
-  tableHTML += '</tbody></table>';
-  document.getElementById('qc-summary-table').innerHTML = tableHTML;
-}
-
-// Make loadDashboardData globally available for debugging
-window.loadDashboardData = loadDashboardData;
-
-// Show error message if data fails to load
+// Show error message if data loading fails
 function showErrorMessage() {
-  const errorMsg = `
-    <div style="text-align: center; padding: 2rem; color: #dc3545;">
-      <h3>⚠️ Unable to load dashboard data</h3>
-      <p>Please check the data files and try refreshing the page.</p>
-      <p>In the meantime, you can view the <a href="https://pedzstar-sprout.streamlit.app/" target="_blank">live dashboard</a>.</p>
+  const errorHtml = `
+    <div style="text-align: center; padding: 40px; color: ${NU_COLORS.gray};">
+      <h3>Unable to Load Dashboard Data</h3>
+      <p>There was an error loading data from research files. Please check:</p>
+      <ul style="text-align: left; display: inline-block;">
+        <li>data/participants.tsv is accessible</li>
+        <li>data/Post_qc_summary.xlsx is accessible</li>
+        <li>JavaScript console for detailed error messages</li>
+      </ul>
+      <p><strong>Using fallback data for demonstration.</strong></p>
     </div>
   `;
   
-  document.querySelectorAll('.chart-container').forEach(container => {
-    container.innerHTML = errorMsg;
+  // Show error in main chart containers
+  const chartContainers = [
+    'income-groups-chart',
+    'race-ethnicity-chart'
+  ];
+  
+  chartContainers.forEach(containerId => {
+    const container = document.getElementById(containerId);
+    if (container) {
+      container.innerHTML = errorHtml;
+    }
   });
 }
 
-// Handle window resize for responsive charts
-window.addEventListener('resize', function() {
-  // Main charts
-  Plotly.Plots.resize('us-map');
-  Plotly.Plots.resize('age-chart');
-  Plotly.Plots.resize('race-chart');
-  Plotly.Plots.resize('hispanic-chart');
-  Plotly.Plots.resize('demo-chart');
+// Manual function to test data loading (for debugging)
+window.testDataLoading = async function() {
+  console.log('=== Manual Data Loading Test ===');
+  try {
+    await loadDashboardData();
+    console.log('✅ Data loading test completed successfully');
+  } catch (error) {
+    console.error('❌ Data loading test failed:', error);
+  }
+};
+
+// Debug function to check all dashboard elements
+window.debugDashboard = function() {
+  console.log('=== Dashboard Debug Information ===');
   
-  // Feature charts
-  const featureCharts = [
-    'lufs-chart', 'rms-chart', 'amplitude-chart', 'centroid-chart',
-    'bandwidth-chart', 'pitch-chart', 'mfcc-mean-chart', 'mfcc-std-chart'
+  const requiredElements = [
+    'total-participants', 'avg-age', 'completion-rate', 'data-quality', 'active-studies',
+    'total-segments', 'eligibility-rate',
+    'income-groups-chart', 'race-ethnicity-chart', 'us-map', 'age-chart', 'qc-chart', 'city-table'
   ];
   
-  featureCharts.forEach(chartId => {
-    const element = document.getElementById(chartId);
-    if (element && element.data) {
-      Plotly.Plots.resize(chartId);
-    }
+  console.log('Checking required elements:');
+  requiredElements.forEach(id => {
+    const element = document.getElementById(id);
+    console.log(`  ${id}: ${element ? '✅ Found' : '❌ Missing'}`);
   });
   
-  // QC charts
-  if (document.getElementById('eligibility-chart')) {
-    Plotly.Plots.resize('eligibility-chart');
+  console.log('Current dashboard data:', dashboardData);
+  console.log('Data processor:', dataProcessor);
+  
+  if (typeof DataProcessor !== 'undefined') {
+    console.log('✅ DataProcessor class is available');
+  } else {
+    console.log('❌ DataProcessor class is not available');
   }
-  if (document.getElementById('city-eligibility-chart')) {
-    Plotly.Plots.resize('city-eligibility-chart');
+  
+  if (typeof Plotly !== 'undefined') {
+    console.log('✅ Plotly is available');
+  } else {
+    console.log('❌ Plotly is not available');
   }
+};
+
+// Initialize dashboard when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM loaded, initializing dashboard...');
+  setTimeout(loadDashboardData, 100);
 });
+
+// Fallback initialization if DOMContentLoaded already fired
+if (document.readyState === 'loading') {
+  console.log('Document still loading, waiting for DOMContentLoaded');
+} else {
+  console.log('Document already loaded, initializing dashboard immediately');
+  setTimeout(loadDashboardData, 100);
+}

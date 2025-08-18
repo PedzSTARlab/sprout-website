@@ -11,18 +11,22 @@
     <h3 class="section-header">Key Metrics</h3>
     <div class="metrics-grid">
       <div class="metric-card">
+        <div class="help-icon" data-tooltip="Total number of unique participants across all cities">?</div>
         <div class="metric-value" id="total-participants">-</div>
         <div class="metric-label">Total Participants</div>
       </div>
       <div class="metric-card">
+        <div class="help-icon" data-tooltip="Number of cities with participants">?</div>
         <div class="metric-value" id="active-cities">-</div>
         <div class="metric-label">Active Cities</div>
       </div>
       <div class="metric-card">
+        <div class="help-icon" data-tooltip="Mean age of all participants">?</div>
         <div class="metric-value" id="avg-age">-</div>
         <div class="metric-label">Average Age</div>
       </div>
       <div class="metric-card">
+        <div class="help-icon" data-tooltip="Range between oldest and youngest participant">?</div>
         <div class="metric-value" id="age-range">-</div>
         <div class="metric-label">Age Range</div>
       </div>
@@ -46,23 +50,18 @@
     <div id="age-chart" class="chart-container"></div>
   </div>
 
-  <!-- Demographics Section -->
+    <!-- Demographic Distribution -->
   <div class="chart-section">
-    <h3 class="section-header">Demographics</h3>
-    <div class="demographics-grid">
+    <h3 class="section-header">Demographic Groups</h3>
+    <div class="charts-grid">
       <div class="chart-half">
-        <h4>Child Race Distribution</h4>
-        <div id="race-chart" class="chart-container"></div>
+        <h4>Income Groups Distribution</h4>
+        <div id="income-groups-chart" class="chart-container"></div>
       </div>
       <div class="chart-half">
-        <h4>Hispanic / Latine Identification</h4>
-        <div id="hispanic-chart" class="chart-container"></div>
+        <h4>Race/Ethnicity Distribution</h4>
+        <div id="race-ethnicity-chart" class="chart-container"></div>
       </div>
-    </div>
-    
-    <div class="chart-full">
-      <h4>Demographic Groups</h4>
-      <div id="demo-chart" class="chart-container"></div>
     </div>
   </div>
 
@@ -71,22 +70,15 @@
     <h3 class="section-header">Quality Control Summary</h3>
     <div class="qc-metrics">
       <div class="metric-card qc-card">
-        <div class="metric-value">7,929</div>
-        <div class="metric-label">Eligible Samples</div>
+        <div class="metric-value" id="total-segments">-</div>
+        <div class="metric-label">Total Segments</div>
       </div>
       <div class="metric-card qc-card">
-        <div class="metric-value">867</div>
-        <div class="metric-label">Not Eligible</div>
-      </div>
-      <div class="metric-card qc-card">
-        <div class="metric-value">8,796</div>
-        <div class="metric-label">Total Samples</div>
-      </div>
-      <div class="metric-card qc-card">
-        <div class="metric-value">90.1%</div>
+        <div class="metric-value" id="eligibility-rate">-</div>
         <div class="metric-label">Eligibility Rate</div>
       </div>
     </div>
+    <div id="qc-chart" class="chart-container"></div>
   </div>
 
   <!-- Feature Analysis Section -->
@@ -121,15 +113,6 @@
     <h3 class="section-header">Quality Control Summary</h3>
     <div id="qc-summary-table" class="summary-table"></div>
   </div>
-
-  <!-- Dashboard Info -->
-
-  <div class="dashboard-footer">
-    <p><strong>Last updated:</strong> August 2025<br>
-    <strong>Dashboard build:</strong> HTML5, CSS3, JavaScript, Plotly.js<br>
-    <strong>Contact:</strong> pedzstarlab@northwestern.edu</p>
-  </div>
-</div>
 
 <!-- Dashboard-specific CSS -->
 <style>
@@ -176,22 +159,93 @@
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
 .metric-card {
   background: white;
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-left: 4px solid var(--nu-purple);
   text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  cursor: default;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Help Icon Styles */
+.help-icon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  background: var(--nu-purple);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.help-icon:hover {
+  background: var(--nu-dark-purple, #3a1c5a);
+  transform: scale(1.1);
+}
+
+/* Custom Tooltip Styles */
+.help-icon:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--nu-purple);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  animation: tooltipFadeIn 0.2s ease-in-out;
+  min-width: max-content;
+}
+
+.help-icon:hover::before {
+  content: '';
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--nu-purple);
+  z-index: 10000;
+}
+
+@keyframes tooltipFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(5px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 .metric-value {
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: bold;
   color: var(--nu-purple);
   margin-bottom: 0.5rem;
@@ -199,9 +253,10 @@
 
 .metric-label {
   color: var(--nu-gray);
-  font-size: 0.9rem;
+  font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-weight: 600;
 }
 
 .chart-container {
@@ -227,6 +282,17 @@
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--nu-light-gray);
+  overflow: hidden;
+}
+
+.chart-half .chart-container {
+  height: 400px;
+  min-height: 300px;
+}
+
+.chart-full .chart-container {
+  height: 450px;
+  min-height: 350px;
 }
 
 .chart-full {
@@ -280,13 +346,14 @@
 
 .qc-metrics {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
   margin: 1rem 0 2rem 0;
 }
 
 .qc-card {
   border-left-color: #2E8B57;
+  padding: 2rem 1.5rem;
 }
 
 .feature-charts-grid {
@@ -379,14 +446,46 @@
 @media (max-width: 768px) {
   .demographics-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .chart-half .chart-container {
+    height: 350px;
+    min-height: 280px;
+  }
+  
+  .chart-full .chart-container {
+    height: 400px;
+    min-height: 300px;
   }
   
   .metrics-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .qc-metrics {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .metric-card {
+    padding: 1.5rem 1rem;
+  }
+  
+  .metric-value {
+    font-size: 2rem;
   }
   
   .dashboard-header h1 {
     font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
 </style>
