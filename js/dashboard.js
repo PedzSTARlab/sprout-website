@@ -899,7 +899,7 @@ function createEligibilityChart(eligibilityData) {
         opacity: 0.7,
         line: { width: 1, color: 'white' }
       },
-      text: eligibleData.map(d => `${d.fileName}<br>${d.city}`),
+      text: eligibleData.map(d => d.city),
       hovertemplate: '<b>%{text}</b><br>Sample Index: %{x}<br>Spectral Bandwidth: %{y:.1f} Hz<br>Status: Eligible<extra></extra>'
     },
     {
@@ -914,7 +914,7 @@ function createEligibilityChart(eligibilityData) {
         opacity: 0.7,
         line: { width: 1, color: 'white' }
       },
-      text: notEligibleData.map(d => `${d.fileName}<br>${d.city}`),
+      text: notEligibleData.map(d => d.city),
       hovertemplate: '<b>%{text}</b><br>Sample Index: %{x}<br>Spectral Bandwidth: %{y:.1f} Hz<br>Status: Not Eligible<extra></extra>'
     }
   ];
