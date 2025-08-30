@@ -2,7 +2,7 @@
 
 # SPROUT Website
 
-Speech Production Repository for Optimizing Use for AI Technologies (SPROUT) Dashboard.
+Speech Production Repository for Optimizing Use for AI Technologies (SPROUT).
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Active-brightgreen)](https://pedzstarlab.github.io/sprout-website/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
