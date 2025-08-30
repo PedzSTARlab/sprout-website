@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SPROUT Dashboard</title>
+  <title>SPROUT</title>
   <link rel="icon" href="images/PedzSTARLab.png" type="image/png"/>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/dashboard.css"/>
@@ -122,77 +122,32 @@
   </header>
 
   <main>
-    <h1>SPROUT Dashboard</h1>
+    <h1>SPROUT</h1>
 
     <div class="tabs-container">
       <div class="tabs">
-        <button class="tab-button" data-tab="research-overview">Research Overview</button>
+        <button class="tab-button active" data-tab="research-overview">Research Overview</button>
         <button class="tab-button" data-tab="data-flow">Data Flow</button>
         <button class="tab-button" data-tab="data-collection">Data Collection</button>
-        <button class="tab-button active" data-tab="dashboard">Dashboard</button>
+        <button class="tab-button" data-tab="dashboard">Dashboard</button>
         <button class="tab-button" data-tab="metadata">Metadata</button>
         <button class="tab-button" data-tab="pre-processing">Pre-Processing</button>
         <button class="tab-button" data-tab="diarization">Diarization</button>
         <button class="tab-button" data-tab="asr">ASR</button>
         <button class="tab-button" data-tab="data-governance">Data Access and Governance</button>
+        <button class="tab-button" data-tab="public-release">Public Release</button>
       </div>
 
       <div class="tab-content">
         <!-- Research Overview Tab -->
-        <div class="tab-pane" id="research-overview">
-          <h2>Overview of SPROUT (Speech Production Repository for Optimizing Use for AI Technologies)</h2>
-          <p>The SPROUT (Speech Production Repository for Optimizing Use for AI Technologies) project is designed to support the development of automatic speech recognition (ASR) systems and AI-driven tools for early childhood assessment. SPROUT focuses on collecting speech samples from four-year-old children—a strategic choice that targets the developmental midpoint of speech sound acquisition in American English. This age group provides an ideal balance: minimizing the frequent developmental errors seen in younger children while still challenging model performance more than fully developed speech in older children. The data set is</p>
-          <p>To ensure equity and robustness in AI development, SPROUT prioritizes speaker variability. The dataset is built using a balanced recruitment strategy across racial/ethnic groups (Black, Latine, and White) and socioeconomic status (at or below 100%, and between 100%–200% of the federal poverty line). Recordings were collected across seven geographically diverse U.S. cities—St. Louis (MO), Los Angeles (CA), Dallas (TX), Orlando (FL), Atlanta (GA), Baltimore (MD), and Iselin (NJ)—through a partnership with a healthcare research firm.</p>
-          <p>Importantly, SPROUT was designed with robust ethical protections to safeguard the use of child speech in AI research. All data collection followed rigorous human subjects research protocols, including informed parental consent, options for data sharing preferences, and strict data privacy and security measures. These protections ensure that SPROUT supports innovation in a way that is transparent, respectful, and centered on the rights and dignity of children and families.</p>
-          <p>Developed through a collaborative, community-engaged approach, SPROUT enables cross-disciplinary research in speech-language pathology, machine learning, education, and child development. It supports the development of tools for early speech disorder detection, language development tracking, and culturally responsive assessment practices.</p>
-
-          <h3>Our Commitment</h3>
-          <p>At the Pediatric Speech Technologies and Acoustics Research (PedzSTAR) Lab, we are committed to advancing ethical, inclusive research that supports early identification of speech and language disorders through the development of AI-powered tools grounded in community input and real-world need. Guided by the principles of FAIR data use—making data Findable, Accessible, Interoperable, and Reusable—our work prioritizes transparency, responsible design, and equitable impact to ensure that all children, regardless of race, language background, or socioeconomic status, are accurately and justly served.</p>
-          <p><strong>Please Note:</strong> The public data releases do not contain pediatric data. It also does not contain an equal distribution of these categories of diseases. Further releases will contain additional data.</p>
-
-          <!-- Updated Data Access Section -->
-          <!-- Public Release (Zenodo) -->
-<h2>Public Release</h2>
-<div class="zenodo-card" role="region" aria-label="SPROUT public release on Zenodo">
-  <div class="zenodo-badge" aria-hidden="true">
-    <i class="fas fa-database"></i>
-  </div>
-  <div>
-    <h3 style="margin:0 0 .25rem 0;">SPROUT Public Dataset on Zenodo</h3>
-    <p style="margin:.25rem 0 0 0;">
-      Explore the latest public release of SPROUT on Zenodo. This record contains curated materials intended for community reuse,
-      including resources for AI research, education, and technology development aligned with our data governance policies.
-    </p>
-
-    <div class="zenodo-meta" aria-label="Release metadata">
-      <span class="pill">Repository: Zenodo</span>
-      <span class="pill">Persistent record</span>
-      <span class="pill">Citable</span>
-      <span class="pill">Stable versioning</span>
-    </div>
-
-    <div class="zenodo-actions">
-      <a
-        class="btn-zenodo"
-        href="https://zenodo.org/records/15723649"
-        target="_blank" rel="noopener"
-        aria-label="View SPROUT on Zenodo (opens in a new tab)"
-      >
-        View on Zenodo
-      </a>
-    </div>
-
-    <p style="margin:.75rem 0 0 0; font-size:.95rem; color:#444;">
-      <em>Note:</em> For credentialed or secured access to sensitive materials (e.g., pediatric audio), please refer to the Data Governance page for requirements.
-    </p>
-  </div>
-</div>
+        <div class="tab-pane active" id="research-overview">
+          <!-- Content will be loaded dynamically from tabs/research-overview.html -->
         </div>
 
         <div class="tab-pane" id="data-flow"></div>
         <div class="tab-pane" id="data-collection"></div>
 
-        <div class="tab-pane active" id="dashboard">
+        <div class="tab-pane" id="dashboard">
           <!-- Dashboard content will be loaded dynamically from tabs/dashboard.html -->
         </div>
         <div class="tab-pane" id="metadata"></div>
@@ -201,6 +156,7 @@
         <div class="tab-pane" id="diarization"></div>
         <div class="tab-pane" id="asr"></div>
         <div class="tab-pane" id="data-governance"></div>
+        <div class="tab-pane" id="public-release"></div>
       </div>
     </div>
   </main>
@@ -208,7 +164,7 @@
   <footer>
     <div class="footer-inner">
       <div class="col">
-        <h3>SPROUT Dashboard</h3>
+        <h3>SPROUT</h3>
         <p>Speech Production Repository for Optimizing Use for AI Technologies</p>
       </div>
       <div class="col">

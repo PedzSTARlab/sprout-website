@@ -1,8 +1,0 @@
-theme: jekyll-theme-minimal
-title: SPROUT Dashboard
-description: Speech Production Repository for Optimizing Use for AI Technologies
-baseurl: "/sprout-website"
-url: "https://pedzstarlab.github.io"
-github:
-  is_project_page: true
-  repository_url: https://github.com/PedzSTARlab/sprout-website

@@ -4,59 +4,77 @@
 <div class="content-section">
     <h3>1. Data Collection</h3>
     <ul>
-        <li>Tools: Adobe Audition (<code>.wav</code>), Zoom (<code>.m4a</code>/<code>.mp4</code>), SharePoint transcripts</li>
-        <li>Raw files live on SharePoint; then copied to processing server</li>
+        <li>Multi-site collection across 7 U.S. cities: St. Louis (MO), Los Angeles (CA), Dallas (TX), Orlando (FL), Atlanta (GA), Baltimore (MD), and Iselin (NJ)</li>
+        <li>Recording tools: Adobe Audition (<code>.wav</code>), Zoom (<code>.m4a</code>/<code>.mp4</code>)</li>
     </ul>
 
-    <h3>2. File Handling & Metadata</h3>
+    <h3>2. File Organization & Metadata</h3>
     <ul>
-        <li>BIDS-style directory structure</li>
-        <li>Rename, remove empty files, associate transcripts</li>
+        <li>BIDS-inspired directory structure implementation</li>
+        <li>Generate <code>participants.tsv</code> with demographic and clinical metadata</li>
     </ul>
 
-    <h3>3. Pre-processing & QC</h3>
+    <h3>3. Three-Stage Pre-processing Pipeline</h3>
     <ul>
-        <li>Noise reduction, silence trimming, normalization</li>
-        <li>Generate QC reports (SNR, clipping, duration)</li>
+        <li><strong>Denoising:</strong> Environmental and microphone noise reduction while preserving speech integrity</li>
+        <li><strong>Pre-QC:</strong> Automated assessment against minimal acoustic standards (SNR, clipping, duration)</li>
+        <li><strong>Normalization:</strong> Audio level normalization and silence trimming</li>
+        <li>Generate quality control reports with metrics: Signal Energy, SPL (dB), SNR, Duration</li>
     </ul>
 
-    <h3>4. Diarization & Segmentation</h3>
+    <h3>4. Post-QC Quality Assessment</h3>
     <ul>
-        <li>Manual speaker labeling + forced alignment (Montreal Forced Aligner)</li>
-        <li>Produce child-only audio segments</li>
+        <li>Advanced acoustic feature evaluation for residual quality issues</li>
+        <li>Eligibility determination for research use based on quality thresholds</li>
+        <li>Generate <code>Post_qc_summary.xlsx</code> with detailed quality metrics</li>
+        <li>Flag segments as "Eligible" or "Not Eligible" for downstream analysis</li>
     </ul>
 
-    <h3>5. Annotation & Feature Extraction</h3>
+    <h3>5. Speaker Diarization & Segmentation</h3>
     <ul>
-        <li>Expert phonetic labels + auto-extracted features (MFCC, prosody)</li>
-        <li>Store artifacts in feature store (e.g., Git LFS or cloud bucket)</li>
+        <li>Manual speaker labeling and verification</li>
+        <li>Forced alignment using Montreal Forced Aligner (MFA)</li>
+        <li>Extract child-only audio segments from multi-speaker recordings</li>
+        <li>Time-aligned segmentation for precise speech boundaries</li>
     </ul>
 
-    <h3>6. ASR & Transcription</h3>
+    <h3>6. Feature Extraction & Annotation</h3>
     <ul>
-        <li>Run Whisper / wav2vec-2.0 → timestamped transcripts</li>
+        <li>Expert phonetic labeling and linguistic annotation</li>
+        <li>Automated acoustic feature extraction (MFCC, prosody, spectral features)</li>
+        <li>Store processed artifacts in version-controlled feature repository</li>
+        <li>Generate phenotype JSON files for clinical assessments</li>
     </ul>
 
-    <h3>7. Modeling & Analysis</h3>
+    <h3>7. Automatic Speech Recognition (ASR)</h3>
     <ul>
-        <li>Train classifiers, bias analysis, explainability pipelines</li>
+        <li>Apply state-of-the-art ASR models (Whisper, wav2vec-2.0) to child-only segments</li>
+        <li>Generate time-aligned transcripts with confidence scores</li>
+        <li>Validate ASR output against manual transcriptions</li>
+        <li>Create timestamped transcripts for linguistic analysis</li>
+    </ul>
+
+    <h3>8. Dataset Packaging & Distribution</h3>
+    <ul>
+        <li>Package data into FAIR-compliant dataset structure</li>
+        <li>Generate public and secured access versions</li>
+        <li>Create dataset documentation and metadata files</li>
+        <li>Apply appropriate data governance and access controls</li>
+    </ul>
+
+    <h3>9. Analysis & Modeling</h3>
+    <ul>
+        <li>Train speech classification models and bias analysis pipelines</li>
+        <li>Develop explainability frameworks for clinical interpretation</li>
+        <li>Generate research insights and performance metrics</li>
+        <li>Support downstream AI model development and validation</li>
     </ul>
 </div>
 
 <h2>Data Flow Diagram</h2>
 
 <div class="diagram-container">
-    <pre class="ascii-diagram">
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Data Collection │────▶│  Pre-processing  │────▶│   Diarization   │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-                                                        │
-                                                        ▼
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│ Model Training  │◀────│  Feature Extract │◀────│  ASR Processing │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-    </pre>
-    <p>The diagram above illustrates the data processing flow from collection to model training.</p>
+    <img src="images/data-flow.png" alt="SPROUT Data Processing Flow Diagram" class="data-flow-image"/>
 </div>
 
 <style>
@@ -65,18 +83,23 @@
     }
     
     .diagram-container {
-        margin: 2rem 0;
+        margin: 2rem auto;
         padding: 1rem;
         background-color: #f8f9fa;
         border-radius: 8px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 90%;
     }
     
-    .ascii-diagram {
-        font-family: monospace;
-        white-space: pre;
-        overflow-x: auto;
-        background-color: transparent;
-        border: none;
-        padding: 1rem;
+    .data-flow-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin: 0 auto 1rem auto;
+        display: block;
     }
 </style>

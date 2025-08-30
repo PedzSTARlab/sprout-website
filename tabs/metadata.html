@@ -4,19 +4,19 @@
 
   <div class="file-tree">
     <h3> Dataset File Structure Overview</h3>
-    <pre>> PedzSTAR_PublicNonCommercial_Dataset/  
+    <pre>> PedzSTAR_SecuredAccess_Dataset/  
 > ├── dataset_description.json  
 > ├── participants.tsv  
 > ├── participants.json  
 > ├── README  
 > ├── CHANGES  
 > ├── phenotype/  
-> │   ├── toyplay.json  
-> │   ├── picturetask.json  
-> │   ├── gfta_test.json  
-> │   ├── pls5_screen.json  
-> │   ├── celfp3_screen.json  
-> │   ├── celfp3_test.json  
+> │   ├── TPL.json  
+> │   ├── PCT.json  
+> │   ├── GFTA.json  
+> │   ├── PLSS.json  
+> │   ├── CELFS.json  
+> │   ├── CELFT.json  
 > │   ├── at_risk.json  
 > ├── sub-*/  
 > │   └── beh/  
@@ -34,11 +34,11 @@
 >     │   ├── dataset_description.json  
 >     │   └── sub-*/  
 >     │       └── beh/  
->     │           ├── sub-*_task-*_acq-MicX_desc-denoisednormPreQC.json  
->     │           ├── sub-*_task-*_acq-MicY_desc-denoisednormPreQC.json  
->     │           ├── sub-*_task-*_acq-MicXY_desc-denoisednormPreQC.json  
->     │           ├── sub-*_task-*_acq-MicX_run-01_desc-denoisednormPreQC.json  
->     │           ├── sub-*_task-*_acq-MicX_run-02_desc-denoisednormPreQC.json  
+>     │           ├── sub-*_task-*_acq-MicX_desc-rawdataPreQC.json  
+>     │           ├── sub-*_task-*_acq-MicY_desc-rawdataPreQC.json  
+>     │           ├── sub-*_task-*_acq-MicXY_desc-rawdataPreQC.json  
+>     │           ├── sub-*_task-*_acq-MicX_run-01_desc-rawdataPreQC.json  
+>     │           ├── sub-*_task-*_acq-MicX_run-02_desc-rawdataPreQC.json  
 >     │           └── ...  
 >     ├── post_qc/  
 >     │   ├── dataset_description.json  
@@ -50,7 +50,7 @@
 >     │           ├── sub-*_task-*_acq-MicX_run-01_desc-denoisednormPostQC.json  
 >     │           ├── sub-*_task-*_acq-MicX_run-02_desc-denoisednormPostQC.json  
 >     │           └── ...  
->     └── denoised_normalized/  
+>     └── denoisednorm/  
 >         ├── dataset_description.json  
 >         └── sub-*/  
 >             └── beh/  
@@ -64,10 +64,17 @@
 >                 ├── sub-*_task-*_acq-MicX_run-02_desc-denoisednorm.wav  
 >                 └── ...  
 
-Task-specific files follow the naming convention:  
-<code>sub-[ParticipantID]_task-[TaskName]_acq-[AcquisitionType][_run-&lt;index&gt;]_desc-rawdata.wav</code> / <code>.json</code>  
-Processed files follow:  
-<code>sub-[ParticipantID]_task-[TaskName]_acq-[AcquisitionType][_run-&lt;index&gt;]_desc-denoisednorm.wav</code> / <code>.json</code>, etc.
+The task-specific audio recordings are named according to the following format:
+> sub-[ParticipantID]_task-[TaskName]_acq-[AcquisitionType][_run-<index>]_desc-rawdata.wav  
+> sub-[ParticipantID]_task-[TaskName]_acq-[AcquisitionType][_run-<index>]_desc-rawdata.json
+
+Processed files in derivatives are named as:
+> sub-[ParticipantID]_task-[TaskName]_acq-[AcquisitionType][_run-<index>]_desc-denoisednorm.wav  
+> sub-[ParticipantID]_task-[TaskName]_acq-[AcquisitionType][_run-<index>]_desc-denoisednorm.json  
+> sub-[ParticipantID]_task-[TaskName]_acq-[AcquisitionType][_run-<index>]_desc-rawdataPreQC.json  
+> sub-[ParticipantID]_task-[TaskName]_acq-[AcquisitionType][_run-<index>]_desc-denoisednormPostQC.json  
+
+Where [AcquisitionType] can be MicX, MicY, MicXY, or ZA.
     </pre>
   </div>
 </div>

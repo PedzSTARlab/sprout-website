@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load tab content from separate HTML files
     function loadTabContent() {
         const tabs = [
+            { id: 'research-overview', file: 'tabs/research-overview.html' },
             { id: 'dashboard', file: 'tabs/dashboard-tab.html' },
             { id: 'data-flow', file: 'tabs/data-flow.html' },
             { id: 'data-collection', file: 'tabs/data-collection.html' },
@@ -13,7 +14,8 @@ document.addEventListener('DOMContentLoaded', function() {
             { id: 'pre-processing', file: 'tabs/pre-processing.html' },
             { id: 'diarization', file: 'tabs/diarization.html' },
             { id: 'asr', file: 'tabs/asr.html' },
-            { id: 'data-governance', file: 'tabs/data-governance.html' }
+            { id: 'data-governance', file: 'tabs/data-governance.html' },
+            { id: 'public-release', file: 'tabs/public-release.html' }
         ];
 
         tabs.forEach(tab => {

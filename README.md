@@ -10,12 +10,7 @@ Speech Production Repository for Optimizing Use for AI Technologies (SPROUT) Das
 
 The SPROUT (Speech Production Repository for Optimizing Use for AI Technologies) project is designed to support the development of automatic speech recognition (ASR) systems and AI-driven tools for early childhood assessment. SPROUT focuses on collecting speech samples from four-year-old children—a strategic choice that targets the developmental midpoint of speech sound acquisition in American English.
 
-This repository contains the GitHub Pages website for the SPROUT project, converted from the original Streamlit application.
+This repository contains the GitHub Pages website for the SPROUT project.
 
 ## 🤝 License
 See [LICENSE](./LICENSE)
-
-## GitHub Pages
-
-This website will be hosted on GitHub Pages at [https://pedzstarlab.github.io/sprout-website/](https://pedzstarlab.github.io/sprout-website/)
-
